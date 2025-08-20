@@ -299,7 +299,12 @@ const updateAvatar = async (req, res) => {
     });
   } catch (error) {
     console.error('Update avatar error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error('Error stack:', error.stack);
+    res.status(500).json({ 
+      message: 'Server error', 
+      error: error.message,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 };
 
