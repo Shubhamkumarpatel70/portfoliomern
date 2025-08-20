@@ -1,10 +1,15 @@
 # Dependencies
 /node_modules
 /client/node_modules
+// ... existing code ...
+# Add recursive ignore for nested node_modules
+**/node_modules/
 
 # Production
 /build
 /client/build
+# Add recursive ignore for nested build folders
+**/build/
 
 # Logs
 logs
@@ -21,6 +26,8 @@ pnpm-debug.log*
 .env.test.local
 .env.production.local
 config.env
+# Ignore config.env in any subdirectory as well
+**/config.env
 
 # IDEs and editors
 .vscode/
