@@ -39,21 +39,29 @@ const connectWithRetry = async () => {
       serverSelectionTimeoutMS: 10000,
     });
     console.log('Connected to MongoDB');
+
+    // Optional admin seeding
+    if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
+      const existingAdmin = await User.findOne({ email: process.env.ADMIN_EMAIL });
+      if (!existingAdmin) {
+        const salt = await bcrypt.genSalt(10);
+        const hashed = await bcrypt.hash(process.env.ADMIN_PASSWORD, salt);
+        await User.create({
+          name: process.env.ADMIN_NAME || 'Admin',
+          email: process.env.ADMIN_EMAIL,
+          password: hashed,
+          role: 'admin'
+        });
+        console.log('Seeded admin account:', process.env.ADMIN_EMAIL);
+      }
+    }
   } catch (err) {
     console.error('MongoDB connection error:', err.message);
     setTimeout(connectWithRetry, 5000);
   }
 };
-connectWithRetry();
 
-const db = mongoose.connection;
-db.on('error', (e) => console.error('MongoDB runtime error:', e));
-
-// Health check for uptime monitoring
-app.get('/healthz', (req, res) => {
-  res.status(200).send('ok');
-});
-
+// Define schemas before seeding
 // User Schema
 const userSchema = new mongoose.Schema({
   name: {
@@ -72,6 +80,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 6
+  },
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
   },
   avatar: {
     type: String,
@@ -199,7 +212,8 @@ app.post('/api/auth/register', [
     user = new User({
       name,
       email,
-      password: hashedPassword
+      password: hashedPassword,
+      role: 'user'
     });
 
     await user.save();
@@ -216,7 +230,8 @@ app.post('/api/auth/register', [
       user: {
         id: user._id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        role: user.role
       }
     });
   } catch (error) {
@@ -262,7 +277,8 @@ app.post('/api/auth/login', [
       user: {
         id: user._id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        role: user.role
       }
     });
   } catch (error) {
@@ -272,7 +288,7 @@ app.post('/api/auth/login', [
 });
 
 // Get user profile
-app.get('/api/auth/me', auth, async (req, res) => {
+app.get('/api/auth/profile', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select('-password');
     res.json(user);
@@ -451,4 +467,15 @@ app.get('*', (req, res) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+}); 
+
+// After defining models
+connectWithRetry();
+
+const db = mongoose.connection;
+db.on('error', (e) => console.error('MongoDB runtime error:', e));
+
+// Health check for uptime monitoring
+app.get('/healthz', (req, res) => {
+  res.status(200).send('ok');
 }); 
