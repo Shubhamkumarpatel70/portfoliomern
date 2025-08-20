@@ -1,0 +1,62 @@
+/* Color palette */
+:root {
+  --color-bg: #0F172A; /* slate-900 */
+  --color-card: #1E293B; /* slate-800 */
+  --color-primary: #38BDF8; /* sky-400 */
+  --color-secondary: #818CF8; /* indigo-400 */
+  --color-text: #F1F5F9; /* slate-100 */
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--color-bg);
+}
+
+/* Utility classes for cards and accents */
+.card-bg {
+  background: var(--color-card) !important;
+  color: var(--color-text) !important;
+}
+.primary-accent {
+  color: var(--color-primary) !important;
+}
+.secondary-accent {
+  color: var(--color-secondary) !important;
+}
+.bg-primary-accent {
+  background: var(--color-primary) !important;
+  color: var(--color-bg) !important;
+}
+.bg-secondary-accent {
+  background: var(--color-secondary) !important;
+  color: var(--color-bg) !important;
+}
+
+/* Remove default link underline and set color */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+a:hover {
+  color: var(--color-secondary);
+}
+
+/* Scrollbar styling for dark background */
+::-webkit-scrollbar {
+  width: 10px;
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-card);
+  border-radius: 6px;
+}
