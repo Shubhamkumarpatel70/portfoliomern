@@ -223,6 +223,11 @@ const changePassword = async (req, res) => {
 // @access  Private
 const updateAvatar = async (req, res) => {
   try {
+    console.log('Avatar upload request received');
+    console.log('Request body:', req.body);
+    console.log('Request file:', req.file);
+    console.log('Request files:', req.files);
+
     const user = await User.findById(req.user._id);
 
     if (!user) {
@@ -231,8 +236,11 @@ const updateAvatar = async (req, res) => {
 
     // Check if file was uploaded
     if (!req.file) {
+      console.log('No file uploaded');
       return res.status(400).json({ message: 'No avatar file uploaded' });
     }
+
+    console.log('File uploaded successfully:', req.file);
 
     // Get the file path from the uploaded file
     let avatarUrl;
@@ -247,8 +255,12 @@ const updateAvatar = async (req, res) => {
       avatarUrl = `/uploads/${req.file.filename}`;
     }
 
+    console.log('Avatar URL:', avatarUrl);
+
     user.avatar = avatarUrl;
     const updatedUser = await user.save();
+
+    console.log('User updated successfully');
 
     res.json({
       _id: updatedUser._id,
@@ -265,7 +277,7 @@ const updateAvatar = async (req, res) => {
     });
   } catch (error) {
     console.error('Update avatar error:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 

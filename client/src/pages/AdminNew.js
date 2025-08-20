@@ -86,6 +86,17 @@ const AdminNew = () => {
   const [error, setError] = useState('');
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   
+  // Dialog states
+  const [deleteDialog, setDeleteDialog] = useState({ open: false, type: '', id: '', name: '' });
+  const [projectDialog, setProjectDialog] = useState({ open: false, edit: false, data: emptyProject });
+  const [experienceDialog, setExperienceDialog] = useState({ open: false, edit: false, data: emptyExperience });
+  const [aboutDialog, setAboutDialog] = useState({ open: false, data: emptyAbout });
+  const [skillDialog, setSkillDialog] = useState({ 
+    open: false, 
+    edit: false, 
+    data: { _id: '', name: '', category: '', level: 'Beginner', icon: '', order: 0, percent: '' } 
+  });
+  
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -160,10 +171,41 @@ const AdminNew = () => {
         window.location.reload(); // Refresh to update UI
       }
     } catch (error) {
-      setError('Failed to upload avatar');
+      setError('Failed to upload avatar: ' + (error.response?.data?.message || error.message));
       console.error('Avatar upload error:', error);
     } finally {
       setUploadingAvatar(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const { type, id } = deleteDialog;
+      let endpoint = '';
+      
+      switch (type) {
+        case 'user':
+          endpoint = `/api/auth/users/${id}`;
+          break;
+        case 'project':
+          endpoint = `/api/projects/${id}`;
+          break;
+        case 'experience':
+          endpoint = `/api/experiences/${id}`;
+          break;
+        case 'skill':
+          endpoint = `/api/skills/${id}`;
+          break;
+        default:
+          return;
+      }
+
+      await api.delete(endpoint);
+      setDeleteDialog({ open: false, type: '', id: '', name: '' });
+      fetchData(); // Refresh data
+    } catch (error) {
+      setError('Failed to delete item: ' + (error.response?.data?.message || error.message));
+      console.error('Error deleting:', error);
     }
   };
 
@@ -417,32 +459,160 @@ const AdminNew = () => {
           {/* Tab Content */}
           <Box sx={{ p: 3 }}>
             {tabValue === 0 && (
-              <UsersTab users={users} onRefresh={fetchData} />
+              <UsersTab 
+                users={users} 
+                onRefresh={fetchData} 
+                onDelete={(id, name) => setDeleteDialog({ open: true, type: 'user', id, name })}
+              />
             )}
             {tabValue === 1 && (
-              <ProjectsTab projects={projects} onRefresh={fetchData} />
+              <ProjectsTab 
+                projects={projects} 
+                onRefresh={fetchData}
+                onEdit={(data) => setProjectDialog({ open: true, edit: !!data, data: data || emptyProject })}
+                onDelete={(id, name) => setDeleteDialog({ open: true, type: 'project', id, name })}
+              />
             )}
             {tabValue === 2 && (
-              <ExperiencesTab experiences={experiences} onRefresh={fetchData} />
+              <ExperiencesTab 
+                experiences={experiences} 
+                onRefresh={fetchData}
+                onEdit={(data) => setExperienceDialog({ open: true, edit: !!data, data: data || emptyExperience })}
+                onDelete={(id, name) => setDeleteDialog({ open: true, type: 'experience', id, name })}
+              />
             )}
             {tabValue === 3 && (
-              <SkillsTab skills={skills} onRefresh={fetchData} />
+              <SkillsTab 
+                skills={skills} 
+                onRefresh={fetchData}
+                onEdit={(data) => setSkillDialog({ 
+                  open: true, 
+                  edit: !!data, 
+                  data: data || { _id: '', name: '', category: '', level: 'Beginner', icon: '', order: 0, percent: '' }
+                })}
+                onDelete={(id, name) => setDeleteDialog({ open: true, type: 'skill', id, name })}
+              />
             )}
             {tabValue === 4 && (
               <ContactsTab contacts={contacts} onRefresh={fetchData} />
             )}
             {tabValue === 5 && (
-              <AboutTab about={about} onRefresh={fetchData} />
+              <AboutTab 
+                about={about} 
+                onRefresh={fetchData}
+                onEdit={(data) => setAboutDialog({ open: true, data: data || emptyAbout })}
+              />
             )}
           </Box>
         </Card>
       </Container>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialog.open} onClose={() => setDeleteDialog({ open: false, type: '', id: '', name: '' })}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete "{deleteDialog.name}"? This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialog({ open: false, type: '', id: '', name: '' })}>
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} color="error" variant="contained">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Project Dialog */}
+      <ProjectDialog 
+        open={projectDialog.open}
+        edit={projectDialog.edit}
+        data={projectDialog.data}
+        onClose={() => setProjectDialog({ open: false, edit: false, data: emptyProject })}
+        onSubmit={async (data) => {
+          try {
+            if (projectDialog.edit) {
+              await api.put(`/api/projects/${data._id}`, data);
+            } else {
+              await api.post('/api/projects', data);
+            }
+            setProjectDialog({ open: false, edit: false, data: emptyProject });
+            fetchData();
+          } catch (error) {
+            setError('Failed to save project: ' + (error.response?.data?.message || error.message));
+          }
+        }}
+      />
+
+      {/* Experience Dialog */}
+      <ExperienceDialog 
+        open={experienceDialog.open}
+        edit={experienceDialog.edit}
+        data={experienceDialog.data}
+        onClose={() => setExperienceDialog({ open: false, edit: false, data: emptyExperience })}
+        onSubmit={async (data) => {
+          try {
+            if (experienceDialog.edit) {
+              await api.put(`/api/experiences/${data._id}`, data);
+            } else {
+              await api.post('/api/experiences', data);
+            }
+            setExperienceDialog({ open: false, edit: false, data: emptyExperience });
+            fetchData();
+          } catch (error) {
+            setError('Failed to save experience: ' + (error.response?.data?.message || error.message));
+          }
+        }}
+      />
+
+      {/* About Dialog */}
+      <AboutDialog 
+        open={aboutDialog.open}
+        data={aboutDialog.data}
+        onClose={() => setAboutDialog({ open: false, data: emptyAbout })}
+        onSubmit={async (data) => {
+          try {
+            if (about) {
+              await api.put('/api/about/me', data);
+            } else {
+              await api.post('/api/about/me', data);
+            }
+            setAboutDialog({ open: false, data: emptyAbout });
+            fetchData();
+          } catch (error) {
+            setError('Failed to save about information: ' + (error.response?.data?.message || error.message));
+          }
+        }}
+      />
+
+      {/* Skill Dialog */}
+      <SkillDialog 
+        open={skillDialog.open}
+        edit={skillDialog.edit}
+        data={skillDialog.data}
+        onClose={() => setSkillDialog({ open: false, edit: false, data: { _id: '', name: '', category: '', level: 'Beginner', icon: '', order: 0, percent: '' } })}
+        onSubmit={async (data) => {
+          try {
+            if (skillDialog.edit) {
+              await api.put(`/api/skills/${data._id}`, data);
+            } else {
+              await api.post('/api/skills', data);
+            }
+            setSkillDialog({ open: false, edit: false, data: { _id: '', name: '', category: '', level: 'Beginner', icon: '', order: 0, percent: '' } });
+            fetchData();
+          } catch (error) {
+            setError('Failed to save skill: ' + (error.response?.data?.message || error.message));
+          }
+        }}
+      />
     </Box>
   );
 };
 
 // Tab Components
-const UsersTab = ({ users, onRefresh }) => (
+const UsersTab = ({ users, onRefresh, onDelete }) => (
   <Box>
     <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
       <Typography variant="h5" fontWeight="bold">
@@ -506,6 +676,7 @@ const UsersTab = ({ users, onRefresh }) => (
                   <IconButton
                     color="error"
                     size="small"
+                    onClick={() => onDelete(user._id, user.name)}
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -519,7 +690,7 @@ const UsersTab = ({ users, onRefresh }) => (
   </Box>
 );
 
-const ProjectsTab = ({ projects, onRefresh }) => (
+const ProjectsTab = ({ projects, onRefresh, onEdit, onDelete }) => (
   <Box>
     <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
       <Typography variant="h5" fontWeight="bold">
@@ -536,6 +707,7 @@ const ProjectsTab = ({ projects, onRefresh }) => (
         <Button
           variant="contained"
           startIcon={<AddIcon />}
+          onClick={() => onEdit(null)}
         >
           Add Project
         </Button>
@@ -568,6 +740,7 @@ const ProjectsTab = ({ projects, onRefresh }) => (
                   <IconButton
                     size="small"
                     sx={{ bgcolor: 'rgba(255,255,255,0.9)' }}
+                    onClick={() => onEdit(project)}
                   >
                     <EditIcon fontSize="small" />
                   </IconButton>
@@ -577,6 +750,7 @@ const ProjectsTab = ({ projects, onRefresh }) => (
                     size="small"
                     color="error"
                     sx={{ bgcolor: 'rgba(255,255,255,0.9)' }}
+                    onClick={() => onDelete(project._id, project.title)}
                   >
                     <DeleteIcon fontSize="small" />
                   </IconButton>
@@ -623,7 +797,7 @@ const ProjectsTab = ({ projects, onRefresh }) => (
   </Box>
 );
 
-const ExperiencesTab = ({ experiences, onRefresh }) => (
+const ExperiencesTab = ({ experiences, onRefresh, onEdit, onDelete }) => (
   <Box>
     <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
       <Typography variant="h5" fontWeight="bold">
@@ -640,6 +814,7 @@ const ExperiencesTab = ({ experiences, onRefresh }) => (
         <Button
           variant="contained"
           startIcon={<AddIcon />}
+          onClick={() => onEdit(null)}
         >
           Add Experience
         </Button>
@@ -682,12 +857,12 @@ const ExperiencesTab = ({ experiences, onRefresh }) => (
               <TableCell>
                 <Box display="flex" gap={1}>
                   <Tooltip title="Edit Experience">
-                    <IconButton size="small">
+                    <IconButton size="small" onClick={() => onEdit(experience)}>
                       <EditIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Delete Experience">
-                    <IconButton size="small" color="error">
+                    <IconButton size="small" color="error" onClick={() => onDelete(experience._id, experience.title)}>
                       <DeleteIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
@@ -701,7 +876,7 @@ const ExperiencesTab = ({ experiences, onRefresh }) => (
   </Box>
 );
 
-const SkillsTab = ({ skills, onRefresh }) => (
+const SkillsTab = ({ skills, onRefresh, onEdit, onDelete }) => (
   <Box>
     <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
       <Typography variant="h5" fontWeight="bold">
@@ -718,6 +893,7 @@ const SkillsTab = ({ skills, onRefresh }) => (
         <Button
           variant="contained"
           startIcon={<AddIcon />}
+          onClick={() => onEdit(null)}
         >
           Add Skill
         </Button>
@@ -752,12 +928,12 @@ const SkillsTab = ({ skills, onRefresh }) => (
             </Typography>
             <Box display="flex" justifyContent="center" gap={1}>
               <Tooltip title="Edit Skill">
-                <IconButton size="small">
+                <IconButton size="small" onClick={() => onEdit(skill)}>
                   <EditIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
               <Tooltip title="Delete Skill">
-                <IconButton size="small" color="error">
+                <IconButton size="small" color="error" onClick={() => onDelete(skill._id, skill.name)}>
                   <DeleteIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
@@ -821,7 +997,7 @@ const ContactsTab = ({ contacts, onRefresh }) => (
   </Box>
 );
 
-const AboutTab = ({ about, onRefresh }) => (
+const AboutTab = ({ about, onRefresh, onEdit }) => (
   <Box>
     <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
       <Typography variant="h5" fontWeight="bold">
@@ -838,6 +1014,7 @@ const AboutTab = ({ about, onRefresh }) => (
         <Button
           variant="contained"
           startIcon={<EditIcon />}
+          onClick={() => onEdit(about)}
         >
           Edit About
         </Button>
@@ -910,6 +1087,67 @@ const AboutTab = ({ about, onRefresh }) => (
       </Card>
     )}
   </Box>
+);
+
+// Dialog Components (simplified versions)
+const ProjectDialog = ({ open, edit, data, onClose, onSubmit }) => (
+  <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <DialogTitle>{edit ? 'Edit Project' : 'Add Project'}</DialogTitle>
+    <DialogContent>
+      <Typography>Project form content here</Typography>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={onClose}>Cancel</Button>
+      <Button onClick={() => onSubmit(data)} variant="contained">
+        {edit ? 'Update' : 'Create'}
+      </Button>
+    </DialogActions>
+  </Dialog>
+);
+
+const ExperienceDialog = ({ open, edit, data, onClose, onSubmit }) => (
+  <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <DialogTitle>{edit ? 'Edit Experience' : 'Add Experience'}</DialogTitle>
+    <DialogContent>
+      <Typography>Experience form content here</Typography>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={onClose}>Cancel</Button>
+      <Button onClick={() => onSubmit(data)} variant="contained">
+        {edit ? 'Update' : 'Create'}
+      </Button>
+    </DialogActions>
+  </Dialog>
+);
+
+const AboutDialog = ({ open, data, onClose, onSubmit }) => (
+  <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <DialogTitle>Edit About Information</DialogTitle>
+    <DialogContent>
+      <Typography>About form content here</Typography>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={onClose}>Cancel</Button>
+      <Button onClick={() => onSubmit(data)} variant="contained">
+        Save
+      </Button>
+    </DialogActions>
+  </Dialog>
+);
+
+const SkillDialog = ({ open, edit, data, onClose, onSubmit }) => (
+  <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <DialogTitle>{edit ? 'Edit Skill' : 'Add Skill'}</DialogTitle>
+    <DialogContent>
+      <Typography>Skill form content here</Typography>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={onClose}>Cancel</Button>
+      <Button onClick={() => onSubmit(data)} variant="contained">
+        {edit ? 'Update' : 'Create'}
+      </Button>
+    </DialogActions>
+  </Dialog>
 );
 
 export default AdminNew;
