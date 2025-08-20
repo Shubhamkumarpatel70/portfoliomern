@@ -64,7 +64,7 @@ const About = () => {
   const fetchAboutData = async () => {
     try {
       setLoading(true);
-      const res = await api.get('/about/public');
+      const res = await api.get('/api/about/public');
       setAbout(res.data.about);
     } catch (err) {
       console.error('Error fetching about data:', err);

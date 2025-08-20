@@ -20,10 +20,10 @@ import axios from 'axios';
 import { api } from '../api';
 
 const levelColor = {
-  Beginner: 'default',
-  Intermediate: 'info',
-  Advanced: 'success',
-  Expert: 'warning',
+  Beginner: '#94a3b8',
+  Intermediate: '#60a5fa',
+  Advanced: '#34d399',
+  Expert: '#f59e0b'
 };
 
 const levelValue = {
@@ -50,22 +50,23 @@ const Skills = () => {
   const API_BASE_URL = process.env.REACT_APP_API_URL || '';
 
   useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const res = await api.get('/api/skills');
+        const list = Array.isArray(res.data) ? res.data : (res.data.skills || res.data || []);
+        setSkills(list);
+        const cats = Array.from(new Set(list.map(s => s.category)));
+        setCategories(['All Skills', ...cats]);
+      } catch (err) {
+        setSkills([]);
+        setCategories(['All Skills']);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchSkills();
   }, []);
-
-  const fetchSkills = async () => {
-    try {
-      const res = await api.get('/skills');
-      setSkills(res.data);
-      const cats = Array.from(new Set(res.data.map(s => s.category)));
-      setCategories(['All Skills', ...cats]);
-    } catch (err) {
-      setSkills([]);
-      setCategories(['All Skills']);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const filteredSkills = selectedCategory === 'All Skills'
     ? skills

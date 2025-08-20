@@ -66,8 +66,9 @@ const Home = () => {
 
   const fetchFeaturedProjects = async () => {
     try {
-      const response = await api.get(`/projects?featured=true&limit=3`);
-      setFeaturedProjects(response.data.projects || []);
+      const response = await api.get(`/api/projects?featured=true&limit=3`);
+      const projects = Array.isArray(response.data) ? response.data : (response.data.projects || []);
+      setFeaturedProjects(projects);
     } catch (error) {
       console.error('Error fetching featured projects:', error);
       setFeaturedProjects([]);
@@ -78,7 +79,7 @@ const Home = () => {
 
   const fetchAbout = async () => {
     try {
-      const res = await api.get(`/about/public`);
+      const res = await api.get(`/api/about/public`);
       setAbout(res.data.about || null);
     } catch (err) {
       setAbout(null);
@@ -89,8 +90,9 @@ const Home = () => {
 
   const fetchSkills = async () => {
     try {
-      const res = await api.get(`/skills`);
-      setSkills(res.data);
+      const res = await api.get(`/api/skills`);
+      const list = Array.isArray(res.data) ? res.data : (res.data.skills || res.data || []);
+      setSkills(list);
     } catch (err) {
       setSkills([]);
     } finally {

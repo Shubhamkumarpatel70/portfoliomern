@@ -52,7 +52,7 @@ const Contact = () => {
     }
     setLoading(true);
     try {
-      await api.post('/contacts', form);
+      await api.post('/api/contacts', form);
       setSuccess('Your message has been sent successfully!');
       setForm({ name: '', email: '', message: '' });
     } catch (err) {

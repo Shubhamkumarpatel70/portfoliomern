@@ -124,12 +124,12 @@ const Admin = () => {
     try {
       setLoading(true);
       const [usersRes, projectsRes, experiencesRes, skillsRes, contactsRes, aboutRes] = await Promise.all([
-        api.get('/auth/users'),
-        api.get('/projects'),
-        api.get('/experiences'),
-        api.get('/skills'),
-        api.get('/contacts'),
-        api.get('/about/me').catch(() => ({ data: null }))
+        api.get('/api/auth/users'),
+        api.get('/api/projects'),
+        api.get('/api/experiences'),
+        api.get('/api/skills'),
+        api.get('/api/contacts'),
+        api.get('/api/about/me').catch(() => ({ data: null }))
       ]);
 
       setUsers(usersRes.data);
@@ -167,13 +167,13 @@ const Admin = () => {
       
       switch (type) {
         case 'user':
-          endpoint = `/auth/users/${id}`;
+          endpoint = `/api/auth/users/${id}`;
           break;
         case 'project':
-          endpoint = `/projects/${id}`;
+          endpoint = `/api/projects/${id}`;
           break;
         case 'experience':
-          endpoint = `/experiences/${id}`;
+          endpoint = `/api/experiences/${id}`;
           break;
         default:
           return;
@@ -202,9 +202,9 @@ const Admin = () => {
         user: user._id,
       };
       if (projectDialog.edit) {
-        await api.put(`/projects/${projectDialog.data._id}`, payload);
+        await api.put(`/api/projects/${projectDialog.data._id}`, payload);
       } else {
-        await api.post('/projects', payload);
+        await api.post('/api/projects', payload);
       }
       handleProjectDialogClose();
       fetchData();
@@ -229,9 +229,9 @@ const Admin = () => {
         user: user._id,
       };
       if (experienceDialog.edit) {
-        await api.put(`/experiences/${experienceDialog.data._id}`, payload);
+        await api.put(`/api/experiences/${experienceDialog.data._id}`, payload);
       } else {
-        await api.post('/experiences', payload);
+        await api.post('/api/experiences', payload);
       }
       handleExperienceDialogClose();
       fetchData();
@@ -264,9 +264,9 @@ const Admin = () => {
         ...aboutDialog.data,
       };
       if (about) {
-        await api.put('/about/me', payload);
+        await api.put('/api/about/me', payload);
       } else {
-        await api.post('/about/me', payload);
+        await api.post('/api/about/me', payload);
       }
       handleAboutDialogClose();
       fetchData();
@@ -283,7 +283,7 @@ const Admin = () => {
       const form = new FormData();
       form.append('avatar', file);
       // include auth token header already set in context
-      await api.put('/auth/profile/avatar', form, {
+      await api.put('/api/auth/profile/avatar', form, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       await fetchData();
@@ -299,7 +299,7 @@ const Admin = () => {
       if (!file) return;
       const form = new FormData();
       form.append('resume', file);
-      await api.put('/about/me/resume', form, {
+      await api.put('/api/about/me/resume', form, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       await fetchData();
@@ -318,7 +318,7 @@ const Admin = () => {
 
   const handleContactStatusUpdate = async (id, status) => {
     try {
-      await api.put(`/contacts/${id}`, { status });
+      await api.put(`/api/contacts/${id}`, { status });
       fetchData();
     } catch (err) {
       setError('Failed to update contact status');
@@ -327,7 +327,7 @@ const Admin = () => {
 
   const handleContactDelete = async (id) => {
     try {
-      await api.delete(`/contacts/${id}`);
+      await api.delete(`/api/contacts/${id}`);
       fetchData();
     } catch (err) {
       setError('Failed to delete contact');
@@ -378,9 +378,9 @@ const Admin = () => {
         payload.percent = null;
       }
       if (skillDialog.edit) {
-        await api.put(`/skills/${_id}`, payload);
+        await api.put(`/api/skills/${_id}`, payload);
       } else {
-        await api.post('/skills', payload);
+        await api.post('/api/skills', payload);
       }
       handleSkillDialogClose();
       fetchData();
@@ -391,7 +391,7 @@ const Admin = () => {
 
   const handleSkillDelete = async (id) => {
     try {
-      await api.delete(`/skills/${id}`);
+      await api.delete(`/api/skills/${id}`);
       fetchData();
     } catch (err) {
       setError('Failed to delete skill');
@@ -400,7 +400,7 @@ const Admin = () => {
 
   const handleToggleFeatured = async (projectId, currentFeatured) => {
     try {
-      await api.put(`/projects/${projectId}/feature`);
+      await api.put(`/api/projects/${projectId}/feature`);
       fetchData(); // Refresh data to show updated status
     } catch (err) {
       setError('Failed to toggle featured status');
@@ -602,7 +602,7 @@ const Admin = () => {
                         <TableCell>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Avatar 
-                              src={user.avatar ? `${user.avatar}` : undefined} 
+                              src={user.avatar || undefined} 
                               sx={{ 
                                 bgcolor: theme.palette.primary.main,
                                 width: 40,
@@ -933,7 +933,7 @@ const Admin = () => {
                 {about?.resume && (
                   <Button 
                     variant="contained" 
-                    onClick={() => window.open(`${about.resume}`, '_blank')}
+                    onClick={() => window.open(about.resume, '_blank')}
                   >
                     View Resume
                   </Button>

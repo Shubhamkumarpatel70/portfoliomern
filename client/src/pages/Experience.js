@@ -54,7 +54,7 @@ const Experience = () => {
 
   const fetchExperiences = async () => {
     try {
-      const response = await api.get('/experiences');
+      const response = await api.get('/api/experiences');
       // Handle different response formats
       const experiencesData = response.data.experiences || response.data || [];
       setExperiences(Array.isArray(experiencesData) ? experiencesData : []);
@@ -102,9 +102,9 @@ const Experience = () => {
     e.preventDefault();
     try {
       if (editingExperience) {
-        await api.put(`/experiences/${editingExperience._id}`, formData);
+        await api.put(`/api/experiences/${editingExperience._id}`, formData);
       } else {
-        await api.post('/experiences', formData);
+        await api.post('/api/experiences', formData);
       }
       fetchExperiences();
       handleCloseDialog();

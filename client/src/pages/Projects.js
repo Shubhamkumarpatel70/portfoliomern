@@ -78,7 +78,7 @@ const Projects = () => {
 
   const fetchProjects = async () => {
     try {
-      const response = await api.get('/projects');
+      const response = await api.get('/api/projects');
       const projectsData = response.data.projects || response.data || [];
       setProjects(Array.isArray(projectsData) ? projectsData : []);
     } catch (error) {
@@ -130,9 +130,9 @@ const Projects = () => {
       };
 
       if (editingProject) {
-        await api.put(`/projects/${editingProject._id}`, projectData);
+        await api.put(`/api/projects/${editingProject._id}`, projectData);
       } else {
-        await api.post('/projects', projectData);
+        await api.post('/api/projects', projectData);
       }
       fetchProjects();
       handleCloseDialog();
@@ -144,7 +144,7 @@ const Projects = () => {
   const handleDelete = async (projectId) => {
     if (window.confirm('Are you sure you want to delete this project?')) {
       try {
-        await api.delete(`/projects/${projectId}`);
+        await api.delete(`/api/projects/${projectId}`);
         fetchProjects();
       } catch (error) {
         console.error('Error deleting project:', error);
