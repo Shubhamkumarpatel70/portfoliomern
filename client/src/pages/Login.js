@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -26,7 +26,8 @@ const Login = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const [redirecting, setRedirecting] = useState(false);
+  const { login, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
 
@@ -36,14 +37,36 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await login(formData.email, formData.password);
-      navigate('/');
+      const result = await login(formData.email, formData.password);
+      if (result.success) {
+        // The user data will be available in the next render cycle
+        // We'll use useEffect to handle the redirect
+      } else {
+        setError(result.message || 'Login failed');
+        setLoading(false);
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
-    } finally {
       setLoading(false);
     }
   };
+
+  // Handle redirect after successful login
+  useEffect(() => {
+    if (isAuthenticated && user && !redirecting) {
+      setRedirecting(true);
+      // Add a small delay to ensure the user data is properly loaded
+      const timer = setTimeout(() => {
+        if (user.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/');
+        }
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthenticated, user, navigate, redirecting]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

@@ -16,7 +16,8 @@ import {
   Paper,
   IconButton,
   Tooltip,
-  Skeleton
+  Skeleton,
+  Fab
 } from '@mui/material';
 import {
   Code as CodeIcon,
@@ -33,7 +34,8 @@ import {
   Work as WorkIcon,
   School as SchoolIcon,
   Psychology as PsychologyIcon,
-  Launch as LaunchIcon
+  Launch as LaunchIcon,
+  KeyboardArrowUp as KeyboardArrowUpIcon
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import axios from 'axios';
@@ -54,6 +56,7 @@ const Home = () => {
   const [selectedSkill, setSelectedSkill] = useState(null);
   const [about, setAbout] = useState(null);
   const [aboutLoading, setAboutLoading] = useState(true);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -63,6 +66,23 @@ const Home = () => {
     fetchSkills();
     fetchAbout();
   }, []);
+
+  // Handle scroll to top functionality
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
 
   const fetchFeaturedProjects = async () => {
     try {
@@ -142,8 +162,8 @@ const Home = () => {
         sx={{
           background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
           color: '#e2e8f0',
-          py: { xs: 8, md: 12 },
-          minHeight: '88vh',
+          py: { xs: 6, sm: 8, md: 12 },
+          minHeight: { xs: '85vh', sm: '88vh' },
           display: 'flex',
           alignItems: 'center',
           position: 'relative',
@@ -160,7 +180,7 @@ const Home = () => {
           }
         }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
           <Grid container spacing={4} alignItems="center" direction={{ xs: 'column', sm: 'row' }} sx={{ flexWrap: { xs: 'wrap', sm: 'nowrap' } }}>
             <Grid item xs={12} sm={7}>
               <motion.div
@@ -175,15 +195,17 @@ const Home = () => {
                   sx={{ 
                     fontWeight: 900,
                     mb: 1.5,
-                    fontSize: { xs: '2.4rem', sm: '3rem', md: '3.6rem', lg: '4rem' },
+                    fontSize: { xs: '1.8rem', sm: '2.4rem', md: '3rem', lg: '3.6rem' },
+                    lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 },
                     background: 'linear-gradient(90deg, #38BDF8 0%, #818CF8 100%)',
                     backgroundClip: 'text',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
-                    textShadow: '0 6px 14px rgba(0,0,0,0.25)'
+                    textShadow: '0 6px 14px rgba(0,0,0,0.25)',
+                    wordBreak: 'break-word'
                   }}
                 >
-                  {aboutLoading ? 'Loading…' : `Hi, I\'m ${about?.name || 'Your Name'}`}
+                  {aboutLoading ? 'Loading…' : `Hi, I'm ${about?.name || 'Your Name'}`}
                 </Typography>
                 <Typography
                   variant="h5"
@@ -191,10 +213,11 @@ const Home = () => {
                   gutterBottom
                   sx={{ 
                     mb: 2,
-                    fontSize: { xs: '1.1rem', sm: '1.25rem', md: '1.35rem' },
+                    fontSize: { xs: '1rem', sm: '1.1rem', md: '1.25rem' },
                     opacity: 0.95,
                     fontWeight: 700,
-                    color: '#94a3b8'
+                    color: '#94a3b8',
+                    lineHeight: { xs: 1.3, sm: 1.4 }
                   }}
                 >
                   Full Stack Developer
@@ -204,16 +227,25 @@ const Home = () => {
                   sx={{ 
                     mb: 4, 
                     opacity: 0.9, 
-                    lineHeight: 1.7,
+                    lineHeight: { xs: 1.6, sm: 1.7 },
                     color: '#cbd5e1',
-                    maxWidth: 500
+                    maxWidth: 500,
+                    fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                    textAlign: { xs: 'left', sm: 'left' }
                   }}
                 >
                   {aboutLoading
                     ? 'Building delightful digital experiences with a focus on quality and impact.'
                     : (about?.bio || 'I create beautiful, functional, and user-centered digital experiences. Passionate about clean code and innovative solutions that make a difference.')}
                 </Typography>
-                <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 4 }}>
+                <Box sx={{ 
+                  display: 'flex', 
+                  gap: { xs: 1.5, sm: 2 }, 
+                  flexWrap: 'wrap', 
+                  mb: 4,
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  alignItems: { xs: 'stretch', sm: 'flex-start' }
+                }}>
                   <Button
                     component={Link}
                     to="/projects"
@@ -224,16 +256,17 @@ const Home = () => {
                       background: 'linear-gradient(90deg, #38BDF8 0%, #818CF8 100%)',
                       color: '#0F172A',
                       fontWeight: 800,
-                      px: 4,
-                      py: 1.5,
-                      fontSize: '1.1rem',
+                      px: { xs: 3, sm: 4 },
+                      py: { xs: 1.2, sm: 1.5 },
+                      fontSize: { xs: '1rem', sm: '1.1rem' },
                       borderRadius: 3,
                       boxShadow: '0 8px 18px rgba(56,189,248,0.25)',
                       '&:hover': {
                         background: 'linear-gradient(90deg, #818CF8 0%, #38BDF8 100%)',
                         transform: 'translateY(-2px)'
                       },
-                      transition: 'all 0.3s ease'
+                      transition: 'all 0.3s ease',
+                      width: { xs: '100%', sm: 'auto' }
                     }}
                   >
                     View My Work
@@ -247,16 +280,17 @@ const Home = () => {
                       background: 'linear-gradient(90deg, #22c55e 0%, #38BDF8 100%)',
                       color: '#0F172A',
                       fontWeight: 800,
-                      px: 4,
-                      py: 1.5,
-                      fontSize: '1.1rem',
+                      px: { xs: 3, sm: 4 },
+                      py: { xs: 1.2, sm: 1.5 },
+                      fontSize: { xs: '1rem', sm: '1.1rem' },
                       borderRadius: 3,
                       boxShadow: '0 8px 18px rgba(34,197,94,0.25)',
                       '&:hover': {
                         background: 'linear-gradient(90deg, #38BDF8 0%, #22c55e 100%)',
                         transform: 'translateY(-2px)'
                       },
-                      transition: 'all 0.3s ease'
+                      transition: 'all 0.3s ease',
+                      width: { xs: '100%', sm: 'auto' }
                     }}
                   >
                     Hire Me
@@ -270,9 +304,9 @@ const Home = () => {
                       borderColor: 'rgba(148, 163, 184, 0.5)',
                       color: '#e2e8f0',
                       fontWeight: 700,
-                      px: 4,
-                      py: 1.5,
-                      fontSize: '1.1rem',
+                      px: { xs: 3, sm: 4 },
+                      py: { xs: 1.2, sm: 1.5 },
+                      fontSize: { xs: '1rem', sm: '1.1rem' },
                       borderRadius: 3,
                       '&:hover': {
                         borderColor: '#e2e8f0',
@@ -280,7 +314,8 @@ const Home = () => {
                         color: '#fff',
                         transform: 'translateY(-2px)'
                       },
-                      transition: 'all 0.3s ease'
+                      transition: 'all 0.3s ease',
+                      width: { xs: '100%', sm: 'auto' }
                     }}
                   >
                     About Me
@@ -288,7 +323,12 @@ const Home = () => {
                 </Box>
                 
                 {/* Social Links */}
-                <Box sx={{ display: 'flex', gap: 1 }}>
+                <Box sx={{ 
+                  display: 'flex', 
+                  gap: { xs: 1, sm: 1.5 }, 
+                  justifyContent: { xs: 'center', sm: 'flex-start' },
+                  flexWrap: 'wrap'
+                }}>
                   {socialLinks.map((social, index) => (
                     <motion.div
                       key={social.label}
@@ -330,7 +370,14 @@ const Home = () => {
                 transition={{ duration: 0.8, delay: 0.2 }}
                 style={{ textAlign: 'center' }}
               >
-                <Box component={motion.div} animate={{ y: [0, -8, 0] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }} sx={{ position: 'relative', width: { xs: 160, sm: 200, md: 240 }, height: { xs: 160, sm: 200, md: 240 }, mx: { xs: 'auto', sm: 0 }, mb: 0 }}>
+                <Box component={motion.div} animate={{ y: [0, -8, 0] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }} sx={{ 
+                  position: 'relative', 
+                  width: { xs: 140, sm: 180, md: 220, lg: 240 }, 
+                  height: { xs: 140, sm: 180, md: 220, lg: 240 }, 
+                  mx: { xs: 'auto', sm: 0 }, 
+                  mb: 0,
+                  mt: { xs: 3, sm: 0 }
+                }}>
                   <Box component={motion.div} animate={{ rotate: 360 }} transition={{ duration: 14, repeat: Infinity, ease: 'linear' }} sx={{
                     position: 'absolute', inset: -10, borderRadius: '50%',
                     background: 'conic-gradient(from 0deg, #38BDF8, #818CF8, #38BDF8)',
@@ -366,17 +413,17 @@ const Home = () => {
       </Box>
 
       {/* Stats Section */}
-      <Box sx={{ py: 8, background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' }}>
-        <Container maxWidth="lg">
+      <Box sx={{ py: { xs: 6, sm: 8 }, background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' }}>
+        <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <Grid container spacing={3}>
+            <Grid container spacing={{ xs: 2, sm: 3 }}>
               {stats.map((stat, index) => (
-                <Grid item xs={6} md={3} key={stat.label}>
+                <Grid item xs={6} sm={6} md={3} key={stat.label}>
                   <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     whileInView={{ opacity: 1, scale: 1 }}
@@ -386,12 +433,12 @@ const Home = () => {
                     <Paper
                       elevation={0}
                       sx={{
-                        minHeight: { xs: 140, sm: 180 },
+                        minHeight: { xs: 120, sm: 140, md: 180 },
                         width: '100%',
                         maxWidth: 420,
                         mx: 'auto',
-                        p: { xs: 2.5, sm: 4 },
-                        borderRadius: { xs: 3, sm: 4 },
+                        p: { xs: 2, sm: 2.5, md: 4 },
+                        borderRadius: { xs: 2, sm: 3, md: 4 },
                         textAlign: 'center',
                         background: 'rgba(255, 255, 255, 0.05)',
                         backdropFilter: 'blur(10px)',
@@ -409,12 +456,12 @@ const Home = () => {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          width: 60,
-                          height: 60,
+                          width: { xs: 50, sm: 60 },
+                          height: { xs: 50, sm: 60 },
                           borderRadius: '50%',
                           background: `radial-gradient(circle at 60% 40%, ${stat.color}cc 60%, #222b 100%)`,
                           mx: 'auto',
-                          mb: 2,
+                          mb: { xs: 1.5, sm: 2 },
                           color: 'white',
                           boxShadow: `0 8px 25px ${stat.color}40`
                         }}
@@ -426,7 +473,8 @@ const Home = () => {
                         sx={{
                           fontWeight: 800,
                           color: 'white',
-                          mb: 1
+                          mb: 1,
+                          fontSize: { xs: '1.5rem', sm: '2rem', md: '2.125rem' }
                         }}
                       >
                         {stat.value}
@@ -435,7 +483,9 @@ const Home = () => {
                         variant="body2"
                         sx={{
                           color: '#cbd5e1',
-                          fontWeight: 600
+                          fontWeight: 600,
+                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                          lineHeight: { xs: 1.2, sm: 1.4 }
                         }}
                       >
                         {stat.label}
@@ -450,8 +500,8 @@ const Home = () => {
       </Box>
 
       {/* Expertise Areas */}
-      <Box sx={{ py: 8, background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)' }}>
-        <Container maxWidth="lg">
+      <Box sx={{ py: { xs: 6, sm: 8 }, background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)' }}>
+        <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -463,14 +513,16 @@ const Home = () => {
               align="center"
               sx={{
                 fontWeight: 800,
-                mb: 5,
+                mb: { xs: 3, sm: 4, md: 5 },
                 color: 'white',
-                letterSpacing: 1.5
+                letterSpacing: 1.5,
+                fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem', lg: '3rem' },
+                lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
               }}
             >
               Areas of Expertise
             </Typography>
-            <Grid container spacing={4}>
+            <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
               {expertiseAreas.map((area, index) => (
                 <Grid item xs={12} sm={6} md={3} key={area.title}>
                   <motion.div
@@ -482,12 +534,12 @@ const Home = () => {
                     <Paper
                       elevation={0}
                       sx={{
-                        minHeight: { xs: 140, sm: 180 },
+                        minHeight: { xs: 120, sm: 140, md: 180 },
                         width: '100%',
                         maxWidth: 420,
                         mx: 'auto',
-                        p: { xs: 2.5, sm: 4 },
-                        borderRadius: { xs: 3, sm: 4 },
+                        p: { xs: 2, sm: 2.5, md: 4 },
+                        borderRadius: { xs: 2, sm: 3, md: 4 },
                         textAlign: 'center',
                         background: 'rgba(255, 255, 255, 0.05)',
                         backdropFilter: 'blur(10px)',
@@ -536,16 +588,18 @@ const Home = () => {
       </Box>
 
       {/* Skills Section */}
-      <Box sx={{ py: 8, background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' }}>
-        <Container maxWidth="lg">
+      <Box sx={{ py: { xs: 6, sm: 8 }, background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' }}>
+        <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
           <Typography
             variant="h2"
             align="center"
             sx={{
               fontWeight: 800,
-              mb: 5,
+              mb: { xs: 3, sm: 4, md: 5 },
               color: 'white',
-              letterSpacing: 1.5
+              letterSpacing: 1.5,
+              fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem', lg: '3rem' },
+              lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
             }}
           >
             Skills & Technologies
@@ -556,9 +610,10 @@ const Home = () => {
             <Box sx={{
               display: 'flex',
               flexWrap: 'wrap',
-              gap: 2,
+              gap: { xs: 1, sm: 2 },
               justifyContent: 'center',
-              mb: 2
+              mb: 2,
+              px: { xs: 1, sm: 0 }
             }}>
               {skills.map(skill => (
                 <Button
@@ -567,10 +622,10 @@ const Home = () => {
                   onClick={() => setSelectedSkill(skill._id)}
                   sx={{
                     borderRadius: 2.5,
-                    px: 4,
-                    py: 1.2,
+                    px: { xs: 2, sm: 3, md: 4 },
+                    py: { xs: 0.8, sm: 1, md: 1.2 },
                     fontWeight: 700,
-                    fontSize: '1.15rem',
+                    fontSize: { xs: '0.9rem', sm: '1rem', md: '1.15rem' },
                     color: selectedSkill === skill._id ? theme.palette.primary.main : theme.palette.text.secondary,
                     background: selectedSkill === skill._id ? theme.palette.accent.main : 'transparent',
                     borderColor: selectedSkill === skill._id ? 'transparent' : 'rgba(255, 255, 255, 0.2)',
@@ -592,8 +647,8 @@ const Home = () => {
       </Box>
 
       {/* Featured Projects Section */}
-      <Box sx={{ py: 8, background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)' }}>
-        <Container maxWidth="lg">
+      <Box sx={{ py: { xs: 6, sm: 8 }, background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)' }}>
+        <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -606,9 +661,11 @@ const Home = () => {
               textAlign="center"
               gutterBottom
               sx={{ 
-                mb: 6,
+                mb: { xs: 3, sm: 4, md: 6 },
                 fontWeight: 700,
-                color: 'white'
+                color: 'white',
+                fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem', lg: '3rem' },
+                lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
               }}
             >
               Featured Projects
@@ -619,9 +676,9 @@ const Home = () => {
                 <Typography variant="h6" color="#cbd5e1">Loading featured projects...</Typography>
               </Box>
             ) : featuredProjects.length > 0 ? (
-              <Grid container spacing={4}>
+              <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
                 {featuredProjects.map((project, index) => (
-                  <Grid item xs={12} md={4} key={project._id}>
+                  <Grid item xs={12} sm={6} md={4} key={project._id}>
                     <motion.div
                       initial={{ opacity: 0, y: 30 }}
                       whileInView={{ opacity: 1, y: 0 }}
@@ -645,19 +702,30 @@ const Home = () => {
                       >
                         <CardMedia
                           component="img"
-                          height="200"
+                          height={{ xs: 160, sm: 180, md: 200 }}
                           image={project.image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop'}
                           alt={project.title}
                           sx={{ objectFit: 'cover' }}
                         />
-                        <CardContent sx={{ p: 3 }}>
+                        <CardContent sx={{ p: { xs: 2, sm: 2.5, md: 3 } }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                            <StarIcon sx={{ color: '#f59e0b', mr: 1 }} />
-                            <Typography variant="h5" component="h3" sx={{ fontWeight: 700, color: 'white', flex: 1 }}>
+                            <StarIcon sx={{ color: '#f59e0b', mr: 1, fontSize: { xs: '1.2rem', sm: '1.5rem' } }} />
+                            <Typography variant="h5" component="h3" sx={{ 
+                              fontWeight: 700, 
+                              color: 'white', 
+                              flex: 1,
+                              fontSize: { xs: '1.1rem', sm: '1.25rem', md: '1.5rem' },
+                              lineHeight: { xs: 1.3, sm: 1.4 }
+                            }}>
                               {project.title}
                             </Typography>
                           </Box>
-                          <Typography variant="body2" sx={{ mb: 2, lineHeight: 1.6, color: '#cbd5e1' }}>
+                          <Typography variant="body2" sx={{ 
+                            mb: 2, 
+                            lineHeight: { xs: 1.5, sm: 1.6 }, 
+                            color: '#cbd5e1',
+                            fontSize: { xs: '0.8rem', sm: '0.875rem' }
+                          }}>
                             {project.description}
                           </Typography>
                           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 3 }}>
@@ -770,7 +838,7 @@ const Home = () => {
       </Box>
 
       {/* Contact Section */}
-      <Container maxWidth="lg" sx={{ py: 10 }}>
+      <Container maxWidth="lg" sx={{ py: { xs: 6, sm: 8, md: 10 }, px: { xs: 2, sm: 3, md: 4 } }}>
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -783,12 +851,14 @@ const Home = () => {
             textAlign="center"
             gutterBottom
             sx={{ 
-              mb: 6,
+              mb: { xs: 3, sm: 4, md: 6 },
               fontWeight: 700,
               background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
               backgroundClip: 'text',
               WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent'
+              WebkitTextFillColor: 'transparent',
+              fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem', lg: '3rem' },
+              lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
             }}
           >
             Let's Connect
@@ -796,11 +866,25 @@ const Home = () => {
           <Typography
             variant="h5"
             textAlign="center"
-            sx={{ mb: 6, maxWidth: 600, mx: 'auto', color: '#cbd5e1' }}
+            sx={{ 
+              mb: { xs: 3, sm: 4, md: 6 }, 
+              maxWidth: 600, 
+              mx: 'auto', 
+              color: '#cbd5e1',
+              fontSize: { xs: '1rem', sm: '1.1rem', md: '1.25rem' },
+              lineHeight: { xs: 1.4, sm: 1.5 }
+            }}
           >
             I'm always interested in new opportunities and exciting projects.
           </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, flexWrap: 'wrap' }}>
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            gap: { xs: 2, sm: 3 }, 
+            flexWrap: 'wrap',
+            flexDirection: { xs: 'column', sm: 'row' },
+            alignItems: { xs: 'center', sm: 'flex-start' }
+          }}>
             {socialLinks.map((social) => (
               <Button
                 key={social.label}
@@ -814,6 +898,10 @@ const Home = () => {
                 sx={{
                   borderColor: 'rgba(255, 255, 255, 0.2)',
                   color: '#e2e8f0',
+                  px: { xs: 3, sm: 4 },
+                  py: { xs: 1.2, sm: 1.5 },
+                  fontSize: { xs: '0.9rem', sm: '1rem' },
+                  width: { xs: '200px', sm: 'auto' },
                   '&:hover': {
                     borderColor: 'white',
                     color: 'white',
@@ -828,6 +916,29 @@ const Home = () => {
           </Box>
         </motion.div>
       </Container>
+
+      {/* Scroll to Top Button */}
+      {showScrollTop && (
+        <Fab
+          color="primary"
+          aria-label="scroll to top"
+          onClick={scrollToTop}
+          sx={{
+            position: 'fixed',
+            bottom: { xs: 16, sm: 24 },
+            right: { xs: 16, sm: 24 },
+            background: 'linear-gradient(135deg, #38BDF8, #818CF8)',
+            '&:hover': {
+              background: 'linear-gradient(135deg, #818CF8, #38BDF8)',
+              transform: 'translateY(-2px)'
+            },
+            zIndex: 1000,
+            boxShadow: '0 4px 20px rgba(56, 189, 248, 0.3)'
+          }}
+        >
+          <KeyboardArrowUpIcon />
+        </Fab>
+      )}
     </Box>
   );
 };
