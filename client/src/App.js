@@ -9,7 +9,7 @@ import Experience from './pages/Experience';
 import Projects from './pages/Projects';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Admin from './pages/Admin';
+import Admin from './pages/AdminNew';
 import Skills from './pages/Skills';
 import Contact from './pages/Contact';
 import './App.css';

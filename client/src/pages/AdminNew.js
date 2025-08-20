@@ -73,41 +73,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../api';
 
-const emptyProject = {
-  title: '',
-  description: '',
-  image: '',
-  technologies: '',
-  category: 'web',
-  githubUrl: '',
-  liveUrl: '',
-  status: 'completed',
-  featured: false,
-  tags: '',
-};
-
-const emptyExperience = {
-  title: '',
-  company: '',
-  location: '',
-  from: '',
-  to: '',
-  current: false,
-  description: '',
-  industry: '',
-  employmentType: 'full-time',
-  companyWebsite: '',
-};
-
-const emptyAbout = {
-  name: '',
-  bio: '',
-  location: '',
-  website: '',
-  skills: '',
-};
-
-const Admin = () => {
+const AdminNew = () => {
   const [tabValue, setTabValue] = useState(0);
   const [users, setUsers] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -118,21 +84,7 @@ const Admin = () => {
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [deleteDialog, setDeleteDialog] = useState({ open: false, type: '', id: '', name: '' });
-  const [projectDialog, setProjectDialog] = useState({ open: false, edit: false, data: emptyProject });
-  const [experienceDialog, setExperienceDialog] = useState({ open: false, edit: false, data: emptyExperience });
-  const [aboutDialog, setAboutDialog] = useState({ open: false, data: emptyAbout });
-  const [skillDialog, setSkillDialog] = useState({ 
-    open: false, 
-    edit: false, 
-    data: { _id: '', name: '', category: '', level: 'Beginner', icon: '', order: 0, percent: '' } 
-  });
-  const [skillCategoryFilter, setSkillCategoryFilter] = useState('All');
-  const [contactStatusFilter, setContactStatusFilter] = useState('All');
-  const [avatarFile, setAvatarFile] = useState(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
-  
-  const skillLevels = ['Beginner', 'Intermediate', 'Advanced', 'Expert'];
   
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
@@ -190,7 +142,6 @@ const Admin = () => {
     const file = event.target.files[0];
     if (!file) return;
 
-    setAvatarFile(file);
     setUploadingAvatar(true);
 
     try {
@@ -213,36 +164,6 @@ const Admin = () => {
       console.error('Avatar upload error:', error);
     } finally {
       setUploadingAvatar(false);
-      setAvatarFile(null);
-    }
-  };
-
-  const handleDelete = async () => {
-    try {
-      const { type, id } = deleteDialog;
-      
-      switch (type) {
-        case 'user':
-          await api.delete(`/api/auth/users/${id}`);
-          break;
-        case 'project':
-          await api.delete(`/api/projects/${id}`);
-          break;
-        case 'experience':
-          await api.delete(`/api/experiences/${id}`);
-          break;
-        case 'skill':
-          await api.delete(`/api/skills/${id}`);
-          break;
-        default:
-          return;
-      }
-
-      setDeleteDialog({ open: false, type: '', id: '', name: '' });
-      fetchData(); // Refresh data
-    } catch (error) {
-      setError('Failed to delete item');
-      console.error('Error deleting:', error);
     }
   };
 
@@ -496,162 +417,32 @@ const Admin = () => {
           {/* Tab Content */}
           <Box sx={{ p: 3 }}>
             {tabValue === 0 && (
-              <UsersTab 
-                users={users} 
-                onDelete={(id, name) => setDeleteDialog({ open: true, type: 'user', id, name })}
-                onRefresh={fetchData}
-              />
+              <UsersTab users={users} onRefresh={fetchData} />
             )}
             {tabValue === 1 && (
-              <ProjectsTab 
-                projects={projects} 
-                onDelete={(id, name) => setDeleteDialog({ open: true, type: 'project', id, name })}
-                onEdit={(data) => setProjectDialog({ open: true, edit: true, data })}
-                onAdd={() => setProjectDialog({ open: true, edit: false, data: emptyProject })}
-                onRefresh={fetchData}
-              />
+              <ProjectsTab projects={projects} onRefresh={fetchData} />
             )}
             {tabValue === 2 && (
-              <ExperiencesTab 
-                experiences={experiences} 
-                onDelete={(id, name) => setDeleteDialog({ open: true, type: 'experience', id, name })}
-                onEdit={(data) => setExperienceDialog({ open: true, edit: true, data })}
-                onAdd={() => setExperienceDialog({ open: true, edit: false, data: emptyExperience })}
-                onRefresh={fetchData}
-              />
+              <ExperiencesTab experiences={experiences} onRefresh={fetchData} />
             )}
             {tabValue === 3 && (
-              <SkillsTab 
-                skills={skills} 
-                onDelete={(id, name) => setDeleteDialog({ open: true, type: 'skill', id, name })}
-                onEdit={(data) => setSkillDialog({ open: true, edit: true, data })}
-                onAdd={() => setSkillDialog({ open: true, edit: false, data: { _id: '', name: '', category: '', level: 'Beginner', icon: '', order: 0, percent: '' } })}
-                onRefresh={fetchData}
-              />
+              <SkillsTab skills={skills} onRefresh={fetchData} />
             )}
             {tabValue === 4 && (
-              <ContactsTab 
-                contacts={contacts} 
-                onRefresh={fetchData}
-              />
+              <ContactsTab contacts={contacts} onRefresh={fetchData} />
             )}
             {tabValue === 5 && (
-              <AboutTab 
-                about={about} 
-                onEdit={(data) => setAboutDialog({ open: true, data: data || emptyAbout })}
-                onRefresh={fetchData}
-              />
+              <AboutTab about={about} onRefresh={fetchData} />
             )}
           </Box>
         </Card>
       </Container>
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteDialog.open} onClose={() => setDeleteDialog({ open: false, type: '', id: '', name: '' })}>
-        <DialogTitle>Confirm Delete</DialogTitle>
-        <DialogContent>
-          <Typography>
-            Are you sure you want to delete "{deleteDialog.name}"? This action cannot be undone.
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDeleteDialog({ open: false, type: '', id: '', name: '' })}>
-            Cancel
-          </Button>
-          <Button onClick={handleDelete} color="error" variant="contained">
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Project Dialog */}
-      <ProjectDialog 
-        open={projectDialog.open}
-        edit={projectDialog.edit}
-        data={projectDialog.data}
-        onClose={() => setProjectDialog({ open: false, edit: false, data: emptyProject })}
-        onSubmit={async (data) => {
-          try {
-            if (projectDialog.edit) {
-              await api.put(`/api/projects/${data._id}`, data);
-            } else {
-              await api.post('/api/projects', data);
-            }
-            setProjectDialog({ open: false, edit: false, data: emptyProject });
-            fetchData();
-          } catch (error) {
-            setError('Failed to save project');
-          }
-        }}
-      />
-
-      {/* Experience Dialog */}
-      <ExperienceDialog 
-        open={experienceDialog.open}
-        edit={experienceDialog.edit}
-        data={experienceDialog.data}
-        onClose={() => setExperienceDialog({ open: false, edit: false, data: emptyExperience })}
-        onSubmit={async (data) => {
-          try {
-            if (experienceDialog.edit) {
-              await api.put(`/api/experiences/${data._id}`, data);
-            } else {
-              await api.post('/api/experiences', data);
-            }
-            setExperienceDialog({ open: false, edit: false, data: emptyExperience });
-            fetchData();
-          } catch (error) {
-            setError('Failed to save experience');
-          }
-        }}
-      />
-
-      {/* About Dialog */}
-      <AboutDialog 
-        open={aboutDialog.open}
-        data={aboutDialog.data}
-        onClose={() => setAboutDialog({ open: false, data: emptyAbout })}
-        onSubmit={async (data) => {
-          try {
-            if (about) {
-              await api.put('/api/about/me', data);
-            } else {
-              await api.post('/api/about/me', data);
-            }
-            setAboutDialog({ open: false, data: emptyAbout });
-            fetchData();
-          } catch (error) {
-            setError('Failed to save about information');
-          }
-        }}
-      />
-
-      {/* Skill Dialog */}
-      <SkillDialog 
-        open={skillDialog.open}
-        edit={skillDialog.edit}
-        data={skillDialog.data}
-        onClose={() => setSkillDialog({ open: false, edit: false, data: { _id: '', name: '', category: '', level: 'Beginner', icon: '', order: 0, percent: '' } })}
-        onSubmit={async (data) => {
-          try {
-            if (skillDialog.edit) {
-              await api.put(`/api/skills/${data._id}`, data);
-            } else {
-              await api.post('/api/skills', data);
-            }
-            setSkillDialog({ open: false, edit: false, data: { _id: '', name: '', category: '', level: 'Beginner', icon: '', order: 0, percent: '' } });
-            fetchData();
-          } catch (error) {
-            setError('Failed to save skill');
-          }
-        }}
-      />
     </Box>
   );
 };
 
 // Tab Components
-const UsersTab = ({ users, onDelete, onRefresh }) => (
+const UsersTab = ({ users, onRefresh }) => (
   <Box>
     <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
       <Typography variant="h5" fontWeight="bold">
@@ -715,7 +506,6 @@ const UsersTab = ({ users, onDelete, onRefresh }) => (
                   <IconButton
                     color="error"
                     size="small"
-                    onClick={() => onDelete(user._id, user.name)}
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -729,7 +519,7 @@ const UsersTab = ({ users, onDelete, onRefresh }) => (
   </Box>
 );
 
-const ProjectsTab = ({ projects, onDelete, onEdit, onAdd, onRefresh }) => (
+const ProjectsTab = ({ projects, onRefresh }) => (
   <Box>
     <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
       <Typography variant="h5" fontWeight="bold">
@@ -746,7 +536,6 @@ const ProjectsTab = ({ projects, onDelete, onEdit, onAdd, onRefresh }) => (
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={onAdd}
         >
           Add Project
         </Button>
@@ -779,7 +568,6 @@ const ProjectsTab = ({ projects, onDelete, onEdit, onAdd, onRefresh }) => (
                   <IconButton
                     size="small"
                     sx={{ bgcolor: 'rgba(255,255,255,0.9)' }}
-                    onClick={() => onEdit(project)}
                   >
                     <EditIcon fontSize="small" />
                   </IconButton>
@@ -789,7 +577,6 @@ const ProjectsTab = ({ projects, onDelete, onEdit, onAdd, onRefresh }) => (
                     size="small"
                     color="error"
                     sx={{ bgcolor: 'rgba(255,255,255,0.9)' }}
-                    onClick={() => onDelete(project._id, project.title)}
                   >
                     <DeleteIcon fontSize="small" />
                   </IconButton>
@@ -836,7 +623,7 @@ const ProjectsTab = ({ projects, onDelete, onEdit, onAdd, onRefresh }) => (
   </Box>
 );
 
-const ExperiencesTab = ({ experiences, onDelete, onEdit, onAdd, onRefresh }) => (
+const ExperiencesTab = ({ experiences, onRefresh }) => (
   <Box>
     <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
       <Typography variant="h5" fontWeight="bold">
@@ -853,7 +640,6 @@ const ExperiencesTab = ({ experiences, onDelete, onEdit, onAdd, onRefresh }) => 
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={onAdd}
         >
           Add Experience
         </Button>
@@ -896,19 +682,12 @@ const ExperiencesTab = ({ experiences, onDelete, onEdit, onAdd, onRefresh }) => 
               <TableCell>
                 <Box display="flex" gap={1}>
                   <Tooltip title="Edit Experience">
-                    <IconButton
-                      size="small"
-                      onClick={() => onEdit(experience)}
-                    >
+                    <IconButton size="small">
                       <EditIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Delete Experience">
-                    <IconButton
-                      size="small"
-                      color="error"
-                      onClick={() => onDelete(experience._id, experience.title)}
-                    >
+                    <IconButton size="small" color="error">
                       <DeleteIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
@@ -922,7 +701,7 @@ const ExperiencesTab = ({ experiences, onDelete, onEdit, onAdd, onRefresh }) => 
   </Box>
 );
 
-const SkillsTab = ({ skills, onDelete, onEdit, onAdd, onRefresh }) => (
+const SkillsTab = ({ skills, onRefresh }) => (
   <Box>
     <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
       <Typography variant="h5" fontWeight="bold">
@@ -939,7 +718,6 @@ const SkillsTab = ({ skills, onDelete, onEdit, onAdd, onRefresh }) => (
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={onAdd}
         >
           Add Skill
         </Button>
@@ -974,19 +752,12 @@ const SkillsTab = ({ skills, onDelete, onEdit, onAdd, onRefresh }) => (
             </Typography>
             <Box display="flex" justifyContent="center" gap={1}>
               <Tooltip title="Edit Skill">
-                <IconButton
-                  size="small"
-                  onClick={() => onEdit(skill)}
-                >
+                <IconButton size="small">
                   <EditIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
               <Tooltip title="Delete Skill">
-                <IconButton
-                  size="small"
-                  color="error"
-                  onClick={() => onDelete(skill._id, skill.name)}
-                >
+                <IconButton size="small" color="error">
                   <DeleteIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
@@ -1050,7 +821,7 @@ const ContactsTab = ({ contacts, onRefresh }) => (
   </Box>
 );
 
-const AboutTab = ({ about, onEdit, onRefresh }) => (
+const AboutTab = ({ about, onRefresh }) => (
   <Box>
     <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
       <Typography variant="h5" fontWeight="bold">
@@ -1067,7 +838,6 @@ const AboutTab = ({ about, onEdit, onRefresh }) => (
         <Button
           variant="contained"
           startIcon={<EditIcon />}
-          onClick={() => onEdit(about)}
         >
           Edit About
         </Button>
@@ -1134,7 +904,6 @@ const AboutTab = ({ about, onEdit, onRefresh }) => (
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => onEdit(null)}
         >
           Add About Information
         </Button>
@@ -1143,65 +912,4 @@ const AboutTab = ({ about, onEdit, onRefresh }) => (
   </Box>
 );
 
-// Dialog Components (simplified versions)
-const ProjectDialog = ({ open, edit, data, onClose, onSubmit }) => (
-  <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-    <DialogTitle>{edit ? 'Edit Project' : 'Add Project'}</DialogTitle>
-    <DialogContent>
-      <Typography>Project form content here</Typography>
-    </DialogContent>
-    <DialogActions>
-      <Button onClick={onClose}>Cancel</Button>
-      <Button onClick={() => onSubmit(data)} variant="contained">
-        {edit ? 'Update' : 'Create'}
-      </Button>
-    </DialogActions>
-  </Dialog>
-);
-
-const ExperienceDialog = ({ open, edit, data, onClose, onSubmit }) => (
-  <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-    <DialogTitle>{edit ? 'Edit Experience' : 'Add Experience'}</DialogTitle>
-    <DialogContent>
-      <Typography>Experience form content here</Typography>
-    </DialogContent>
-    <DialogActions>
-      <Button onClick={onClose}>Cancel</Button>
-      <Button onClick={() => onSubmit(data)} variant="contained">
-        {edit ? 'Update' : 'Create'}
-      </Button>
-    </DialogActions>
-  </Dialog>
-);
-
-const AboutDialog = ({ open, data, onClose, onSubmit }) => (
-  <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-    <DialogTitle>Edit About Information</DialogTitle>
-    <DialogContent>
-      <Typography>About form content here</Typography>
-    </DialogContent>
-    <DialogActions>
-      <Button onClick={onClose}>Cancel</Button>
-      <Button onClick={() => onSubmit(data)} variant="contained">
-        Save
-      </Button>
-    </DialogActions>
-  </Dialog>
-);
-
-const SkillDialog = ({ open, edit, data, onClose, onSubmit }) => (
-  <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-    <DialogTitle>{edit ? 'Edit Skill' : 'Add Skill'}</DialogTitle>
-    <DialogContent>
-      <Typography>Skill form content here</Typography>
-    </DialogContent>
-    <DialogActions>
-      <Button onClick={onClose}>Cancel</Button>
-      <Button onClick={() => onSubmit(data)} variant="contained">
-        {edit ? 'Update' : 'Create'}
-      </Button>
-    </DialogActions>
-  </Dialog>
-);
-
-export default Admin;
+export default AdminNew;

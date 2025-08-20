@@ -229,12 +229,25 @@ const updateAvatar = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // The upload middleware places the file URL on req.body.avatar
-    if (!req.body.avatar) {
+    // Check if file was uploaded
+    if (!req.file) {
       return res.status(400).json({ message: 'No avatar file uploaded' });
     }
 
-    user.avatar = req.body.avatar;
+    // Get the file path from the uploaded file
+    let avatarUrl;
+    if (process.env.NODE_ENV === 'production' && 
+        process.env.CLOUDINARY_CLOUD_NAME && 
+        process.env.CLOUDINARY_API_KEY && 
+        process.env.CLOUDINARY_API_SECRET) {
+      // Cloudinary upload
+      avatarUrl = req.file.path;
+    } else {
+      // Local upload
+      avatarUrl = `/uploads/${req.file.filename}`;
+    }
+
+    user.avatar = avatarUrl;
     const updatedUser = await user.save();
 
     res.json({
