@@ -88,14 +88,10 @@ const AdminNew = () => {
   
   // Dialog states
   const [deleteDialog, setDeleteDialog] = useState({ open: false, type: '', id: '', name: '' });
-  const [projectDialog, setProjectDialog] = useState({ open: false, edit: false, data: emptyProject });
-  const [experienceDialog, setExperienceDialog] = useState({ open: false, edit: false, data: emptyExperience });
-  const [aboutDialog, setAboutDialog] = useState({ open: false, data: emptyAbout });
-  const [skillDialog, setSkillDialog] = useState({ 
-    open: false, 
-    edit: false, 
-    data: { _id: '', name: '', category: '', level: 'Beginner', icon: '', order: 0, percent: '' } 
-  });
+  const [projectDialog, setProjectDialog] = useState({ open: false, edit: false, data: {} });
+  const [experienceDialog, setExperienceDialog] = useState({ open: false, edit: false, data: {} });
+  const [skillDialog, setSkillDialog] = useState({ open: false, edit: false, data: {} });
+  const [aboutDialog, setAboutDialog] = useState({ open: false, data: {} });
   
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
@@ -469,7 +465,7 @@ const AdminNew = () => {
               <ProjectsTab 
                 projects={projects} 
                 onRefresh={fetchData}
-                onEdit={(data) => setProjectDialog({ open: true, edit: !!data, data: data || emptyProject })}
+                onEdit={(data) => setProjectDialog({ open: true, edit: !!data, data: data || {} })}
                 onDelete={(id, name) => setDeleteDialog({ open: true, type: 'project', id, name })}
               />
             )}
@@ -477,7 +473,7 @@ const AdminNew = () => {
               <ExperiencesTab 
                 experiences={experiences} 
                 onRefresh={fetchData}
-                onEdit={(data) => setExperienceDialog({ open: true, edit: !!data, data: data || emptyExperience })}
+                onEdit={(data) => setExperienceDialog({ open: true, edit: !!data, data: data || {} })}
                 onDelete={(id, name) => setDeleteDialog({ open: true, type: 'experience', id, name })}
               />
             )}
@@ -485,11 +481,7 @@ const AdminNew = () => {
               <SkillsTab 
                 skills={skills} 
                 onRefresh={fetchData}
-                onEdit={(data) => setSkillDialog({ 
-                  open: true, 
-                  edit: !!data, 
-                  data: data || { _id: '', name: '', category: '', level: 'Beginner', icon: '', order: 0, percent: '' }
-                })}
+                onEdit={(data) => setSkillDialog({ open: true, edit: !!data, data: data || {} })}
                 onDelete={(id, name) => setDeleteDialog({ open: true, type: 'skill', id, name })}
               />
             )}
@@ -500,7 +492,7 @@ const AdminNew = () => {
               <AboutTab 
                 about={about} 
                 onRefresh={fetchData}
-                onEdit={(data) => setAboutDialog({ open: true, data: data || emptyAbout })}
+                onEdit={(data) => setAboutDialog({ open: true, data: data || {} })}
               />
             )}
           </Box>
@@ -530,7 +522,7 @@ const AdminNew = () => {
         open={projectDialog.open}
         edit={projectDialog.edit}
         data={projectDialog.data}
-        onClose={() => setProjectDialog({ open: false, edit: false, data: emptyProject })}
+        onClose={() => setProjectDialog({ open: false, edit: false, data: {} })}
         onSubmit={async (data) => {
           try {
             if (projectDialog.edit) {
@@ -538,7 +530,7 @@ const AdminNew = () => {
             } else {
               await api.post('/api/projects', data);
             }
-            setProjectDialog({ open: false, edit: false, data: emptyProject });
+            setProjectDialog({ open: false, edit: false, data: {} });
             fetchData();
           } catch (error) {
             setError('Failed to save project: ' + (error.response?.data?.message || error.message));
@@ -551,7 +543,7 @@ const AdminNew = () => {
         open={experienceDialog.open}
         edit={experienceDialog.edit}
         data={experienceDialog.data}
-        onClose={() => setExperienceDialog({ open: false, edit: false, data: emptyExperience })}
+        onClose={() => setExperienceDialog({ open: false, edit: false, data: {} })}
         onSubmit={async (data) => {
           try {
             if (experienceDialog.edit) {
@@ -559,7 +551,7 @@ const AdminNew = () => {
             } else {
               await api.post('/api/experiences', data);
             }
-            setExperienceDialog({ open: false, edit: false, data: emptyExperience });
+            setExperienceDialog({ open: false, edit: false, data: {} });
             fetchData();
           } catch (error) {
             setError('Failed to save experience: ' + (error.response?.data?.message || error.message));
@@ -571,7 +563,7 @@ const AdminNew = () => {
       <AboutDialog 
         open={aboutDialog.open}
         data={aboutDialog.data}
-        onClose={() => setAboutDialog({ open: false, data: emptyAbout })}
+        onClose={() => setAboutDialog({ open: false, data: {} })}
         onSubmit={async (data) => {
           try {
             if (about) {
@@ -579,7 +571,7 @@ const AdminNew = () => {
             } else {
               await api.post('/api/about/me', data);
             }
-            setAboutDialog({ open: false, data: emptyAbout });
+            setAboutDialog({ open: false, data: {} });
             fetchData();
           } catch (error) {
             setError('Failed to save about information: ' + (error.response?.data?.message || error.message));
@@ -592,7 +584,7 @@ const AdminNew = () => {
         open={skillDialog.open}
         edit={skillDialog.edit}
         data={skillDialog.data}
-        onClose={() => setSkillDialog({ open: false, edit: false, data: { _id: '', name: '', category: '', level: 'Beginner', icon: '', order: 0, percent: '' } })}
+        onClose={() => setSkillDialog({ open: false, edit: false, data: {} })}
         onSubmit={async (data) => {
           try {
             if (skillDialog.edit) {
@@ -600,7 +592,7 @@ const AdminNew = () => {
             } else {
               await api.post('/api/skills', data);
             }
-            setSkillDialog({ open: false, edit: false, data: { _id: '', name: '', category: '', level: 'Beginner', icon: '', order: 0, percent: '' } });
+            setSkillDialog({ open: false, edit: false, data: {} });
             fetchData();
           } catch (error) {
             setError('Failed to save skill: ' + (error.response?.data?.message || error.message));
@@ -1090,64 +1082,348 @@ const AboutTab = ({ about, onRefresh, onEdit }) => (
 );
 
 // Dialog Components (simplified versions)
-const ProjectDialog = ({ open, edit, data, onClose, onSubmit }) => (
-  <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-    <DialogTitle>{edit ? 'Edit Project' : 'Add Project'}</DialogTitle>
-    <DialogContent>
-      <Typography>Project form content here</Typography>
-    </DialogContent>
-    <DialogActions>
-      <Button onClick={onClose}>Cancel</Button>
-      <Button onClick={() => onSubmit(data)} variant="contained">
-        {edit ? 'Update' : 'Create'}
-      </Button>
-    </DialogActions>
-  </Dialog>
-);
+const ProjectDialog = ({ open, edit, data, onClose, onSubmit }) => {
+  const [formData, setFormData] = useState(data);
 
-const ExperienceDialog = ({ open, edit, data, onClose, onSubmit }) => (
-  <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-    <DialogTitle>{edit ? 'Edit Experience' : 'Add Experience'}</DialogTitle>
-    <DialogContent>
-      <Typography>Experience form content here</Typography>
-    </DialogContent>
-    <DialogActions>
-      <Button onClick={onClose}>Cancel</Button>
-      <Button onClick={() => onSubmit(data)} variant="contained">
-        {edit ? 'Update' : 'Create'}
-      </Button>
-    </DialogActions>
-  </Dialog>
-);
+  useEffect(() => {
+    setFormData(data);
+  }, [data]);
 
-const AboutDialog = ({ open, data, onClose, onSubmit }) => (
-  <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-    <DialogTitle>Edit About Information</DialogTitle>
-    <DialogContent>
-      <Typography>About form content here</Typography>
-    </DialogContent>
-    <DialogActions>
-      <Button onClick={onClose}>Cancel</Button>
-      <Button onClick={() => onSubmit(data)} variant="contained">
-        Save
-      </Button>
-    </DialogActions>
-  </Dialog>
-);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
 
-const SkillDialog = ({ open, edit, data, onClose, onSubmit }) => (
-  <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-    <DialogTitle>{edit ? 'Edit Skill' : 'Add Skill'}</DialogTitle>
-    <DialogContent>
-      <Typography>Skill form content here</Typography>
-    </DialogContent>
-    <DialogActions>
-      <Button onClick={onClose}>Cancel</Button>
-      <Button onClick={() => onSubmit(data)} variant="contained">
-        {edit ? 'Update' : 'Create'}
-      </Button>
-    </DialogActions>
-  </Dialog>
-);
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogTitle>{edit ? 'Edit Project' : 'Add Project'}</DialogTitle>
+      <form onSubmit={handleSubmit}>
+        <DialogContent>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Title"
+                value={formData.title || ''}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                required
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Description"
+                multiline
+                rows={3}
+                value={formData.description || ''}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Image URL"
+                value={formData.image || ''}
+                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Technologies (comma separated)"
+                value={formData.technologies || ''}
+                onChange={(e) => setFormData({ ...formData, technologies: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="GitHub URL"
+                value={formData.githubUrl || ''}
+                onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Live URL"
+                value={formData.liveUrl || ''}
+                onChange={(e) => setFormData({ ...formData, liveUrl: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={formData.featured || false}
+                    onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                  />
+                }
+                label="Featured Project"
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button type="submit" variant="contained">
+            {edit ? 'Update' : 'Create'}
+          </Button>
+        </DialogActions>
+      </form>
+    </Dialog>
+  );
+};
+
+const ExperienceDialog = ({ open, edit, data, onClose, onSubmit }) => {
+  const [formData, setFormData] = useState(data);
+
+  useEffect(() => {
+    setFormData(data);
+  }, [data]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogTitle>{edit ? 'Edit Experience' : 'Add Experience'}</DialogTitle>
+      <form onSubmit={handleSubmit}>
+        <DialogContent>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Position Title"
+                value={formData.title || ''}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Company"
+                value={formData.company || ''}
+                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Location"
+                value={formData.location || ''}
+                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="From Date"
+                type="date"
+                value={formData.from || ''}
+                onChange={(e) => setFormData({ ...formData, from: e.target.value })}
+                InputLabelProps={{ shrink: true }}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="To Date"
+                type="date"
+                value={formData.to || ''}
+                onChange={(e) => setFormData({ ...formData, to: e.target.value })}
+                InputLabelProps={{ shrink: true }}
+                disabled={formData.current}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={formData.current || false}
+                    onChange={(e) => setFormData({ ...formData, current: e.target.checked })}
+                  />
+                }
+                label="Current Position"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Description"
+                multiline
+                rows={4}
+                value={formData.description || ''}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                required
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button type="submit" variant="contained">
+            {edit ? 'Update' : 'Create'}
+          </Button>
+        </DialogActions>
+      </form>
+    </Dialog>
+  );
+};
+
+const AboutDialog = ({ open, data, onClose, onSubmit }) => {
+  const [formData, setFormData] = useState(data);
+
+  useEffect(() => {
+    setFormData(data);
+  }, [data]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogTitle>Edit About Information</DialogTitle>
+      <form onSubmit={handleSubmit}>
+        <DialogContent>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Name"
+                value={formData.name || ''}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Bio"
+                multiline
+                rows={4}
+                value={formData.bio || ''}
+                onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Location"
+                value={formData.location || ''}
+                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Website"
+                value={formData.website || ''}
+                onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Skills (comma separated)"
+                value={formData.skills || ''}
+                onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
+                helperText="Enter skills separated by commas"
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button type="submit" variant="contained">
+            Save
+          </Button>
+        </DialogActions>
+      </form>
+    </Dialog>
+  );
+};
+
+const SkillDialog = ({ open, edit, data, onClose, onSubmit }) => {
+  const [formData, setFormData] = useState(data);
+
+  useEffect(() => {
+    setFormData(data);
+  }, [data]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogTitle>{edit ? 'Edit Skill' : 'Add Skill'}</DialogTitle>
+      <form onSubmit={handleSubmit}>
+        <DialogContent>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Skill Name"
+                value={formData.name || ''}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Category"
+                value={formData.category || ''}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <InputLabel>Level</InputLabel>
+                <Select
+                  value={formData.level || 'Beginner'}
+                  onChange={(e) => setFormData({ ...formData, level: e.target.value })}
+                  label="Level"
+                >
+                  <MenuItem value="Beginner">Beginner</MenuItem>
+                  <MenuItem value="Intermediate">Intermediate</MenuItem>
+                  <MenuItem value="Advanced">Advanced</MenuItem>
+                  <MenuItem value="Expert">Expert</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Icon (optional)"
+                value={formData.icon || ''}
+                onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
+                helperText="Enter an icon name or emoji"
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button type="submit" variant="contained">
+            {edit ? 'Update' : 'Create'}
+          </Button>
+        </DialogActions>
+      </form>
+    </Dialog>
+  );
+};
 
 export default AdminNew;

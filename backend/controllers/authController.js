@@ -227,6 +227,7 @@ const updateAvatar = async (req, res) => {
     console.log('Request body:', req.body);
     console.log('Request file:', req.file);
     console.log('Request files:', req.files);
+    console.log('Request headers:', req.headers);
 
     const user = await User.findById(req.user._id);
 
@@ -236,7 +237,28 @@ const updateAvatar = async (req, res) => {
 
     // Check if file was uploaded
     if (!req.file) {
-      console.log('No file uploaded');
+      console.log('No file uploaded - checking if it\'s in body');
+      // Check if the file URL is in the body (for base64 or URL uploads)
+      if (req.body.avatar) {
+        user.avatar = req.body.avatar;
+        const updatedUser = await user.save();
+        
+        return res.json({
+          _id: updatedUser._id,
+          name: updatedUser.name,
+          email: updatedUser.email,
+          bio: updatedUser.bio,
+          location: updatedUser.location,
+          website: updatedUser.website,
+          social: updatedUser.social,
+          skills: updatedUser.skills,
+          role: updatedUser.role,
+          avatar: updatedUser.avatar,
+          token: generateToken(updatedUser._id),
+        });
+      }
+      
+      console.log('No file uploaded and no avatar in body');
       return res.status(400).json({ message: 'No avatar file uploaded' });
     }
 
