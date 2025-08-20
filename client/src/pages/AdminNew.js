@@ -84,6 +84,7 @@ const AdminNew = () => {
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   
   // Dialog states
@@ -149,9 +150,24 @@ const AdminNew = () => {
     const file = event.target.files[0];
     if (!file) return;
 
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setError('Please select a valid image file');
+      return;
+    }
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      setError('File size must be less than 5MB');
+      return;
+    }
+
     setUploadingAvatar(true);
+    setError(''); // Clear any previous errors
 
     try {
+      console.log('Uploading avatar:', file.name, file.size, file.type);
+      
       const formData = new FormData();
       formData.append('avatar', file);
 
@@ -159,18 +175,48 @@ const AdminNew = () => {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        timeout: 30000, // 30 second timeout
       });
+
+      console.log('Avatar upload response:', response.data);
 
       // Update local user data
       if (response.data) {
         localStorage.setItem('user', JSON.stringify(response.data));
-        window.location.reload(); // Refresh to update UI
+        localStorage.setItem('token', response.data.token);
+        
+        // Show success message
+        setError(''); // Clear any errors
+        setSuccess('Avatar uploaded successfully!');
+        console.log('Avatar uploaded successfully:', response.data.avatar);
+        
+        // Refresh the page to update UI
+        window.location.reload();
       }
     } catch (error) {
-      setError('Failed to upload avatar: ' + (error.response?.data?.message || error.message));
       console.error('Avatar upload error:', error);
+      
+      let errorMessage = 'Failed to upload avatar';
+      
+      if (error.response) {
+        // Server responded with error
+        errorMessage = error.response.data?.message || error.response.data?.error || errorMessage;
+        console.error('Server error:', error.response.data);
+      } else if (error.request) {
+        // Network error
+        errorMessage = 'Network error - please check your connection';
+        console.error('Network error:', error.request);
+      } else {
+        // Other error
+        errorMessage = error.message || errorMessage;
+        console.error('Other error:', error);
+      }
+      
+      setError(errorMessage);
     } finally {
       setUploadingAvatar(false);
+      // Clear the file input
+      event.target.value = '';
     }
   };
 
@@ -302,13 +348,25 @@ const AdminNew = () => {
               </IconButton>
             </Tooltip>
             
-            <Tooltip title="Upload Avatar">
+            <Tooltip title={uploadingAvatar ? "Uploading..." : "Upload Avatar"}>
               <IconButton 
                 component="label" 
-                sx={{ color: 'white' }}
+                sx={{ 
+                  color: 'white',
+                  opacity: uploadingAvatar ? 0.6 : 1,
+                  '&:hover': {
+                    opacity: uploadingAvatar ? 0.6 : 0.8
+                  }
+                }}
                 disabled={uploadingAvatar}
               >
-                <UploadIcon />
+                {uploadingAvatar ? (
+                  <Box sx={{ width: 20, height: 20 }}>
+                    <CircularProgress size={20} color="inherit" />
+                  </Box>
+                ) : (
+                  <UploadIcon />
+                )}
                 <input
                   type="file"
                   hidden
@@ -351,6 +409,13 @@ const AdminNew = () => {
         {error && (
           <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>
             {error}
+          </Alert>
+        )}
+
+        {/* Success Alert */}
+        {success && (
+          <Alert severity="success" sx={{ mb: 3 }} onClose={() => setSuccess('')}>
+            {success}
           </Alert>
         )}
 
