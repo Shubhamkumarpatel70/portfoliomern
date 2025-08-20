@@ -17,16 +17,22 @@ app.use(express.static('public'));
 app.use(express.static(path.join(__dirname, 'client', 'build')));
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/portfolio', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/portfolio';
+const connectWithRetry = async () => {
+  try {
+    await mongoose.connect(mongoUri, {
+      serverSelectionTimeoutMS: 10000,
+    });
+    console.log('Connected to MongoDB');
+  } catch (err) {
+    console.error('MongoDB connection error:', err.message);
+    setTimeout(connectWithRetry, 5000);
+  }
+};
+connectWithRetry();
 
 const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', () => {
-  console.log('Connected to MongoDB');
-});
+db.on('error', (e) => console.error('MongoDB runtime error:', e));
 
 // Health check for uptime monitoring
 app.get('/healthz', (req, res) => {
