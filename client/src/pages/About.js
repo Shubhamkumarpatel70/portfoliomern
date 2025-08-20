@@ -31,6 +31,7 @@ import {
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import axios from 'axios';
+import { api } from '../api';
 
 const getStatColor = (icon) => {
   if (icon.type && icon.type.displayName === 'WorkIcon') return '#3b82f6cc';
@@ -42,7 +43,7 @@ const getStatColor = (icon) => {
 
 const About = () => {
   const [about, setAbout] = useState(null);
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+  const API_BASE_URL = process.env.REACT_APP_API_URL || '';
   const getImageUrl = (url) => {
     if (!url) return '';
     if (url.startsWith('http')) return url;
@@ -63,8 +64,8 @@ const About = () => {
   const fetchAboutData = async () => {
     try {
       setLoading(true);
-      const aboutResponse = await axios.get(`${API_BASE_URL}/api/about/public`);
-      setAbout(aboutResponse.data.about);
+      const res = await api.get('/about/public');
+      setAbout(res.data.about);
     } catch (err) {
       console.error('Error fetching about data:', err);
       setAbout(null);

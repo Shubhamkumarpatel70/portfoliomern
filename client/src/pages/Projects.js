@@ -39,6 +39,7 @@ import {
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import { api } from '../api';
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
@@ -77,7 +78,7 @@ const Projects = () => {
 
   const fetchProjects = async () => {
     try {
-      const response = await axios.get('http://localhost:5001/api/projects');
+      const response = await api.get('/projects');
       const projectsData = response.data.projects || response.data || [];
       setProjects(Array.isArray(projectsData) ? projectsData : []);
     } catch (error) {
@@ -129,9 +130,9 @@ const Projects = () => {
       };
 
       if (editingProject) {
-        await axios.put(`http://localhost:5001/api/projects/${editingProject._id}`, projectData);
+        await api.put(`/projects/${editingProject._id}`, projectData);
       } else {
-        await axios.post('http://localhost:5001/api/projects', projectData);
+        await api.post('/projects', projectData);
       }
       fetchProjects();
       handleCloseDialog();
@@ -143,7 +144,7 @@ const Projects = () => {
   const handleDelete = async (projectId) => {
     if (window.confirm('Are you sure you want to delete this project?')) {
       try {
-        await axios.delete(`http://localhost:5001/api/projects/${projectId}`);
+        await api.delete(`/projects/${projectId}`);
         fetchProjects();
       } catch (error) {
         console.error('Error deleting project:', error);

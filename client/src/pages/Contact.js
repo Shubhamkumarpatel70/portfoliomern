@@ -25,6 +25,7 @@ import {
 } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
+import { api } from '../api';
 
 const Contact = () => {
   const theme = useTheme();
@@ -51,7 +52,7 @@ const Contact = () => {
     }
     setLoading(true);
     try {
-      await axios.post('http://localhost:5001/api/contacts', form);
+      await api.post('/contacts', form);
       setSuccess('Your message has been sent successfully!');
       setForm({ name: '', email: '', message: '' });
     } catch (err) {

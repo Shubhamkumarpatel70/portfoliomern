@@ -26,6 +26,7 @@ import {
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import { api } from '../api';
 
 const Experience = () => {
   const [experiences, setExperiences] = useState([]);
@@ -53,7 +54,7 @@ const Experience = () => {
 
   const fetchExperiences = async () => {
     try {
-      const response = await axios.get('http://localhost:5001/api/experiences');
+      const response = await api.get('/experiences');
       // Handle different response formats
       const experiencesData = response.data.experiences || response.data || [];
       setExperiences(Array.isArray(experiencesData) ? experiencesData : []);
@@ -101,9 +102,9 @@ const Experience = () => {
     e.preventDefault();
     try {
       if (editingExperience) {
-        await axios.put(`http://localhost:5001/api/experiences/${editingExperience._id}`, formData);
+        await api.put(`/experiences/${editingExperience._id}`, formData);
       } else {
-        await axios.post('http://localhost:5001/api/experiences', formData);
+        await api.post('/experiences', formData);
       }
       fetchExperiences();
       handleCloseDialog();

@@ -50,6 +50,7 @@ import {
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import { api } from '../api';
 
 const emptyProject = {
   title: '',
@@ -123,12 +124,12 @@ const Admin = () => {
     try {
       setLoading(true);
       const [usersRes, projectsRes, experiencesRes, skillsRes, contactsRes, aboutRes] = await Promise.all([
-        axios.get('http://localhost:5001/api/auth/users'),
-        axios.get('http://localhost:5001/api/projects'),
-        axios.get('http://localhost:5001/api/experiences'),
-        axios.get('http://localhost:5001/api/skills'),
-        axios.get('http://localhost:5001/api/contacts'),
-        axios.get('http://localhost:5001/api/about/me').catch(() => ({ data: null }))
+        api.get('/auth/users'),
+        api.get('/projects'),
+        api.get('/experiences'),
+        api.get('/skills'),
+        api.get('/contacts'),
+        api.get('/about/me').catch(() => ({ data: null }))
       ]);
 
       setUsers(usersRes.data);
@@ -166,19 +167,19 @@ const Admin = () => {
       
       switch (type) {
         case 'user':
-          endpoint = `http://localhost:5001/api/auth/users/${id}`;
+          endpoint = `/auth/users/${id}`;
           break;
         case 'project':
-          endpoint = `http://localhost:5001/api/projects/${id}`;
+          endpoint = `/projects/${id}`;
           break;
         case 'experience':
-          endpoint = `http://localhost:5001/api/experiences/${id}`;
+          endpoint = `/experiences/${id}`;
           break;
         default:
           return;
       }
 
-      await axios.delete(endpoint);
+      await api.delete(endpoint);
       setDeleteDialog({ open: false, type: '', id: '', name: '' });
       fetchData(); // Refresh data
     } catch (error) {
@@ -201,9 +202,9 @@ const Admin = () => {
         user: user._id,
       };
       if (projectDialog.edit) {
-        await axios.put(`http://localhost:5001/api/projects/${projectDialog.data._id}`, payload);
+        await api.put(`/projects/${projectDialog.data._id}`, payload);
       } else {
-        await axios.post('http://localhost:5001/api/projects', payload);
+        await api.post('/projects', payload);
       }
       handleProjectDialogClose();
       fetchData();
@@ -228,9 +229,9 @@ const Admin = () => {
         user: user._id,
       };
       if (experienceDialog.edit) {
-        await axios.put(`http://localhost:5001/api/experiences/${experienceDialog.data._id}`, payload);
+        await api.put(`/experiences/${experienceDialog.data._id}`, payload);
       } else {
-        await axios.post('http://localhost:5001/api/experiences', payload);
+        await api.post('/experiences', payload);
       }
       handleExperienceDialogClose();
       fetchData();
@@ -263,9 +264,9 @@ const Admin = () => {
         ...aboutDialog.data,
       };
       if (about) {
-        await axios.put('http://localhost:5001/api/about/me', payload);
+        await api.put('/about/me', payload);
       } else {
-        await axios.post('http://localhost:5001/api/about/me', payload);
+        await api.post('/about/me', payload);
       }
       handleAboutDialogClose();
       fetchData();
@@ -282,7 +283,7 @@ const Admin = () => {
       const form = new FormData();
       form.append('avatar', file);
       // include auth token header already set in context
-      await axios.put('http://localhost:5001/api/auth/profile/avatar', form, {
+      await api.put('/auth/profile/avatar', form, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       await fetchData();
@@ -298,7 +299,7 @@ const Admin = () => {
       if (!file) return;
       const form = new FormData();
       form.append('resume', file);
-      await axios.put('http://localhost:5001/api/about/me/resume', form, {
+      await api.put('/about/me/resume', form, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       await fetchData();
@@ -317,7 +318,7 @@ const Admin = () => {
 
   const handleContactStatusUpdate = async (id, status) => {
     try {
-      await axios.put(`http://localhost:5001/api/contacts/${id}`, { status });
+      await api.put(`/contacts/${id}`, { status });
       fetchData();
     } catch (err) {
       setError('Failed to update contact status');
@@ -326,7 +327,7 @@ const Admin = () => {
 
   const handleContactDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5001/api/contacts/${id}`);
+      await api.delete(`/contacts/${id}`);
       fetchData();
     } catch (err) {
       setError('Failed to delete contact');
@@ -377,9 +378,9 @@ const Admin = () => {
         payload.percent = null;
       }
       if (skillDialog.edit) {
-        await axios.put(`http://localhost:5001/api/skills/${_id}`, payload);
+        await api.put(`/skills/${_id}`, payload);
       } else {
-        await axios.post('http://localhost:5001/api/skills', payload);
+        await api.post('/skills', payload);
       }
       handleSkillDialogClose();
       fetchData();
@@ -390,7 +391,7 @@ const Admin = () => {
 
   const handleSkillDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5001/api/skills/${id}`);
+      await api.delete(`/skills/${id}`);
       fetchData();
     } catch (err) {
       setError('Failed to delete skill');
@@ -399,7 +400,7 @@ const Admin = () => {
 
   const handleToggleFeatured = async (projectId, currentFeatured) => {
     try {
-      await axios.put(`http://localhost:5001/api/projects/${projectId}/feature`);
+      await api.put(`/projects/${projectId}/feature`);
       fetchData(); // Refresh data to show updated status
     } catch (err) {
       setError('Failed to toggle featured status');
@@ -601,7 +602,7 @@ const Admin = () => {
                         <TableCell>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Avatar 
-                              src={user.avatar ? `http://localhost:5001${user.avatar}` : undefined} 
+                              src={user.avatar ? `${user.avatar}` : undefined} 
                               sx={{ 
                                 bgcolor: theme.palette.primary.main,
                                 width: 40,
@@ -932,7 +933,7 @@ const Admin = () => {
                 {about?.resume && (
                   <Button 
                     variant="contained" 
-                    onClick={() => window.open(`http://localhost:5001${about.resume}`, '_blank')}
+                    onClick={() => window.open(`${about.resume}`, '_blank')}
                   >
                     View Resume
                   </Button>

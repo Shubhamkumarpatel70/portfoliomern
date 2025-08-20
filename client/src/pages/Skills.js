@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
+import { api } from '../api';
 
 const levelColor = {
   Beginner: 'default',
@@ -46,7 +47,7 @@ const Skills = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All Skills');
   const [loading, setLoading] = useState(true);
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+  const API_BASE_URL = process.env.REACT_APP_API_URL || '';
 
   useEffect(() => {
     fetchSkills();
@@ -54,7 +55,7 @@ const Skills = () => {
 
   const fetchSkills = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/api/skills`);
+      const res = await api.get('/skills');
       setSkills(res.data);
       const cats = Array.from(new Set(res.data.map(s => s.category)));
       setCategories(['All Skills', ...cats]);

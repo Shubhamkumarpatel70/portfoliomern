@@ -10,7 +10,22 @@ require('dotenv').config();
 const app = express();
 
 // Middleware
-app.use(cors());
+const allowedOrigins = [
+	'http://localhost:3000',
+	process.env.CLIENT_ORIGIN,
+	'https://portfoliomernfront.onrender.com'
+].filter(Boolean);
+app.use(cors({
+	origin: function(origin, callback) {
+		if (!origin || allowedOrigins.includes(origin)) {
+			return callback(null, true);
+		}
+		return callback(new Error('Not allowed by CORS'));
+	},
+	credentials: true,
+	methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+	allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 app.use(express.static('public'));
 // Serve React build assets

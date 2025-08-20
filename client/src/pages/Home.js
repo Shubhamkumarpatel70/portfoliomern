@@ -37,9 +37,10 @@ import {
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import axios from 'axios';
+import { api } from '../api';
 
 const Home = () => {
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+  const API_BASE_URL = process.env.REACT_APP_API_URL || '';
   const getImageUrl = (url) => {
     if (!url) return '';
     if (url.startsWith('http')) return url;
@@ -65,7 +66,7 @@ const Home = () => {
 
   const fetchFeaturedProjects = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/projects?featured=true&limit=3`);
+      const response = await api.get(`/projects?featured=true&limit=3`);
       setFeaturedProjects(response.data.projects || []);
     } catch (error) {
       console.error('Error fetching featured projects:', error);
@@ -77,7 +78,7 @@ const Home = () => {
 
   const fetchAbout = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/api/about/public`);
+      const res = await api.get(`/about/public`);
       setAbout(res.data.about || null);
     } catch (err) {
       setAbout(null);
@@ -88,7 +89,7 @@ const Home = () => {
 
   const fetchSkills = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/api/skills`);
+      const res = await api.get(`/skills`);
       setSkills(res.data);
     } catch (err) {
       setSkills([]);
