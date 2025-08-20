@@ -75,13 +75,7 @@ const login = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
-        bio: user.bio,
-        location: user.location,
-        website: user.website,
-        social: user.social,
-        skills: user.skills,
-        role: user.role,
-        avatar: user.avatar,
+        role: user.role, // Add role to the response
         token: generateToken(user._id),
       });
     } else {
@@ -271,4 +265,4 @@ module.exports = {
   deleteUser,
   changePassword,
   updateAvatar,
-}; 
+};
