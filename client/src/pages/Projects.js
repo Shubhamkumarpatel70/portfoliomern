@@ -24,7 +24,9 @@ import {
   Skeleton,
   IconButton,
   Tooltip,
-  Alert
+  Alert,
+  Stack,
+  Divider
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -34,7 +36,8 @@ import {
   Launch as LaunchIcon,
   Search as SearchIcon,
   Code as CodeIcon,
-  Star as StarIcon
+  Star as StarIcon,
+  FilterList as FilterIcon
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
@@ -51,6 +54,9 @@ const Projects = () => {
   const { isAuthenticated, user } = useAuth();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
+  const isExtraSmall = useMediaQuery(theme.breakpoints.down('xs'));
 
   const isAdmin = isAuthenticated && user?.role === 'admin';
 
@@ -181,17 +187,17 @@ const Projects = () => {
       <Box sx={{ 
         background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
         minHeight: '100vh',
-        py: { xs: 6, md: 10 }
+        py: { xs: 4, sm: 6, md: 8, lg: 10 }
       }}>
         <Container maxWidth="lg">
-          <Box sx={{ textAlign: 'center', mb: 6 }}>
-            <Skeleton variant="text" width="60%" height={60} sx={{ mx: 'auto', mb: 2, bgcolor: 'rgba(255,255,255,0.12)' }} />
-            <Skeleton variant="text" width="80%" height={40} sx={{ mx: 'auto', bgcolor: 'rgba(255,255,255,0.1)' }} />
+          <Box sx={{ textAlign: 'center', mb: { xs: 4, sm: 6, md: 8 } }}>
+            <Skeleton variant="text" width={{ xs: '80%', sm: '60%' }} height={{ xs: 40, sm: 50, md: 60 }} sx={{ mx: 'auto', mb: 2, bgcolor: 'rgba(255,255,255,0.12)' }} />
+            <Skeleton variant="text" width={{ xs: '90%', sm: '80%' }} height={{ xs: 30, sm: 35, md: 40 }} sx={{ mx: 'auto', bgcolor: 'rgba(255,255,255,0.1)' }} />
           </Box>
-          <Grid container spacing={4}>
+          <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
             {[1, 2, 3, 4, 5, 6].map((item) => (
-              <Grid item xs={12} md={6} lg={4} key={item}>
-                <Skeleton variant="rectangular" height={320} sx={{ borderRadius: 3, bgcolor: 'rgba(255,255,255,0.08)' }} />
+              <Grid item xs={12} sm={6} md={4} lg={4} key={item}>
+                <Skeleton variant="rectangular" height={{ xs: 280, sm: 300, md: 320 }} sx={{ borderRadius: 3, bgcolor: 'rgba(255,255,255,0.08)' }} />
               </Grid>
             ))}
           </Grid>
@@ -210,7 +216,7 @@ const Projects = () => {
         sx={{
           background: 'transparent',
           color: 'white',
-          py: { xs: 6, md: 10 },
+          py: { xs: 4, sm: 6, md: 8, lg: 10 },
           textAlign: 'center',
           position: 'relative',
           overflow: 'hidden',
@@ -233,7 +239,7 @@ const Projects = () => {
             transition={{ duration: 0.8 }}
           >
             <Typography 
-              variant="h2" 
+              variant="h1" 
               component="h1" 
               gutterBottom 
               sx={{ 
@@ -242,8 +248,10 @@ const Projects = () => {
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-                mb: 3,
-                fontSize: { xs: '2.5rem', md: '3.5rem' }
+                mb: { xs: 2, sm: 3, md: 4 },
+                fontSize: { xs: '1.75rem', sm: '2.25rem', md: '2.75rem', lg: '3.25rem', xl: '3.75rem' },
+                lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 },
+                px: { xs: 1, sm: 0 }
               }}
             >
               My Projects
@@ -252,12 +260,14 @@ const Projects = () => {
               variant="h5" 
               sx={{ 
                 opacity: 0.9, 
-                maxWidth: 700, 
+                maxWidth: { xs: '100%', sm: 600, md: 700 }, 
                 mx: 'auto',
                 fontWeight: 600,
                 color: '#cbd5e1',
-                mb: 4,
-                lineHeight: 1.4
+                mb: { xs: 3, sm: 4, md: 5 },
+                lineHeight: 1.4,
+                fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
+                px: { xs: 2, sm: 0 }
               }}
             >
               A collection of my work showcasing various technologies and innovative solutions
@@ -275,9 +285,9 @@ const Projects = () => {
                     fontWeight: 700,
                     background: 'linear-gradient(45deg, #10b981, #059669)',
                     color: 'white',
-                    px: 2,
-                    py: 1,
-                    fontSize: '1rem'
+                    px: { xs: 1.5, sm: 2 },
+                    py: { xs: 0.5, sm: 1 },
+                    fontSize: { xs: '0.875rem', sm: '1rem' }
                   }} 
                 />
               </motion.div>
@@ -286,7 +296,7 @@ const Projects = () => {
         </Container>
       </Box>
 
-      <Container maxWidth="lg" sx={{ py: { xs: 6, md: 8 } }}>
+      <Container maxWidth="lg" sx={{ py: { xs: 4, sm: 6, md: 8 } }}>
         {/* Controls Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -296,16 +306,17 @@ const Projects = () => {
           <Paper
             elevation={0}
             sx={{
-              p: { xs: 3, md: 4 },
-              mb: 6,
+              p: { xs: 2, sm: 3, md: 4 },
+              mb: { xs: 4, sm: 5, md: 6 },
               background: 'rgba(255, 255, 255, 0.06)',
               backdropFilter: 'blur(10px)',
               border: '1px solid rgba(255, 255, 255, 0.12)',
-              borderRadius: 3
+              borderRadius: { xs: 2, sm: 3 }
             }}
           >
-            <Grid container spacing={3} alignItems="center">
-              <Grid item xs={12} md={5}>
+            <Stack spacing={{ xs: 2, sm: 3 }} direction={{ xs: 'column', md: 'row' }} alignItems={{ xs: 'stretch', md: 'center' }}>
+              {/* Search Field */}
+              <Box sx={{ flex: { xs: '1', md: '1' } }}>
                 <TextField
                   fullWidth
                   placeholder="Search projects..."
@@ -316,7 +327,7 @@ const Projects = () => {
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      borderRadius: 3,
+                      borderRadius: { xs: 2, sm: 3 },
                       background: 'rgba(255,255,255,0.06)',
                       color: '#e2e8f0',
                       '&:hover': { background: 'rgba(255,255,255,0.1)' },
@@ -324,10 +335,39 @@ const Projects = () => {
                     }
                   }}
                 />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                  {categories.map((category) => (
+              </Box>
+
+              {/* Category Filters */}
+              <Box sx={{ 
+                display: 'flex', 
+                gap: { xs: 1, sm: 1.5 }, 
+                flexWrap: 'wrap',
+                justifyContent: { xs: 'center', md: 'flex-start' }
+              }}>
+                {isSmallMobile ? (
+                  <FormControl size="small" sx={{ minWidth: 120 }}>
+                    <InputLabel sx={{ color: '#94a3b8' }}>Category</InputLabel>
+                    <Select
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                      label="Category"
+                      sx={{
+                        color: '#e2e8f0',
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: { xs: 2, sm: 3 },
+                          background: 'rgba(255,255,255,0.06)',
+                        }
+                      }}
+                    >
+                      {categories.map((category) => (
+                        <MenuItem key={category.value} value={category.value}>
+                          {category.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                ) : (
+                  categories.map((category) => (
                     <Chip
                       key={category.value}
                       label={category.label}
@@ -335,19 +375,26 @@ const Projects = () => {
                       variant={selectedCategory === category.value ? 'filled' : 'outlined'}
                       sx={{
                         borderRadius: 2,
-                        px: 1.5,
+                        px: { xs: 1, sm: 1.5 },
                         color: selectedCategory === category.value ? '#0F172A' : '#cbd5e1',
                         bgcolor: selectedCategory === category.value ? '#38BDF8' : 'transparent',
                         borderColor: 'rgba(148,163,184,0.3)',
                         fontWeight: 700,
+                        fontSize: { xs: '0.75rem', sm: '0.875rem' },
                         '&:hover': { bgcolor: selectedCategory === category.value ? '#38BDF8' : 'rgba(255,255,255,0.06)' }
                       }}
                     />
-                  ))}
-                </Box>
-              </Grid>
-              {isAdmin ? (
-                <Grid item xs={12} md={3} sx={{ textAlign: { xs: 'center', md: 'right' } }}>
+                  ))
+                )}
+              </Box>
+
+              {/* Add Project Button */}
+              {isAdmin && (
+                <Box sx={{ 
+                  display: 'flex', 
+                  justifyContent: { xs: 'center', md: 'flex-end' },
+                  minWidth: { xs: '100%', md: 'auto' }
+                }}>
                   <Button
                     variant="contained"
                     startIcon={<AddIcon />}
@@ -355,27 +402,22 @@ const Projects = () => {
                     sx={{
                       background: 'linear-gradient(90deg, #38BDF8 0%, #818CF8 100%)',
                       fontWeight: 800,
-                      px: 4,
-                      py: 1.5,
-                      borderRadius: 3,
-                      fontSize: '1rem',
+                      px: { xs: 3, sm: 4 },
+                      py: { xs: 1, sm: 1.5 },
+                      borderRadius: { xs: 2, sm: 3 },
+                      fontSize: { xs: '0.875rem', sm: '1rem' },
                       color: '#0F172A',
                       boxShadow: '0 8px 25px rgba(56, 189, 248, 0.25)',
                       '&:hover': { background: 'linear-gradient(90deg, #818CF8 0%, #38BDF8 100%)', transform: 'translateY(-2px)' },
-                      transition: 'all 0.3s ease'
+                      transition: 'all 0.3s ease',
+                      width: { xs: '100%', md: 'auto' }
                     }}
                   >
                     Add Project
                   </Button>
-                </Grid>
-              ) : isAuthenticated && (
-                <Grid item xs={12} md={3} sx={{ textAlign: { xs: 'center', md: 'right' } }}>
-                  <Alert severity="info" sx={{ borderRadius: 2 }}>
-                    Admin access required to add projects
-                  </Alert>
-                </Grid>
+                </Box>
               )}
-            </Grid>
+            </Stack>
           </Paper>
         </motion.div>
 
@@ -385,12 +427,13 @@ const Projects = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <Box sx={{ mb: 4, textAlign: 'center' }}>
+          <Box sx={{ mb: { xs: 3, sm: 4, md: 5 }, textAlign: 'center' }}>
             <Typography
               variant="h6"
               sx={{
                 color: '#64748b',
-                fontWeight: 600
+                fontWeight: 600,
+                fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' }
               }}
             >
               Showing {filteredProjects.length} of {projects.length} projects
@@ -400,9 +443,9 @@ const Projects = () => {
 
         {/* Projects Grid */}
         {filteredProjects.length > 0 ? (
-          <Grid container spacing={4}>
+          <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
             {filteredProjects.map((project, index) => (
-              <Grid item xs={12} md={6} lg={4} key={project._id}>
+              <Grid item xs={12} sm={6} md={6} lg={4} key={project._id}>
                 <motion.div
                   initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -417,7 +460,7 @@ const Projects = () => {
                       background: 'rgba(255, 255, 255, 0.06)',
                       backdropFilter: 'blur(10px)',
                       border: '1px solid rgba(255, 255, 255, 0.12)',
-                      borderRadius: 3,
+                      borderRadius: { xs: 2, sm: 3 },
                       overflow: 'hidden',
                       boxShadow: '0 10px 30px rgba(0,0,0,0.25)',
                       transition: 'all 0.3s ease',
@@ -433,7 +476,7 @@ const Projects = () => {
                     <Box sx={{ position: 'relative', overflow: 'hidden' }}>
                       <CardMedia
                         component="img"
-                        height="220"
+                        height={{ xs: 180, sm: 200, md: 220 }}
                         image={project.image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop'}
                         alt={project.title}
                         className="project-image"
@@ -446,10 +489,10 @@ const Projects = () => {
                         <Box
                           sx={{
                             position: 'absolute',
-                            top: 12,
-                            right: 12,
+                            top: { xs: 8, sm: 12 },
+                            right: { xs: 8, sm: 12 },
                             display: 'flex',
-                            gap: 1
+                            gap: { xs: 0.5, sm: 1 }
                           }}
                         >
                           <Tooltip title="Edit Project">
@@ -461,7 +504,9 @@ const Projects = () => {
                                 backdropFilter: 'blur(10px)',
                                 color: '#38BDF8',
                                 '&:hover': { bgcolor: 'rgba(56, 189, 248, 0.2)', transform: 'scale(1.1)' },
-                                transition: 'all 0.3s ease'
+                                transition: 'all 0.3s ease',
+                                width: { xs: 28, sm: 32 },
+                                height: { xs: 28, sm: 32 }
                               }}
                             >
                               <EditIcon fontSize="small" />
@@ -476,7 +521,9 @@ const Projects = () => {
                                 backdropFilter: 'blur(10px)',
                                 color: '#ef4444',
                                 '&:hover': { bgcolor: 'rgba(239, 68, 68, 0.2)', transform: 'scale(1.1)' },
-                                transition: 'all 0.3s ease'
+                                transition: 'all 0.3s ease',
+                                width: { xs: 28, sm: 32 },
+                                height: { xs: 28, sm: 32 }
                               }}
                             >
                               <DeleteIcon fontSize="small" />
@@ -485,15 +532,16 @@ const Projects = () => {
                         </Box>
                       )}
                     </Box>
-                    <CardContent sx={{ flexGrow: 1, p: 3 }}>
+                    <CardContent sx={{ flexGrow: 1, p: { xs: 2, sm: 3 } }}>
                       <Typography 
                         variant="h5" 
                         component="h3" 
                         sx={{ 
                           fontWeight: 700,
                           color: '#e2e8f0',
-                          mb: 2,
-                          lineHeight: 1.3
+                          mb: { xs: 1.5, sm: 2 },
+                          lineHeight: 1.3,
+                          fontSize: { xs: '1.125rem', sm: '1.25rem', md: '1.375rem' }
                         }}
                       >
                         {project.title}
@@ -501,16 +549,16 @@ const Projects = () => {
                       <Typography 
                         variant="body2" 
                         sx={{ 
-                          mb: 3, 
+                          mb: { xs: 2, sm: 3 }, 
                           lineHeight: 1.6,
                           color: '#94a3b8',
-                          fontSize: '0.95rem'
+                          fontSize: { xs: '0.875rem', sm: '0.95rem' }
                         }}
                       >
                         {project.description}
                       </Typography>
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 3 }}>
-                        {project.technologies && project.technologies.slice(0, 4).map((tech) => (
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: { xs: 0.5, sm: 1 }, mb: { xs: 2, sm: 3 } }}>
+                        {project.technologies && project.technologies.slice(0, isSmallMobile ? 3 : 4).map((tech) => (
                           <Chip
                             key={tech}
                             label={tech}
@@ -519,24 +567,31 @@ const Projects = () => {
                               background: 'rgba(59, 130, 246, 0.12)',
                               color: '#93c5fd',
                               fontWeight: 600,
-                              fontSize: '0.75rem',
-                              border: '1px solid rgba(59, 130, 246, 0.35)'
+                              fontSize: { xs: '0.7rem', sm: '0.75rem' },
+                              border: '1px solid rgba(59, 130, 246, 0.35)',
+                              height: { xs: 20, sm: 24 }
                             }}
                           />
                         ))}
-                        {project.technologies && project.technologies.length > 4 && (
+                        {project.technologies && project.technologies.length > (isSmallMobile ? 3 : 4) && (
                           <Chip
-                            label={`+${project.technologies.length - 4} more`}
+                            label={`+${project.technologies.length - (isSmallMobile ? 3 : 4)} more`}
                             size="small"
                             sx={{
                               background: 'rgba(100, 116, 139, 0.15)',
                               color: '#cbd5e1',
-                              fontSize: '0.75rem'
+                              fontSize: { xs: '0.7rem', sm: '0.75rem' },
+                              height: { xs: 20, sm: 24 }
                             }}
                           />
                         )}
                       </Box>
-                      <Box sx={{ display: 'flex', gap: 1.5, mt: 'auto' }}>
+                      <Box sx={{ 
+                        display: 'flex', 
+                        gap: { xs: 1, sm: 1.5 }, 
+                        mt: 'auto',
+                        flexDirection: { xs: 'column', sm: 'row' }
+                      }}>
                         {project.githubUrl && (
                           <Button
                             size="small"
@@ -550,11 +605,12 @@ const Projects = () => {
                               borderColor: '#38BDF8',
                               color: '#38BDF8',
                               fontWeight: 600,
-                              borderRadius: 2,
+                              borderRadius: { xs: 1.5, sm: 2 },
                               '&:hover': {
                                 borderColor: '#7dd3fc',
                                 backgroundColor: 'rgba(56, 189, 248, 0.12)'
-                              }
+                              },
+                              fontSize: { xs: '0.75rem', sm: '0.875rem' }
                             }}
                           >
                             Code
@@ -572,9 +628,10 @@ const Projects = () => {
                               flex: 1,
                               background: 'linear-gradient(90deg, #38BDF8 0%, #818CF8 100%)',
                               fontWeight: 700,
-                              borderRadius: 2,
+                              borderRadius: { xs: 1.5, sm: 2 },
                               color: '#0F172A',
-                              '&:hover': { background: 'linear-gradient(90deg, #818CF8 0%, #38BDF8 100%)' }
+                              '&:hover': { background: 'linear-gradient(90deg, #818CF8 0%, #38BDF8 100%)' },
+                              fontSize: { xs: '0.75rem', sm: '0.875rem' }
                             }}
                           >
                             Demo
@@ -596,12 +653,12 @@ const Projects = () => {
             <Paper
               elevation={0}
               sx={{
-                p: { xs: 4, md: 8 },
+                p: { xs: 3, sm: 4, md: 6, lg: 8 },
                 textAlign: 'center',
                 background: 'rgba(255, 255, 255, 0.06)',
                 backdropFilter: 'blur(10px)',
                 border: '1px solid rgba(255, 255, 255, 0.12)',
-                borderRadius: 3,
+                borderRadius: { xs: 2, sm: 3 },
                 color: '#e2e8f0'
               }}
             >
@@ -610,23 +667,24 @@ const Projects = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  width: 80,
-                  height: 80,
+                  width: { xs: 60, sm: 80 },
+                  height: { xs: 60, sm: 80 },
                   borderRadius: '50%',
                   background: 'linear-gradient(45deg, #64748b, #94a3b8)',
                   mx: 'auto',
-                  mb: 3,
+                  mb: { xs: 2, sm: 3 },
                   color: 'white'
                 }}
               >
-                <CodeIcon sx={{ fontSize: 40 }} />
+                <CodeIcon sx={{ fontSize: { xs: 30, sm: 40 } }} />
               </Box>
               <Typography 
                 variant="h4" 
                 sx={{ 
                   fontWeight: 800,
                   color: 'white',
-                  mb: 2
+                  mb: { xs: 1.5, sm: 2 },
+                  fontSize: { xs: '1.5rem', sm: '2rem', md: '2.25rem' }
                 }}
               >
                 No projects found
@@ -634,11 +692,13 @@ const Projects = () => {
               <Typography 
                 variant="body1" 
                 sx={{ 
-                  mb: 4,
+                  mb: { xs: 3, sm: 4 },
                   color: '#cbd5e1',
-                  maxWidth: 500,
+                  maxWidth: { xs: '100%', sm: 500 },
                   mx: 'auto',
-                  lineHeight: 1.6
+                  lineHeight: 1.6,
+                  fontSize: { xs: '0.875rem', sm: '1rem' },
+                  px: { xs: 2, sm: 0 }
                 }}
               >
                 {searchTerm || selectedCategory !== 'all' 
@@ -656,10 +716,10 @@ const Projects = () => {
                   sx={{
                     background: 'linear-gradient(45deg, #3b82f6, #8b5cf6)',
                     fontWeight: 700,
-                    px: 4,
-                    py: 1.5,
-                    borderRadius: 3,
-                    fontSize: '1rem',
+                    px: { xs: 3, sm: 4 },
+                    py: { xs: 1, sm: 1.5 },
+                    borderRadius: { xs: 2, sm: 3 },
+                    fontSize: { xs: '0.875rem', sm: '1rem' },
                     boxShadow: '0 8px 25px rgba(59, 130, 246, 0.3)',
                     '&:hover': {
                       background: 'linear-gradient(45deg, #2563eb, #7c3aed)',
@@ -683,24 +743,27 @@ const Projects = () => {
         onClose={handleCloseDialog} 
         maxWidth="md" 
         fullWidth
+        fullScreen={isSmallMobile}
         PaperProps={{
           sx: {
-            borderRadius: 3,
+            borderRadius: isSmallMobile ? 0 : 3,
             background: 'rgba(15, 23, 42, 0.96)',
             color: '#e2e8f0',
-            backdropFilter: 'blur(10px)'
+            backdropFilter: 'blur(10px)',
+            m: isSmallMobile ? 0 : 2
           }
         }}
       >
         <DialogTitle sx={{ 
           fontWeight: 800,
-          fontSize: '1.5rem'
+          fontSize: { xs: '1.25rem', sm: '1.5rem' },
+          p: { xs: 2, sm: 3 }
         }}>
           {editingProject ? 'Edit Project' : 'Add New Project'}
         </DialogTitle>
         <form onSubmit={handleSubmit}>
-          <DialogContent>
-            <Grid container spacing={3}>
+          <DialogContent sx={{ p: { xs: 2, sm: 3 } }}>
+            <Grid container spacing={{ xs: 2, sm: 3 }}>
               <Grid item xs={12}>
                 <TextField
                   name="title"
@@ -711,7 +774,7 @@ const Projects = () => {
                   required
                   sx={{ 
                     '& .MuiOutlinedInput-root': { 
-                      borderRadius: 2,
+                      borderRadius: { xs: 1.5, sm: 2 },
                       background: 'rgba(255,255,255,0.06)',
                       color: '#e2e8f0'
                     },
@@ -728,10 +791,10 @@ const Projects = () => {
                   fullWidth
                   required
                   multiline
-                  rows={3}
+                  rows={isSmallMobile ? 4 : 3}
                   sx={{ 
                     '& .MuiOutlinedInput-root': { 
-                      borderRadius: 2,
+                      borderRadius: { xs: 1.5, sm: 2 },
                       background: 'rgba(255,255,255,0.06)',
                       color: '#e2e8f0'
                     },
@@ -748,7 +811,7 @@ const Projects = () => {
                   fullWidth
                   sx={{ 
                     '& .MuiOutlinedInput-root': { 
-                      borderRadius: 2,
+                      borderRadius: { xs: 1.5, sm: 2 },
                       background: 'rgba(255,255,255,0.06)',
                       color: '#e2e8f0'
                     },
@@ -766,7 +829,7 @@ const Projects = () => {
                   required
                   sx={{ 
                     '& .MuiOutlinedInput-root': { 
-                      borderRadius: 2,
+                      borderRadius: { xs: 1.5, sm: 2 },
                       background: 'rgba(255,255,255,0.06)',
                       color: '#e2e8f0'
                     },
@@ -783,7 +846,7 @@ const Projects = () => {
                   fullWidth
                   sx={{ 
                     '& .MuiOutlinedInput-root': { 
-                      borderRadius: 2,
+                      borderRadius: { xs: 1.5, sm: 2 },
                       background: 'rgba(255,255,255,0.06)',
                       color: '#e2e8f0'
                     },
@@ -800,7 +863,7 @@ const Projects = () => {
                   fullWidth
                   sx={{ 
                     '& .MuiOutlinedInput-root': { 
-                      borderRadius: 2,
+                      borderRadius: { xs: 1.5, sm: 2 },
                       background: 'rgba(255,255,255,0.06)',
                       color: '#e2e8f0'
                     },
@@ -818,7 +881,7 @@ const Projects = () => {
                     label="Category"
                     sx={{ 
                       '& .MuiOutlinedInput-root': { 
-                        borderRadius: 2,
+                        borderRadius: { xs: 1.5, sm: 2 },
                         background: 'rgba(255,255,255,0.06)',
                         color: '#e2e8f0'
                       } 
@@ -833,7 +896,7 @@ const Projects = () => {
               </Grid>
             </Grid>
           </DialogContent>
-          <DialogActions sx={{ p: 3 }}>
+          <DialogActions sx={{ p: { xs: 2, sm: 3 } }}>
             <Button 
               onClick={handleCloseDialog} 
               sx={{ 
@@ -850,9 +913,9 @@ const Projects = () => {
                 background: 'linear-gradient(90deg, #38BDF8 0%, #818CF8 100%)',
                 color: '#0F172A',
                 fontWeight: 800,
-                px: 4,
-                py: 1,
-                borderRadius: 2,
+                px: { xs: 3, sm: 4 },
+                py: { xs: 0.75, sm: 1 },
+                borderRadius: { xs: 1.5, sm: 2 },
                 '&:hover': { background: 'linear-gradient(90deg, #818CF8 0%, #38BDF8 100%)' }
               }}
             >

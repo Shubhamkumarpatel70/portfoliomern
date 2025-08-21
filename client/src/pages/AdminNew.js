@@ -41,7 +41,8 @@ import {
   Breadcrumbs,
   Link,
   Switch,
-  FormControlLabel
+  FormControlLabel,
+  useMediaQuery
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -98,6 +99,8 @@ const AdminNew = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     if (!isAuthenticated || user?.role !== 'admin') {
@@ -330,20 +333,29 @@ const AdminNew = () => {
           borderBottom: '1px solid rgba(255,255,255,0.1)'
         }}
       >
-        <Toolbar>
+        <Toolbar sx={{ px: { xs: 2, sm: 3 } }}>
           <Box display="flex" alignItems="center" flexGrow={1}>
-            <DashboardIcon sx={{ mr: 2, color: 'white' }} />
-            <Typography variant="h6" component="div" sx={{ color: 'white', fontWeight: 600 }}>
-              Admin Dashboard
+            <DashboardIcon sx={{ mr: { xs: 1, sm: 2 }, color: 'white' }} />
+            <Typography 
+              variant={isSmallMobile ? "h6" : "h6"} 
+              component="div" 
+              sx={{ 
+                color: 'white', 
+                fontWeight: 600,
+                fontSize: { xs: '1rem', sm: '1.25rem' }
+              }}
+            >
+              {isSmallMobile ? 'Admin' : 'Admin Dashboard'}
             </Typography>
           </Box>
           
-          <Box display="flex" alignItems="center" gap={2}>
+          <Box display="flex" alignItems="center" gap={{ xs: 1, sm: 2 }}>
             <Tooltip title="Refresh Data">
               <IconButton 
                 onClick={fetchData} 
                 sx={{ color: 'white' }}
                 disabled={loading}
+                size={isSmallMobile ? "small" : "medium"}
               >
                 <RefreshIcon />
               </IconButton>
@@ -360,6 +372,7 @@ const AdminNew = () => {
                   }
                 }}
                 disabled={uploadingAvatar}
+                size={isSmallMobile ? "small" : "medium"}
               >
                 {uploadingAvatar ? (
                   <Box sx={{ width: 20, height: 20 }}>
@@ -377,14 +390,16 @@ const AdminNew = () => {
               </IconButton>
             </Tooltip>
             
-            <Tooltip title="Account Settings">
-              <IconButton sx={{ color: 'white' }}>
-                <SettingsIcon />
-              </IconButton>
-            </Tooltip>
+            {!isSmallMobile && (
+              <Tooltip title="Account Settings">
+                <IconButton sx={{ color: 'white' }}>
+                  <SettingsIcon />
+                </IconButton>
+              </Tooltip>
+            )}
             
             <Tooltip title="Logout">
-              <IconButton onClick={handleLogout} sx={{ color: 'white' }}>
+              <IconButton onClick={handleLogout} sx={{ color: 'white' }} size={isSmallMobile ? "small" : "medium"}>
                 <LogoutIcon />
               </IconButton>
             </Tooltip>
@@ -392,9 +407,9 @@ const AdminNew = () => {
         </Toolbar>
       </AppBar>
 
-      <Container maxWidth="xl" sx={{ py: 4 }}>
+      <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 3, md: 4 }, px: { xs: 2, sm: 3 } }}>
         {/* Breadcrumbs */}
-        <Breadcrumbs sx={{ mb: 3 }}>
+        <Breadcrumbs sx={{ mb: { xs: 2, sm: 3 }, display: { xs: 'none', sm: 'flex' } }}>
           <Link 
             color="inherit" 
             href="/" 
@@ -408,21 +423,21 @@ const AdminNew = () => {
 
         {/* Error Alert */}
         {error && (
-          <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>
+          <Alert severity="error" sx={{ mb: { xs: 2, sm: 3 } }} onClose={() => setError('')}>
             {error}
           </Alert>
         )}
 
         {/* Success Alert */}
         {success && (
-          <Alert severity="success" sx={{ mb: 3 }} onClose={() => setSuccess('')}>
+          <Alert severity="success" sx={{ mb: { xs: 2, sm: 3 } }} onClose={() => setSuccess('')}>
             {success}
           </Alert>
         )}
 
         {/* Stats Cards */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={6} md={3}>
+        <Grid container spacing={{ xs: 2, sm: 3 }} sx={{ mb: { xs: 3, sm: 4 } }}>
+          <Grid item xs={6} sm={6} md={3}>
             <StatCard
               title="Total Users"
               value={stats.totalUsers || 0}
@@ -431,7 +446,7 @@ const AdminNew = () => {
               color="primary"
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={6} sm={6} md={3}>
             <StatCard
               title="Active Users"
               value={stats.activeUsers || 0}
@@ -440,7 +455,7 @@ const AdminNew = () => {
               color="success"
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={6} sm={6} md={3}>
             <StatCard
               title="Total Projects"
               value={stats.totalProjects || 0}
@@ -449,7 +464,7 @@ const AdminNew = () => {
               color="info"
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={6} sm={6} md={3}>
             <StatCard
               title="Total Experiences"
               value={stats.totalExperiences || 0}
@@ -461,18 +476,18 @@ const AdminNew = () => {
         </Grid>
 
         {/* Main Content */}
-        <Card sx={{ borderRadius: 3, overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+        <Card sx={{ borderRadius: { xs: 2, sm: 3 }, overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
           {/* Enhanced Tabs */}
           <Box sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: 'background.paper' }}>
             <Tabs 
               value={tabValue} 
               onChange={(e, newValue) => setTabValue(newValue)}
-              variant="scrollable"
-              scrollButtons="auto"
+              variant={isMobile ? "scrollable" : "fullWidth"}
+              scrollButtons={isMobile ? "auto" : false}
               sx={{
                 '& .MuiTab-root': {
-                  minHeight: 64,
-                  fontSize: '0.875rem',
+                  minHeight: { xs: 48, sm: 64 },
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
                   fontWeight: 600,
                   textTransform: 'none',
                   '&.Mui-selected': {
@@ -487,39 +502,39 @@ const AdminNew = () => {
             >
               <Tab 
                 icon={<PeopleIcon />} 
-                label="Users" 
+                label={isSmallMobile ? "Users" : "Users"} 
                 iconPosition="start"
               />
               <Tab 
                 icon={<WorkIcon />} 
-                label="Projects" 
+                label={isSmallMobile ? "Projects" : "Projects"} 
                 iconPosition="start"
               />
               <Tab 
                 icon={<BusinessIcon />} 
-                label="Experiences" 
+                label={isSmallMobile ? "Exp" : "Experiences"} 
                 iconPosition="start"
               />
               <Tab 
                 icon={<CodeIcon />} 
-                label="Skills" 
+                label={isSmallMobile ? "Skills" : "Skills"} 
                 iconPosition="start"
               />
               <Tab 
                 icon={<ContactMailIcon />} 
-                label="Contacts" 
+                label={isSmallMobile ? "Contact" : "Contacts"} 
                 iconPosition="start"
               />
               <Tab 
                 icon={<PersonIcon />} 
-                label="About" 
+                label={isSmallMobile ? "About" : "About"} 
                 iconPosition="start"
               />
             </Tabs>
           </Box>
 
           {/* Tab Content */}
-          <Box sx={{ p: 3 }}>
+          <Box sx={{ p: { xs: 2, sm: 3 } }}>
             {tabValue === 0 && (
               <UsersTab 
                 users={users} 
@@ -748,112 +763,178 @@ const UsersTab = ({ users, onRefresh, onDelete }) => (
   </Box>
 );
 
-const ProjectsTab = ({ projects, onRefresh, onEdit, onDelete }) => (
-  <Box>
-    <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-      <Typography variant="h5" fontWeight="bold">
-        Project Management
-      </Typography>
-      <Box display="flex" gap={2}>
-        <Button
-          variant="outlined"
-          startIcon={<RefreshIcon />}
-          onClick={onRefresh}
+const ProjectsTab = ({ projects, onRefresh, onEdit, onDelete }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  
+  return (
+    <Box>
+      <Box 
+        display="flex" 
+        flexDirection={{ xs: 'column', sm: 'row' }}
+        justifyContent="space-between" 
+        alignItems={{ xs: 'stretch', sm: 'center' }} 
+        gap={{ xs: 2, sm: 0 }}
+        mb={3}
+      >
+        <Typography 
+          variant={isSmallMobile ? "h6" : "h5"} 
+          fontWeight="bold"
+          sx={{ textAlign: { xs: 'center', sm: 'left' } }}
         >
-          Refresh
-        </Button>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => onEdit(null)}
+          Project Management
+        </Typography>
+        <Box 
+          display="flex" 
+          gap={2} 
+          flexDirection={{ xs: 'column', sm: 'row' }}
+          width={{ xs: '100%', sm: 'auto' }}
         >
-          Add Project
-        </Button>
+          <Button
+            variant="outlined"
+            startIcon={<RefreshIcon />}
+            onClick={onRefresh}
+            fullWidth={isSmallMobile}
+            size={isSmallMobile ? "small" : "medium"}
+          >
+            Refresh
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => onEdit(null)}
+            fullWidth={isSmallMobile}
+            size={isSmallMobile ? "small" : "medium"}
+          >
+            Add Project
+          </Button>
+        </Box>
       </Box>
-    </Box>
-    
-    <Grid container spacing={3}>
-      {projects.map((project) => (
-        <Grid item xs={12} sm={6} md={4} key={project._id}>
-          <Card sx={{ height: '100%', position: 'relative' }}>
-            <Box
-              sx={{
-                height: 200,
-                backgroundImage: `url(${project.image})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                position: 'relative'
-              }}
-            >
+      
+      <Grid container spacing={{ xs: 2, sm: 3 }}>
+        {projects.map((project) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={project._id}>
+            <Card sx={{ 
+              height: '100%', 
+              position: 'relative',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                transform: 'translateY(-4px)',
+                boxShadow: '0 8px 25px rgba(0,0,0,0.15)'
+              }
+            }}>
               <Box
                 sx={{
-                  position: 'absolute',
-                  top: 8,
-                  right: 8,
-                  display: 'flex',
-                  gap: 1
+                  height: { xs: 160, sm: 180, md: 200 },
+                  backgroundImage: `url(${project.image})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  position: 'relative'
                 }}
               >
-                <Tooltip title="Edit Project">
-                  <IconButton
-                    size="small"
-                    sx={{ bgcolor: 'rgba(255,255,255,0.9)' }}
-                    onClick={() => onEdit(project)}
-                  >
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Delete Project">
-                  <IconButton
-                    size="small"
-                    color="error"
-                    sx={{ bgcolor: 'rgba(255,255,255,0.9)' }}
-                    onClick={() => onDelete(project._id, project.title)}
-                  >
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-              </Box>
-              {project.featured && (
                 <Box
                   sx={{
                     position: 'absolute',
                     top: 8,
-                    left: 8,
-                    bgcolor: 'primary.main',
-                    color: 'white',
-                    px: 1,
-                    py: 0.5,
-                    borderRadius: 1,
-                    fontSize: '0.75rem'
+                    right: 8,
+                    display: 'flex',
+                    gap: 1
                   }}
                 >
-                  Featured
+                  <Tooltip title="Edit Project">
+                    <IconButton
+                      size="small"
+                      sx={{ 
+                        bgcolor: 'rgba(255,255,255,0.9)',
+                        '&:hover': { bgcolor: 'rgba(255,255,255,1)' }
+                      }}
+                      onClick={() => onEdit(project)}
+                    >
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Delete Project">
+                    <IconButton
+                      size="small"
+                      color="error"
+                      sx={{ 
+                        bgcolor: 'rgba(255,255,255,0.9)',
+                        '&:hover': { bgcolor: 'rgba(255,255,255,1)' }
+                      }}
+                      onClick={() => onDelete(project._id, project.title)}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
                 </Box>
-              )}
-            </Box>
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold" mb={1}>
-                {project.title}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" mb={2}>
-                {project.description}
-              </Typography>
-              <Box display="flex" gap={1} flexWrap="wrap">
-                {project.technologies?.slice(0, 3).map((tech, index) => (
-                  <Chip key={index} label={tech} size="small" variant="outlined" />
-                ))}
-                {project.technologies?.length > 3 && (
-                  <Chip label={`+${project.technologies.length - 3}`} size="small" />
+                {project.featured && (
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      top: 8,
+                      left: 8,
+                      bgcolor: 'primary.main',
+                      color: 'white',
+                      px: 1,
+                      py: 0.5,
+                      borderRadius: 1,
+                      fontSize: { xs: '0.7rem', sm: '0.75rem' }
+                    }}
+                  >
+                    Featured
+                  </Box>
                 )}
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-      ))}
-    </Grid>
-  </Box>
-);
+              <CardContent sx={{ p: { xs: 2, sm: 2.5 } }}>
+                <Typography 
+                  variant={isSmallMobile ? "h6" : "h6"} 
+                  fontWeight="bold" 
+                  mb={1}
+                  sx={{ 
+                    fontSize: { xs: '1rem', sm: '1.25rem' },
+                    lineHeight: { xs: 1.3, sm: 1.4 }
+                  }}
+                >
+                  {project.title}
+                </Typography>
+                <Typography 
+                  variant="body2" 
+                  color="text.secondary" 
+                  mb={2}
+                  sx={{ 
+                    fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                    lineHeight: { xs: 1.4, sm: 1.5 }
+                  }}
+                >
+                  {project.description}
+                </Typography>
+                <Box display="flex" gap={1} flexWrap="wrap">
+                  {project.technologies?.slice(0, isSmallMobile ? 2 : 3).map((tech, index) => (
+                    <Chip 
+                      key={index} 
+                      label={tech} 
+                      size="small" 
+                      variant="outlined"
+                      sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
+                    />
+                  ))}
+                  {project.technologies?.length > (isSmallMobile ? 2 : 3) && (
+                    <Chip 
+                      label={`+${project.technologies.length - (isSmallMobile ? 2 : 3)}`} 
+                      size="small"
+                      sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
+                    />
+                  )}
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
+  );
+};
 
 const ExperiencesTab = ({ experiences, onRefresh, onEdit, onDelete }) => (
   <Box>
@@ -1150,6 +1231,9 @@ const AboutTab = ({ about, onRefresh, onEdit }) => (
 // Dialog Components (simplified versions)
 const ProjectDialog = ({ open, edit, data, onClose, onSubmit }) => {
   const [formData, setFormData] = useState(data);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     setFormData(data);
@@ -1161,11 +1245,29 @@ const ProjectDialog = ({ open, edit, data, onClose, onSubmit }) => {
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>{edit ? 'Edit Project' : 'Add Project'}</DialogTitle>
+    <Dialog 
+      open={open} 
+      onClose={onClose} 
+      maxWidth="md" 
+      fullWidth
+      PaperProps={{
+        sx: {
+          borderRadius: { xs: 2, sm: 3 },
+          m: { xs: 2, sm: 3 },
+          maxHeight: { xs: '90vh', sm: '80vh' }
+        }
+      }}
+    >
+      <DialogTitle sx={{ 
+        fontSize: { xs: '1.25rem', sm: '1.5rem' },
+        px: { xs: 2, sm: 3 },
+        py: { xs: 2, sm: 2.5 }
+      }}>
+        {edit ? 'Edit Project' : 'Add Project'}
+      </DialogTitle>
       <form onSubmit={handleSubmit}>
-        <DialogContent>
-          <Grid container spacing={2}>
+        <DialogContent sx={{ px: { xs: 2, sm: 3 }, pb: { xs: 2, sm: 3 } }}>
+          <Grid container spacing={{ xs: 2, sm: 3 }}>
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -1173,6 +1275,12 @@ const ProjectDialog = ({ open, edit, data, onClose, onSubmit }) => {
                 value={formData.title || ''}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 required
+                size={isSmallMobile ? "small" : "medium"}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: { xs: 1.5, sm: 2 }
+                  }
+                }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -1180,10 +1288,16 @@ const ProjectDialog = ({ open, edit, data, onClose, onSubmit }) => {
                 fullWidth
                 label="Description"
                 multiline
-                rows={3}
+                rows={isSmallMobile ? 2 : 3}
                 value={formData.description || ''}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 required
+                size={isSmallMobile ? "small" : "medium"}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: { xs: 1.5, sm: 2 }
+                  }
+                }}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -1192,6 +1306,12 @@ const ProjectDialog = ({ open, edit, data, onClose, onSubmit }) => {
                 label="Image URL"
                 value={formData.image || ''}
                 onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                size={isSmallMobile ? "small" : "medium"}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: { xs: 1.5, sm: 2 }
+                  }
+                }}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -1200,6 +1320,12 @@ const ProjectDialog = ({ open, edit, data, onClose, onSubmit }) => {
                 label="Technologies (comma separated)"
                 value={formData.technologies || ''}
                 onChange={(e) => setFormData({ ...formData, technologies: e.target.value })}
+                size={isSmallMobile ? "small" : "medium"}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: { xs: 1.5, sm: 2 }
+                  }
+                }}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -1208,6 +1334,12 @@ const ProjectDialog = ({ open, edit, data, onClose, onSubmit }) => {
                 label="GitHub URL"
                 value={formData.githubUrl || ''}
                 onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
+                size={isSmallMobile ? "small" : "medium"}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: { xs: 1.5, sm: 2 }
+                  }
+                }}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -1216,6 +1348,12 @@ const ProjectDialog = ({ open, edit, data, onClose, onSubmit }) => {
                 label="Live URL"
                 value={formData.liveUrl || ''}
                 onChange={(e) => setFormData({ ...formData, liveUrl: e.target.value })}
+                size={isSmallMobile ? "small" : "medium"}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: { xs: 1.5, sm: 2 }
+                  }
+                }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -1224,16 +1362,36 @@ const ProjectDialog = ({ open, edit, data, onClose, onSubmit }) => {
                   <Switch
                     checked={formData.featured || false}
                     onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                    size={isSmallMobile ? "small" : "medium"}
                   />
                 }
                 label="Featured Project"
+                sx={{ 
+                  fontSize: { xs: '0.875rem', sm: '1rem' }
+                }}
               />
             </Grid>
           </Grid>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={onClose}>Cancel</Button>
-          <Button type="submit" variant="contained">
+        <DialogActions sx={{ 
+          px: { xs: 2, sm: 3 }, 
+          py: { xs: 2, sm: 2.5 },
+          flexDirection: { xs: 'column', sm: 'row' },
+          gap: { xs: 1, sm: 0 }
+        }}>
+          <Button 
+            onClick={onClose}
+            fullWidth={isSmallMobile}
+            size={isSmallMobile ? "small" : "medium"}
+          >
+            Cancel
+          </Button>
+          <Button 
+            type="submit" 
+            variant="contained"
+            fullWidth={isSmallMobile}
+            size={isSmallMobile ? "small" : "medium"}
+          >
             {edit ? 'Update' : 'Create'}
           </Button>
         </DialogActions>

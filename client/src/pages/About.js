@@ -55,6 +55,8 @@ const About = () => {
   const [experiences, setExperiences] = useState([]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
 
   useEffect(() => {
     fetchAboutData();
@@ -96,18 +98,18 @@ const About = () => {
       <Box sx={{ 
         background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
         minHeight: '100vh',
-        py: { xs: 4, md: 8 }
+        py: { xs: 4, sm: 6, md: 8, lg: 10 }
       }}>
         <Container maxWidth="lg">
-          <Box sx={{ textAlign: 'center', mb: 6 }}>
-            <Skeleton variant="text" width="60%" height={60} sx={{ mx: 'auto', mb: 2, bgcolor: 'rgba(255,255,255,0.12)' }} />
-            <Skeleton variant="text" width="80%" height={40} sx={{ mx: 'auto', mb: 2, bgcolor: 'rgba(255,255,255,0.1)' }} />
-            <Skeleton variant="text" width="70%" height={24} sx={{ mx: 'auto', bgcolor: 'rgba(255,255,255,0.08)' }} />
+          <Box sx={{ textAlign: 'center', mb: { xs: 4, sm: 5, md: 6 } }}>
+            <Skeleton variant="text" width={{ xs: '80%', sm: '60%' }} height={{ xs: 40, sm: 50, md: 60 }} sx={{ mx: 'auto', mb: 2, bgcolor: 'rgba(255,255,255,0.12)' }} />
+            <Skeleton variant="text" width={{ xs: '90%', sm: '80%' }} height={{ xs: 30, sm: 35, md: 40 }} sx={{ mx: 'auto', mb: 2, bgcolor: 'rgba(255,255,255,0.1)' }} />
+            <Skeleton variant="text" width={{ xs: '70%', sm: '70%' }} height={{ xs: 20, sm: 24 }} sx={{ mx: 'auto', bgcolor: 'rgba(255,255,255,0.08)' }} />
           </Box>
-          <Grid container spacing={4}>
+          <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
             {[1, 2, 3, 4].map((item) => (
-              <Grid item xs={12} md={6} lg={3} key={item}>
-                <Skeleton variant="rectangular" height={200} sx={{ borderRadius: 3, bgcolor: 'rgba(255,255,255,0.06)' }} />
+              <Grid item xs={12} sm={6} md={6} lg={3} key={item}>
+                <Skeleton variant="rectangular" height={{ xs: 180, sm: 200, md: 200 }} sx={{ borderRadius: { xs: 2, sm: 3 }, bgcolor: 'rgba(255,255,255,0.06)' }} />
               </Grid>
             ))}
           </Grid>

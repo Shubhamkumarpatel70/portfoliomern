@@ -43,6 +43,8 @@ const levelColorHex = {
 const Skills = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isSmallMobile = useMediaQuery(theme.breakpoints.down('xs'));
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
   const [skills, setSkills] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All Skills');

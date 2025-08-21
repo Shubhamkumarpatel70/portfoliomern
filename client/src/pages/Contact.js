@@ -29,6 +29,9 @@ import { api } from '../api';
 
 const Contact = () => {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
   const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
@@ -106,7 +109,7 @@ const Contact = () => {
       minHeight: '100vh', 
       background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
       color: 'white', 
-      py: 8,
+      py: { xs: 4, sm: 6, md: 8, lg: 10 },
       position: 'relative',
       overflow: 'hidden',
       '&::before': {
@@ -122,7 +125,7 @@ const Contact = () => {
       },
     }}>
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-        <Grid container spacing={6}>
+        <Grid container spacing={{ xs: 3, sm: 4, md: 6 }}>
           <Grid item xs={12} md={6}>
             <motion.div
               initial={{ opacity: 0, y: 40 }}
