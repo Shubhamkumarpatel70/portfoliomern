@@ -69,11 +69,13 @@ import {
   Refresh as RefreshIcon,
   FilterList as FilterIcon,
   Search as SearchIcon,
-  MoreVert as MoreVertIcon
+  MoreVert as MoreVertIcon,
+  Email as EmailIcon
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../api';
+import NewsletterManagement from '../components/NewsletterManagement';
 
 const AdminNew = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -530,6 +532,11 @@ const AdminNew = () => {
                 label={isSmallMobile ? "About" : "About"} 
                 iconPosition="start"
               />
+              <Tab 
+                icon={<EmailIcon />} 
+                label={isSmallMobile ? "Newsletter" : "Newsletter"} 
+                iconPosition="start"
+              />
             </Tabs>
           </Box>
 
@@ -575,6 +582,9 @@ const AdminNew = () => {
                 onRefresh={fetchData}
                 onEdit={(data) => setAboutDialog({ open: true, data: data || {} })}
               />
+            )}
+            {tabValue === 6 && (
+              <NewsletterManagement />
             )}
           </Box>
         </Card>

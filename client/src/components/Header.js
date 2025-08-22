@@ -69,7 +69,7 @@ const Header = () => {
     <Box sx={{ width: 250 }}>
       <Box sx={{ p: 2, textAlign: 'center', borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
         <Typography variant="h6" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>
-          Portfolio
+          Shubham
         </Typography>
       </Box>
       <List>
@@ -193,7 +193,7 @@ const Header = () => {
               }
             }}
           >
-            Portfolio
+            Shubham
           </Typography>
           {/* Desktop Navigation */}
           {!isMobile && (
@@ -350,7 +350,7 @@ const Header = () => {
       >
         <Box sx={{ p: 2, textAlign: 'center', borderBottom: '1px solid #334155' }}>
           <Typography variant="h6" sx={{ fontWeight: 900, color: '#38BDF8', letterSpacing: 1 }}>
-            Portfolio
+            Shubham
           </Typography>
         </Box>
         <List>

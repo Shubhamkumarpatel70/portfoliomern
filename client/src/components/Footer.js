@@ -12,7 +12,9 @@ import {
   Chip,
   Tooltip,
   Fab,
-  Link
+  Link,
+  Alert,
+  Snackbar
 } from '@mui/material';
 import {
   GitHub as GitHubIcon,
@@ -29,11 +31,18 @@ import {
   Article as BlogIcon
 } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
+import { api } from '../api';
 
 const Footer = () => {
   const theme = useTheme();
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success'
+  });
 
   const socialLinks = [
     {
@@ -95,12 +104,29 @@ const Footer = () => {
     { name: 'MUI', icon: <DesignIcon />, color: '#007fff' }
   ];
 
-  const handleSubscribe = (e) => {
+  const handleSubscribe = async (e) => {
     e.preventDefault();
-    if (email) {
+    if (!email) return;
+
+    setIsLoading(true);
+    try {
+      const response = await api.post('/api/newsletter/subscribe', { email });
       setIsSubscribed(true);
       setEmail('');
+      setSnackbar({
+        open: true,
+        message: response.data.message || 'Successfully subscribed to newsletter!',
+        severity: 'success'
+      });
       setTimeout(() => setIsSubscribed(false), 3000);
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.message || 'Failed to subscribe. Please try again.',
+        severity: 'error'
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -163,7 +189,7 @@ const Footer = () => {
                       WebkitTextFillColor: 'transparent'
                     }}
                   >
-                    Your Name
+                    SHUBHAM KUMAR
                   </Typography>
                 </Box>
                 <Typography
@@ -543,7 +569,7 @@ const Footer = () => {
                         type="submit"
                         variant="contained"
                         endIcon={!isSubscribed && <SendIcon />}
-                        disabled={isSubscribed}
+                        disabled={isSubscribed || isLoading}
                         sx={{
                           background: isSubscribed 
                             ? '#10b981' 
@@ -565,7 +591,7 @@ const Footer = () => {
                           transition: 'all 0.2s ease',
                         }}
                       >
-                        {isSubscribed ? 'Thank you! 🎉' : 'Subscribe Now'}
+                        {isSubscribed ? 'Thank you! 🎉' : isLoading ? 'Subscribing...' : 'Subscribe Now'}
                       </Button>
                     </motion.div>
                   </AnimatePresence>
@@ -604,7 +630,7 @@ const Footer = () => {
                   fontSize: '0.8rem'
                 }}
               >
-                © {new Date().getFullYear()} Your Name. All rights reserved.
+                © {new Date().getFullYear()} SHUBHAM KUMAR. All rights reserved.
               </Typography>
               
               <Box sx={{ 
@@ -685,6 +711,22 @@ const Footer = () => {
           <ArrowUpIcon />
         </Fab>
       </motion.div>
+
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

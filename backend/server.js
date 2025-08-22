@@ -16,6 +16,7 @@ const experienceRoutes = require('./routes/experiences');
 const skillRoutes = require('./routes/skills');
 const contactRoutes = require('./routes/contacts');
 const aboutRoutes = require('./routes/about');
+const newsletterRoutes = require('./routes/newsletter');
 
 const app = express();
 
@@ -72,6 +73,7 @@ app.use('/api/experiences', experienceRoutes);
 app.use('/api/skills', skillRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/about', aboutRoutes);
+app.use('/api/newsletter', newsletterRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {
