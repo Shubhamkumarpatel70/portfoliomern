@@ -11,10 +11,10 @@ import {
   Divider,
   IconButton,
   useTheme,
-  useMediaQuery,
   Grid,
   Link
 } from '@mui/material';
+import { useMediaQuery } from '@mui/material';
 import { 
   Send as SendIcon,
   Email as EmailIcon,
