@@ -15,15 +15,18 @@ import {
   TextField,
   FormControlLabel,
   Checkbox,
-  useTheme
+  useTheme,
+  useMediaQuery,
+  IconButton
 } from '@mui/material';
 import {
   LocationOn as LocationIcon,
   CalendarToday as CalendarIcon,
   Add as AddIcon,
-  Edit as EditIcon
+  Edit as EditIcon,
+  Work as WorkIcon
 } from '@mui/icons-material';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import { api } from '../api';
@@ -44,6 +47,8 @@ const Experience = () => {
   });
   const { isAuthenticated, user } = useAuth();
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
   // Check if user is admin
   const isAdmin = isAuthenticated && user?.role === 'admin';
@@ -131,20 +136,52 @@ const Experience = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-        <Typography>Loading experiences...</Typography>
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '60vh',
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)'
+      }}>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              color: '#cbd5e1',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1
+            }}
+          >
+            <motion.span
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            >
+              ⏳
+            </motion.span>
+            Loading experiences...
+          </Typography>
+        </motion.div>
       </Box>
     );
   }
 
   return (
-    <Box sx={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)', minHeight: '100vh' }}>
+    <Box sx={{ 
+      background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)', 
+      minHeight: '100vh',
+      overflow: 'hidden'
+    }}>
       {/* Hero Section */}
       <Box
         sx={{
           background: 'transparent',
           color: 'white',
-          py: { xs: 6, md: 8 },
+          py: { xs: 4, md: 8 },
           textAlign: 'center',
           position: 'relative',
           overflow: 'hidden',
@@ -167,7 +204,7 @@ const Experience = () => {
             transition={{ duration: 0.8 }}
           >
             <Typography 
-              variant="h2" 
+              variant={isMobile ? "h3" : "h2"} 
               component="h1" 
               gutterBottom 
               sx={{ 
@@ -176,25 +213,30 @@ const Experience = () => {
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-                textShadow: '0 4px 8px rgba(0,0,0,0.1)'
+                textShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                px: isMobile ? 1 : 0,
+                fontSize: { xs: '2.5rem', sm: '3rem', md: '3.75rem' }
               }}
             >
               Professional Experience
             </Typography>
             <Typography 
-              variant="h5" 
+              variant={isMobile ? "body1" : "h5"} 
               sx={{ 
                 opacity: 0.9, 
                 maxWidth: 600, 
                 mx: 'auto',
                 fontWeight: 600,
-                color: '#cbd5e1'
+                color: '#cbd5e1',
+                px: isMobile ? 2 : 0,
+                mt: 1
               }}
             >
               My journey through the world of technology and development
             </Typography>
             {isAdmin && (
               <Chip 
+                icon={<WorkIcon />}
                 label="Admin Mode" 
                 color="success" 
                 size="small" 
@@ -202,7 +244,10 @@ const Experience = () => {
                   mt: 2, 
                   fontWeight: 600,
                   background: 'rgba(16, 185, 129, 0.9)',
-                  color: 'white'
+                  color: 'white',
+                  '& .MuiChip-icon': {
+                    color: 'white !important'
+                  }
                 }} 
               />
             )}
@@ -210,32 +255,35 @@ const Experience = () => {
         </Container>
       </Box>
 
-      <Container maxWidth="lg" sx={{ py: 10 }}>
+      <Container maxWidth="lg" sx={{ py: { xs: 6, md: 10 }, px: { xs: 2, sm: 3 } }}>
         {/* Add Experience Button */}
         {isAdmin ? (
-          <Box sx={{ mb: 6, textAlign: 'right' }}>
-            <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              onClick={() => handleOpenDialog()}
-              sx={{
-                background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                fontWeight: 600,
-                px: 4,
-                py: 1.5,
-                '&:hover': {
-                  background: 'linear-gradient(135deg, #5b21b6, #7c3aed)',
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 8px 25px rgba(99, 102, 241, 0.3)'
-                },
-                transition: 'all 0.3s ease'
-              }}
-            >
-              Add Experience
-            </Button>
+          <Box sx={{ mb: 6, textAlign: { xs: 'center', sm: 'right' } }}>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={() => handleOpenDialog()}
+                sx={{
+                  background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                  fontWeight: 600,
+                  px: 4,
+                  py: 1.5,
+                  borderRadius: 2,
+                  '&:hover': {
+                    background: 'linear-gradient(135deg, #5b21b6, #7c3aed)',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 8px 25px rgba(99, 102, 241, 0.3)'
+                  },
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                Add Experience
+              </Button>
+            </motion.div>
           </Box>
         ) : isAuthenticated && (
-          <Box sx={{ mb: 6, textAlign: 'right' }}>
+          <Box sx={{ mb: 6, textAlign: { xs: 'center', sm: 'right' } }}>
             <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
               Admin access required to add experiences
             </Typography>
@@ -244,132 +292,165 @@ const Experience = () => {
 
         {/* Experience Timeline */}
         {Array.isArray(experiences) && experiences.length > 0 ? (
-          <Box>
-            {experiences.map((experience, index) => (
-              <motion.div
-                key={experience._id}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
-                viewport={{ once: true }}
-              >
-                <Card
-                  sx={{
-                    mb: 4,
-                    position: 'relative',
-                    background: 'rgba(255,255,255,0.06)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255,255,255,0.12)',
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.25)',
-                    transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease',
-                    '&:hover': {
-                      transform: 'translateY(-6px)',
-                      boxShadow: '0 24px 56px rgba(0,0,0,0.45)',
-                      borderColor: 'rgba(129,140,248,0.35)',
-                      '& .timeline-dot': {
-                        transform: 'scale(1.2)',
-                        boxShadow: '0 0 24px rgba(99, 102, 241, 0.65)'
-                      }
-                    },
-                    '&:before': {
-                      content: '""',
-                      position: 'absolute',
-                      left: { xs: 20, md: 40 },
-                      top: 60,
-                      bottom: -20,
-                      width: 3,
-                      background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                      opacity: index === experiences.length - 1 ? 0 : 0.6,
-                      borderRadius: 2
-                    }
-                  }}
+          <Box sx={{ position: 'relative' }}>
+            {/* Vertical timeline line */}
+            <Box
+              sx={{
+                position: 'absolute',
+                left: { xs: 16, md: 36 },
+                top: 40,
+                bottom: 0,
+                width: 3,
+                background: 'linear-gradient(to bottom, #667eea, #764ba2, transparent)',
+                opacity: 0.6,
+                borderRadius: 2,
+                display: { xs: 'none', sm: 'block' }
+              }}
+            />
+            
+            <AnimatePresence>
+              {experiences.map((experience, index) => (
+                <motion.div
+                  key={experience._id}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -50 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true, margin: "-50px" }}
                 >
-                  <CardContent sx={{ pl: { xs: 6, md: 8 }, p: 4 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-                      {/* Timeline Dot */}
-                      <Box
-                        className="timeline-dot"
-                        sx={{
-                          position: 'absolute',
-                          left: { xs: 16, md: 36 },
-                          top: 24,
-                          width: 16,
-                          height: 16,
-                          borderRadius: '50%',
-                          background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                          border: '4px solid white',
-                          boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
-                          zIndex: 1,
-                          transition: 'all 0.3s ease'
-                        }}
-                      />
-                      
-                      {/* Content */}
-                      <Box sx={{ flex: 1 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
-                          <Box>
-                            <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 800, color: '#e2e8f0' }}>
-                              {experience.title}
-                            </Typography>
-                            <Typography variant="h6" gutterBottom sx={{ fontWeight: 700, color: '#93c5fd' }}>
-                              {experience.company}
-                            </Typography>
+                  <Card
+                    sx={{
+                      mb: 4,
+                      position: 'relative',
+                      background: 'rgba(255,255,255,0.06)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                      boxShadow: '0 10px 30px rgba(0,0,0,0.25)',
+                      transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease',
+                      borderRadius: 3,
+                      overflow: 'visible',
+                      '&:hover': {
+                        transform: 'translateY(-6px)',
+                        boxShadow: '0 24px 56px rgba(0,0,0,0.45)',
+                        borderColor: 'rgba(129,140,248,0.35)',
+                        '& .timeline-dot': {
+                          transform: 'scale(1.2)',
+                          boxShadow: '0 0 24px rgba(99, 102, 241, 0.65)'
+                        }
+                      }
+                    }}
+                  >
+                    <CardContent sx={{ 
+                      pl: { xs: 5, sm: 6, md: 8 }, 
+                      pr: { xs: 2, sm: 4 },
+                      py: 4,
+                      '&:last-child': { pb: 4 }
+                    }}>
+                      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+                        {/* Timeline Dot */}
+                        <Box
+                          className="timeline-dot"
+                          sx={{
+                            position: 'absolute',
+                            left: { xs: 12, sm: 14, md: 32 },
+                            top: 32,
+                            width: 16,
+                            height: 16,
+                            borderRadius: '50%',
+                            background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                            border: '4px solid #1e293b',
+                            boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
+                            zIndex: 2,
+                            transition: 'all 0.3s ease'
+                          }}
+                        />
+                        
+                        {/* Content */}
+                        <Box sx={{ flex: 1 }}>
+                          <Box sx={{ 
+                            display: 'flex', 
+                            justifyContent: 'space-between', 
+                            alignItems: { xs: 'flex-start', sm: 'center' },
+                            flexDirection: { xs: 'column', sm: 'row' },
+                            gap: { xs: 2, sm: 0 },
+                            mb: 3 
+                          }}>
+                            <Box>
+                              <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 800, color: '#e2e8f0' }}>
+                                {experience.title}
+                              </Typography>
+                              <Typography variant="h6" gutterBottom sx={{ fontWeight: 700, color: '#93c5fd' }}>
+                                {experience.company}
+                              </Typography>
+                            </Box>
+                            {isAdmin && (
+                              <IconButton
+                                onClick={() => handleOpenDialog(experience)}
+                                sx={{
+                                  color: theme.palette.primary.main,
+                                  background: 'rgba(99, 102, 241, 0.1)',
+                                  '&:hover': {
+                                    background: 'rgba(99, 102, 241, 0.2)'
+                                  }
+                                }}
+                              >
+                                <EditIcon fontSize={isMobile ? "small" : "medium"} />
+                              </IconButton>
+                            )}
                           </Box>
-                          {isAdmin && (
-                            <Button
-                              size="small"
-                              startIcon={<EditIcon />}
-                              onClick={() => handleOpenDialog(experience)}
-                              sx={{
-                                color: theme.palette.primary.main,
-                                fontWeight: 600,
-                                '&:hover': {
-                                  bgcolor: 'rgba(99, 102, 241, 0.1)'
+                          
+                          <Box sx={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            mb: 3, 
+                            gap: { xs: 2, sm: 3 }, 
+                            flexWrap: 'wrap' 
+                          }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <LocationIcon fontSize="small" sx={{ color: '#94a3b8' }} />
+                              <Typography variant="body2" sx={{ color: '#94a3b8', fontWeight: 500 }}>
+                                {experience.location}
+                              </Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <CalendarIcon fontSize="small" sx={{ color: '#94a3b8' }} />
+                              <Typography variant="body2" sx={{ color: '#94a3b8', fontWeight: 500 }}>
+                                {experience.current 
+                                  ? `${formatDate(experience.from)} - Present`
+                                  : `${formatDate(experience.from)} - ${formatDate(experience.to)}`
                                 }
-                              }}
-                            >
-                              Edit
-                            </Button>
+                              </Typography>
+                            </Box>
+                            {experience.current && (
+                              <Chip 
+                                label="Current" 
+                                color="success" 
+                                size="small" 
+                                sx={{ 
+                                  fontWeight: 600,
+                                  background: 'rgba(16, 185, 129, 0.9)',
+                                  color: 'white'
+                                }}
+                              />
+                            )}
+                          </Box>
+                          
+                          {experience.description && (
+                            <Typography variant="body1" sx={{ 
+                              lineHeight: 1.7, 
+                              color: '#cbd5e1',
+                              textAlign: 'justify'
+                            }}>
+                              {experience.description}
+                            </Typography>
                           )}
                         </Box>
-                        
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, gap: 3, flexWrap: 'wrap' }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <LocationIcon fontSize="small" color="action" />
-                            <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
-                              {experience.location}
-                            </Typography>
-                          </Box>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <CalendarIcon fontSize="small" color="action" />
-                            <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
-                              {experience.current 
-                                ? `${formatDate(experience.from)} - Present`
-                                : `${formatDate(experience.from)} - ${formatDate(experience.to)}`
-                              }
-                            </Typography>
-                          </Box>
-                          {experience.current && (
-                            <Chip 
-                              label="Current" 
-                              color="success" 
-                              size="small" 
-                              sx={{ fontWeight: 600 }}
-                            />
-                          )}
-                        </Box>
-                        
-                        {experience.description && (
-                          <Typography variant="body1" sx={{ lineHeight: 1.7, color: '#cbd5e1' }}>
-                            {experience.description}
-                          </Typography>
-                        )}
                       </Box>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </Box>
         ) : (
           <Box sx={{ textAlign: 'center', py: 10 }}>
@@ -383,38 +464,57 @@ const Experience = () => {
               }
             </Typography>
             {isAdmin && (
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                onClick={() => handleOpenDialog()}
-                sx={{
-                  background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                  fontWeight: 600,
-                  px: 4,
-                  py: 1.5,
-                  '&:hover': {
-                    background: 'linear-gradient(135deg, #5b21b6, #7c3aed)',
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 8px 25px rgba(99, 102, 241, 0.3)'
-                  },
-                  transition: 'all 0.3s ease'
-                }}
-              >
-                Add First Experience
-              </Button>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  onClick={() => handleOpenDialog()}
+                  sx={{
+                    background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                    fontWeight: 600,
+                    px: 4,
+                    py: 1.5,
+                    borderRadius: 2,
+                    '&:hover': {
+                      background: 'linear-gradient(135deg, #5b21b6, #7c3aed)',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 8px 25px rgba(99, 102, 241, 0.3)'
+                    },
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  Add First Experience
+                </Button>
+              </motion.div>
             )}
           </Box>
         )}
       </Container>
 
       {/* Add/Edit Experience Dialog */}
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ fontWeight: 600 }}>
+      <Dialog 
+        open={openDialog} 
+        onClose={handleCloseDialog} 
+        maxWidth="sm" 
+        fullWidth
+        fullScreen={isMobile}
+        PaperProps={{
+          sx: { borderRadius: isMobile ? 0 : 2 }
+        }}
+      >
+        <DialogTitle sx={{ 
+          fontWeight: 600,
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+          color: 'white'
+        }}>
           {editingExperience ? 'Edit Experience' : 'Add New Experience'}
         </DialogTitle>
         <form onSubmit={handleSubmit}>
-          <DialogContent>
-            <Grid container spacing={3}>
+          <DialogContent sx={{ 
+            bgcolor: '#1e293b',
+            py: 3 
+          }}>
+            <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
                   name="title"
@@ -423,7 +523,16 @@ const Experience = () => {
                   onChange={handleInputChange}
                   fullWidth
                   required
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                  sx={{ 
+                    '& .MuiOutlinedInput-root': { 
+                      borderRadius: 2,
+                      bgcolor: '#0f172a',
+                      color: 'white'
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: '#94a3b8'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -434,7 +543,16 @@ const Experience = () => {
                   onChange={handleInputChange}
                   fullWidth
                   required
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                  sx={{ 
+                    '& .MuiOutlinedInput-root': { 
+                      borderRadius: 2,
+                      bgcolor: '#0f172a',
+                      color: 'white'
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: '#94a3b8'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -444,10 +562,19 @@ const Experience = () => {
                   value={formData.location}
                   onChange={handleInputChange}
                   fullWidth
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                  sx={{ 
+                    '& .MuiOutlinedInput-root': { 
+                      borderRadius: 2,
+                      bgcolor: '#0f172a',
+                      color: 'white'
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: '#94a3b8'
+                    }
+                  }}
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   name="from"
                   label="From Date"
@@ -457,10 +584,19 @@ const Experience = () => {
                   fullWidth
                   required
                   InputLabelProps={{ shrink: true }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                  sx={{ 
+                    '& .MuiOutlinedInput-root': { 
+                      borderRadius: 2,
+                      bgcolor: '#0f172a',
+                      color: 'white'
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: '#94a3b8'
+                    }
+                  }}
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   name="to"
                   label="To Date"
@@ -470,7 +606,16 @@ const Experience = () => {
                   fullWidth
                   disabled={formData.current}
                   InputLabelProps={{ shrink: true }}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                  sx={{ 
+                    '& .MuiOutlinedInput-root': { 
+                      borderRadius: 2,
+                      bgcolor: '#0f172a',
+                      color: 'white'
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: '#94a3b8'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -480,10 +625,11 @@ const Experience = () => {
                       name="current"
                       checked={formData.current}
                       onChange={handleInputChange}
-                      color="primary"
+                      sx={{ color: '#818CF8' }}
                     />
                   }
                   label="I currently work here"
+                  sx={{ color: '#cbd5e1' }}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -495,29 +641,51 @@ const Experience = () => {
                   fullWidth
                   multiline
                   rows={4}
-                  sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                  sx={{ 
+                    '& .MuiOutlinedInput-root': { 
+                      borderRadius: 2,
+                      bgcolor: '#0f172a',
+                      color: 'white'
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: '#94a3b8'
+                    }
+                  }}
                 />
               </Grid>
             </Grid>
           </DialogContent>
-          <DialogActions sx={{ p: 3 }}>
-            <Button onClick={handleCloseDialog} sx={{ fontWeight: 600 }}>
-              Cancel
-            </Button>
+          <DialogActions sx={{ 
+            p: 3, 
+            bgcolor: '#1e293b',
+            borderTop: '1px solid rgba(255,255,255,0.1)'
+          }}>
             <Button 
-              type="submit" 
-              variant="contained"
-              sx={{
-                background: 'linear-gradient(135deg, #667eea, #764ba2)',
+              onClick={handleCloseDialog} 
+              sx={{ 
                 fontWeight: 600,
-                px: 3,
-                '&:hover': {
-                  background: 'linear-gradient(135deg, #5b21b6, #7c3aed)'
-                }
+                color: '#94a3b8'
               }}
             >
-              {editingExperience ? 'Update' : 'Add'}
+              Cancel
             </Button>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button 
+                type="submit" 
+                variant="contained"
+                sx={{
+                  background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                  fontWeight: 600,
+                  px: 3,
+                  borderRadius: 2,
+                  '&:hover': {
+                    background: 'linear-gradient(135deg, #5b21b6, #7c3aed)'
+                  }
+                }}
+              >
+                {editingExperience ? 'Update' : 'Add'}
+              </Button>
+            </motion.div>
           </DialogActions>
         </form>
       </Dialog>
@@ -525,4 +693,4 @@ const Experience = () => {
   );
 };
 
-export default Experience; 
+export default Experience;

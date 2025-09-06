@@ -16,8 +16,9 @@ import {
   Paper,
   IconButton,
   Tooltip,
-  Skeleton,
-  Fab
+  Fab,
+  alpha,
+  Skeleton
 } from '@mui/material';
 import {
   Code as CodeIcon,
@@ -26,19 +27,13 @@ import {
   Email as EmailIcon,
   Star as StarIcon,
   ArrowForward as ArrowForwardIcon,
-  TrendingUp as TrendingUpIcon,
-  Lightbulb as LightbulbIcon,
-  Speed as SpeedIcon,
-  Security as SecurityIcon,
-  Brush as BrushIcon,
   Work as WorkIcon,
-  School as SchoolIcon,
+  Speed as SpeedIcon,
   Psychology as PsychologyIcon,
   Launch as LaunchIcon,
   KeyboardArrowUp as KeyboardArrowUpIcon
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
-import axios from 'axios';
 import { api } from '../api';
 
 const Home = () => {
@@ -49,6 +44,7 @@ const Home = () => {
     if (url.startsWith('/uploads/')) return `${API_BASE_URL}${url}`;
     return url;
   };
+  
   const [featuredProjects, setFeaturedProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [skills, setSkills] = useState([]);
@@ -57,6 +53,7 @@ const Home = () => {
   const [about, setAbout] = useState(null);
   const [aboutLoading, setAboutLoading] = useState(true);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -155,96 +152,136 @@ const Home = () => {
     { title: 'UI/UX Design', icon: <CodeIcon />, color: '#8b5cf6' }
   ];
 
+  // Animation variants
+  const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+  };
+
+  const staggerChildren = {
+    visible: { transition: { staggerChildren: 0.1 } }
+  };
+
   return (
-    <Box sx={{ background: '#0f172a', minHeight: '100vh' }}>
+    <Box sx={{ 
+      background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
+      minHeight: '100vh',
+      overflow: 'hidden',
+      position: 'relative',
+      '&::before': {
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'radial-gradient(circle at 20% 80%, rgba(56, 189, 248, 0.07) 0%, transparent 40%)',
+        pointerEvents: 'none'
+      }
+    }}>
       {/* Hero Section */}
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
-          color: '#e2e8f0',
-          py: { xs: 6, sm: 8, md: 12 },
-          minHeight: { xs: '85vh', sm: '88vh' },
+          minHeight: { xs: '90vh', sm: '95vh', md: '100vh' },
           display: 'flex',
           alignItems: 'center',
           position: 'relative',
           overflow: 'hidden',
+          py: { xs: 4, sm: 6, md: 0 },
           '&::before': {
             content: '""',
             position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.03\'%3E%3Ccircle cx=\'30\' cy=\'30\' r=\'2\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
-            opacity: 0.5
+            top: '-10%',
+            right: '-10%',
+            width: '60%',
+            height: '60%',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%)',
+            pointerEvents: 'none'
+          },
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            bottom: '-10%',
+            left: '-10%',
+            width: '40%',
+            height: '40%',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(129, 140, 248, 0.1) 0%, transparent 70%)',
+            pointerEvents: 'none'
           }
         }}
       >
-        <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
-          <Grid container spacing={4} alignItems="center" direction={{ xs: 'column', sm: 'row' }} sx={{ flexWrap: { xs: 'wrap', sm: 'nowrap' } }}>
-            <Grid item xs={12} sm={7}>
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+          <Grid container spacing={4} alignItems="center" justifyContent="center">
+            <Grid item xs={12} md={7} sx={{ order: { xs: 2, md: 1 } }}>
               <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8 }}
+                initial="hidden"
+                animate="visible"
+                variants={fadeIn}
               >
                 <Typography
                   variant={isMobile ? 'h4' : 'h2'}
                   component="h1"
                   gutterBottom
                   sx={{ 
-                    fontWeight: 900,
-                    mb: 1.5,
-                    fontSize: { xs: '1.8rem', sm: '2.4rem', md: '3rem', lg: '3.6rem' },
-                    lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 },
+                    fontWeight: 800,
+                    mb: 2,
+                    fontSize: { 
+                      xs: '2rem', 
+                      sm: '2.5rem', 
+                      md: '3rem', 
+                      lg: '3.5rem' 
+                    },
+                    lineHeight: 1.2,
                     background: 'linear-gradient(90deg, #38BDF8 0%, #818CF8 100%)',
                     backgroundClip: 'text',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
-                    textShadow: '0 6px 14px rgba(0,0,0,0.25)',
-                    wordBreak: 'break-word'
+                    textAlign: { xs: 'center', md: 'left' }
                   }}
                 >
                   {aboutLoading ? 'Loading…' : `Hi, I'm ${about?.name || 'Your Name'}`}
                 </Typography>
+                
                 <Typography
                   variant="h5"
                   component="h2"
                   gutterBottom
                   sx={{ 
                     mb: 2,
-                    fontSize: { xs: '1rem', sm: '1.1rem', md: '1.25rem' },
-                    opacity: 0.95,
-                    fontWeight: 700,
+                    fontSize: { xs: '1.1rem', sm: '1.25rem', md: '1.5rem' },
                     color: '#94a3b8',
-                    lineHeight: { xs: 1.3, sm: 1.4 }
+                    fontWeight: 600,
+                    textAlign: { xs: 'center', md: 'left' }
                   }}
                 >
                   Full Stack Developer
                 </Typography>
+                
                 <Typography
-                  variant="h6"
+                  variant="body1"
                   sx={{ 
                     mb: 4, 
-                    opacity: 0.9, 
-                    lineHeight: { xs: 1.6, sm: 1.7 },
                     color: '#cbd5e1',
-                    maxWidth: 500,
-                    fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
-                    textAlign: { xs: 'left', sm: 'left' }
+                    fontSize: { xs: '1rem', md: '1.1rem' },
+                    lineHeight: 1.7,
+                    maxWidth: 600,
+                    textAlign: { xs: 'center', md: 'left' },
+                    mx: { xs: 'auto', md: 0 }
                   }}
                 >
                   {aboutLoading
                     ? 'Building delightful digital experiences with a focus on quality and impact.'
                     : (about?.bio || 'I create beautiful, functional, and user-centered digital experiences. Passionate about clean code and innovative solutions that make a difference.')}
                 </Typography>
+                
                 <Box sx={{ 
                   display: 'flex', 
-                  gap: { xs: 1.5, sm: 2 }, 
+                  gap: 2, 
                   flexWrap: 'wrap', 
                   mb: 4,
-                  flexDirection: { xs: 'column', sm: 'row' },
-                  alignItems: { xs: 'stretch', sm: 'flex-start' }
+                  justifyContent: { xs: 'center', md: 'flex-start' }
                 }}>
                   <Button
                     component={Link}
@@ -255,79 +292,52 @@ const Home = () => {
                     sx={{
                       background: 'linear-gradient(90deg, #38BDF8 0%, #818CF8 100%)',
                       color: '#0F172A',
-                      fontWeight: 800,
-                      px: { xs: 3, sm: 4 },
-                      py: { xs: 1.2, sm: 1.5 },
-                      fontSize: { xs: '1rem', sm: '1.1rem' },
-                      borderRadius: 3,
-                      boxShadow: '0 8px 18px rgba(56,189,248,0.25)',
+                      fontWeight: 700,
+                      px: 4,
+                      py: 1.5,
+                      borderRadius: 2,
+                      boxShadow: '0 4px 14px rgba(56, 189, 248, 0.4)',
                       '&:hover': {
-                        background: 'linear-gradient(90deg, #818CF8 0%, #38BDF8 100%)',
+                        boxShadow: '0 6px 20px rgba(56, 189, 248, 0.6)',
                         transform: 'translateY(-2px)'
                       },
                       transition: 'all 0.3s ease',
-                      width: { xs: '100%', sm: 'auto' }
+                      minWidth: { xs: '100%', sm: 'auto' }
                     }}
                   >
                     View My Work
                   </Button>
+                  
                   <Button
                     component={Link}
                     to="/contact"
-                    variant="contained"
-                    size="large"
-                    sx={{
-                      background: 'linear-gradient(90deg, #22c55e 0%, #38BDF8 100%)',
-                      color: '#0F172A',
-                      fontWeight: 800,
-                      px: { xs: 3, sm: 4 },
-                      py: { xs: 1.2, sm: 1.5 },
-                      fontSize: { xs: '1rem', sm: '1.1rem' },
-                      borderRadius: 3,
-                      boxShadow: '0 8px 18px rgba(34,197,94,0.25)',
-                      '&:hover': {
-                        background: 'linear-gradient(90deg, #38BDF8 0%, #22c55e 100%)',
-                        transform: 'translateY(-2px)'
-                      },
-                      transition: 'all 0.3s ease',
-                      width: { xs: '100%', sm: 'auto' }
-                    }}
-                  >
-                    Hire Me
-                  </Button>
-                  <Button
-                    component={Link}
-                    to="/about"
                     variant="outlined"
                     size="large"
                     sx={{
-                      borderColor: 'rgba(148, 163, 184, 0.5)',
+                      borderColor: 'rgba(255, 255, 255, 0.3)',
                       color: '#e2e8f0',
-                      fontWeight: 700,
-                      px: { xs: 3, sm: 4 },
-                      py: { xs: 1.2, sm: 1.5 },
-                      fontSize: { xs: '1rem', sm: '1.1rem' },
-                      borderRadius: 3,
+                      fontWeight: 600,
+                      px: 4,
+                      py: 1.5,
+                      borderRadius: 2,
                       '&:hover': {
                         borderColor: '#e2e8f0',
-                        bgcolor: 'rgba(255,255,255,0.06)',
-                        color: '#fff',
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
                         transform: 'translateY(-2px)'
                       },
                       transition: 'all 0.3s ease',
-                      width: { xs: '100%', sm: 'auto' }
+                      minWidth: { xs: '100%', sm: 'auto' }
                     }}
                   >
-                    About Me
+                    Contact Me
                   </Button>
                 </Box>
                 
                 {/* Social Links */}
                 <Box sx={{ 
                   display: 'flex', 
-                  gap: { xs: 1, sm: 1.5 }, 
-                  justifyContent: { xs: 'center', sm: 'flex-start' },
-                  flexWrap: 'wrap'
+                  gap: 1.5, 
+                  justifyContent: { xs: 'center', md: 'flex-start' }
                 }}>
                   {socialLinks.map((social, index) => (
                     <motion.div
@@ -344,13 +354,11 @@ const Home = () => {
                           rel="noopener noreferrer"
                           sx={{
                             color: '#e2e8f0',
-                            bgcolor: 'rgba(255,255,255,0.06)',
-                            border: '1px solid rgba(148,163,184,0.3)',
+                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                            border: '1px solid rgba(255, 255, 255, 0.1)',
                             '&:hover': {
-                              bgcolor: 'rgba(255,255,255,0.12)',
-                              color: '#fff',
-                              transform: 'translateY(-2px)',
-                              boxShadow: '0 8px 18px rgba(2,6,23,0.35)'
+                              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                              transform: 'translateY(-2px)'
                             },
                             transition: 'all 0.3s ease'
                           }}
@@ -363,48 +371,56 @@ const Home = () => {
                 </Box>
               </motion.div>
             </Grid>
-            <Grid item xs={12} sm={5}>
+            
+            <Grid item xs={12} md={5} sx={{ order: { xs: 1, md: 2 }, textAlign: 'center' }}>
               <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                style={{ textAlign: 'center' }}
               >
-                <Box component={motion.div} animate={{ y: [0, -8, 0] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }} sx={{ 
+                <Box sx={{ 
                   position: 'relative', 
-                  width: { xs: 140, sm: 180, md: 220, lg: 240 }, 
-                  height: { xs: 140, sm: 180, md: 220, lg: 240 }, 
-                  mx: { xs: 'auto', sm: 0 }, 
-                  mb: 0,
-                  mt: { xs: 3, sm: 0 }
+                  width: { xs: 200, sm: 280, md: 320 }, 
+                  height: { xs: 200, sm: 280, md: 320 }, 
+                  mx: 'auto',
+                  mb: { xs: 4, md: 0 }
                 }}>
-                  <Box component={motion.div} animate={{ rotate: 360 }} transition={{ duration: 14, repeat: Infinity, ease: 'linear' }} sx={{
-                    position: 'absolute', inset: -10, borderRadius: '50%',
-                    background: 'conic-gradient(from 0deg, #38BDF8, #818CF8, #38BDF8)',
-                    filter: 'blur(10px)', opacity: 0.6
-                  }} />
-                  <motion.div whileHover={{ scale: 1.03 }} transition={{ type: 'spring', stiffness: 220, damping: 16 }}>
+                  <Box 
+                    component={motion.div}
+                    animate={{ 
+                      rotate: 360,
+                      scale: [1, 1.05, 1]
+                    }}
+                    transition={{ 
+                      rotate: { duration: 20, repeat: Infinity, ease: "linear" },
+                      scale: { duration: 4, repeat: Infinity }
+                    }}
+                    sx={{
+                      position: 'absolute',
+                      top: -10,
+                      left: -10,
+                      right: -10,
+                      bottom: -10,
+                      borderRadius: '50%',
+                      border: '2px solid rgba(56, 189, 248, 0.3)',
+                      animation: 'pulse 3s infinite'
+                    }}
+                  />
+                  
                   <Avatar
                     src={getImageUrl(about?.photoUrl || about?.user?.avatar || '')}
                     alt={about?.name || 'Profile'}
                     sx={{
-                      width: '100%', height: '100%',
-                      mx: 'auto',
-                      border: '3px solid rgba(255,255,255,0.2)',
-                      fontSize: { xs: '2.5rem', md: '4rem' },
-                      boxShadow: '0 20px 40px rgba(0,0,0,0.35)',
-                      bgcolor: 'primary.main',
-                      color: 'white',
-                      '& .MuiAvatar-img': {
-                        objectFit: 'cover',
-                        width: '100%',
-                        height: '100%',
-                      }
+                      width: '100%',
+                      height: '100%',
+                      border: '4px solid rgba(255, 255, 255, 0.1)',
+                      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
+                      backgroundColor: 'primary.main',
+                      fontSize: '4rem'
                     }}
                   >
-                    {about?.name ? about.name.charAt(0).toUpperCase() : <CodeIcon sx={{ fontSize: 'inherit' }} />}
+                    {about?.name ? about.name.charAt(0).toUpperCase() : <CodeIcon />}
                   </Avatar>
-                  </motion.div>
                 </Box>
               </motion.div>
             </Grid>
@@ -413,57 +429,49 @@ const Home = () => {
       </Box>
 
       {/* Stats Section */}
-      <Box sx={{ py: { xs: 6, sm: 8 }, background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' }}>
-        <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+      <Box sx={{ py: 8, position: 'relative' }}>
+        <Container maxWidth="lg">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true }}
+            variants={{
+              visible: { transition: { staggerChildren: 0.1 } }
+            }}
           >
-            <Grid container spacing={{ xs: 2, sm: 3 }}>
+            <Grid container spacing={3}>
               {stats.map((stat, index) => (
                 <Grid item xs={6} sm={6} md={3} key={stat.label}>
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                    viewport={{ once: true }}
-                  >
+                  <motion.div variants={fadeIn}>
                     <Paper
                       elevation={0}
                       sx={{
-                        minHeight: { xs: 120, sm: 140, md: 180 },
-                        width: '100%',
-                        maxWidth: 420,
-                        mx: 'auto',
-                        p: { xs: 2, sm: 2.5, md: 4 },
-                        borderRadius: { xs: 2, sm: 3, md: 4 },
+                        p: 3,
                         textAlign: 'center',
-                        background: 'rgba(255, 255, 255, 0.05)',
+                        background: 'rgba(255, 255, 255, 0.03)',
                         backdropFilter: 'blur(10px)',
                         border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: 2,
+                        height: '100%',
                         transition: 'all 0.3s ease',
                         '&:hover': {
                           transform: 'translateY(-5px)',
-                          boxShadow: '0 12px 30px rgba(0,0,0,0.3)',
-                          background: 'rgba(255, 255, 255, 0.08)'
+                          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
+                          background: 'rgba(255, 255, 255, 0.05)'
                         }
                       }}
                     >
                       <Box
                         sx={{
-                          display: 'flex',
+                          display: 'inline-flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          width: { xs: 50, sm: 60 },
-                          height: { xs: 50, sm: 60 },
+                          width: 60,
+                          height: 60,
                           borderRadius: '50%',
-                          background: `radial-gradient(circle at 60% 40%, ${stat.color}cc 60%, #222b 100%)`,
-                          mx: 'auto',
-                          mb: { xs: 1.5, sm: 2 },
-                          color: 'white',
-                          boxShadow: `0 8px 25px ${stat.color}40`
+                          background: `linear-gradient(135deg, ${stat.color} 0%, ${alpha(stat.color, 0.7)} 100%)`,
+                          mb: 2,
+                          color: 'white'
                         }}
                       >
                         {stat.icon}
@@ -471,10 +479,9 @@ const Home = () => {
                       <Typography
                         variant="h4"
                         sx={{
-                          fontWeight: 800,
+                          fontWeight: 700,
                           color: 'white',
-                          mb: 1,
-                          fontSize: { xs: '1.5rem', sm: '2rem', md: '2.125rem' }
+                          mb: 1
                         }}
                       >
                         {stat.value}
@@ -483,9 +490,7 @@ const Home = () => {
                         variant="body2"
                         sx={{
                           color: '#cbd5e1',
-                          fontWeight: 600,
-                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                          lineHeight: { xs: 1.2, sm: 1.4 }
+                          fontWeight: 500
                         }}
                       >
                         {stat.label}
@@ -499,233 +504,185 @@ const Home = () => {
         </Container>
       </Box>
 
-      {/* Expertise Areas */}
-      <Box sx={{ py: { xs: 6, sm: 8 }, background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)' }}>
-        <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+      {/* Skills Section */}
+      <Box sx={{ py: 8, background: 'rgba(15, 23, 42, 0.7)' }}>
+        <Container maxWidth="lg">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true }}
+            variants={fadeIn}
           >
             <Typography
-              variant="h2"
+              variant="h3"
               align="center"
               sx={{
-                fontWeight: 800,
-                mb: { xs: 3, sm: 4, md: 5 },
-                color: 'white',
-                letterSpacing: 1.5,
-                fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem', lg: '3rem' },
-                lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
+                fontWeight: 700,
+                mb: 6,
+                color: 'white'
               }}
             >
-              Areas of Expertise
+              Skills & Technologies
             </Typography>
-            <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
-              {expertiseAreas.map((area, index) => (
-                <Grid item xs={12} sm={6} md={3} key={area.title}>
+            
+            {skillsLoading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 1 }}>
+                {[...Array(12)].map((_, i) => (
+                  <Skeleton 
+                    key={i} 
+                    variant="rounded" 
+                    width={100} 
+                    height={40} 
+                    sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2 }}
+                  />
+                ))}
+              </Box>
+            ) : (
+              <Box sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: 1.5,
+                justifyContent: 'center',
+                maxWidth: 800,
+                mx: 'auto'
+              }}>
+                {skills.map((skill, index) => (
                   <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                    key={skill._id}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
                     viewport={{ once: true }}
                   >
-                    <Paper
-                      elevation={0}
+                    <Chip
+                      label={skill.name}
+                      variant={selectedSkill === skill._id ? "filled" : "outlined"}
+                      onClick={() => setSelectedSkill(selectedSkill === skill._id ? null : skill._id)}
                       sx={{
-                        minHeight: { xs: 120, sm: 140, md: 180 },
-                        width: '100%',
-                        maxWidth: 420,
-                        mx: 'auto',
-                        p: { xs: 2, sm: 2.5, md: 4 },
-                        borderRadius: { xs: 2, sm: 3, md: 4 },
-                        textAlign: 'center',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        backdropFilter: 'blur(10px)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                        transition: 'all 0.3s ease',
+                        borderRadius: 2,
+                        py: 2,
+                        fontWeight: 600,
+                        backgroundColor: selectedSkill === skill._id ? 'primary.main' : 'transparent',
+                        color: selectedSkill === skill._id ? '#0f172a' : '#e2e8f0',
+                        borderColor: selectedSkill === skill._id ? 'transparent' : 'rgba(255, 255, 255, 0.2)',
                         '&:hover': {
-                          transform: 'translateY(-5px)',
-                          boxShadow: '0 12px 30px rgba(0,0,0,0.3)',
-                          background: 'rgba(255, 255, 255, 0.08)'
-                        }
+                          backgroundColor: selectedSkill === skill._id ? 'primary.dark' : 'rgba(255, 255, 255, 0.1)'
+                        },
+                        transition: 'all 0.3s ease'
                       }}
-                    >
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          width: 60,
-                          height: 60,
-                          borderRadius: '50%',
-                          background: `radial-gradient(circle at 60% 40%, ${area.color}cc 60%, #222b 100%)`,
-                          mx: 'auto',
-                          mb: 2,
-                          color: 'white',
-                          boxShadow: `0 8px 25px ${area.color}40`
-                        }}
-                      >
-                        {area.icon}
-                      </Box>
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          fontWeight: 700,
-                          color: 'white'
-                        }}
-                      >
-                        {area.title}
-                      </Typography>
-                    </Paper>
+                    />
                   </motion.div>
-                </Grid>
-              ))}
-            </Grid>
+                ))}
+              </Box>
+            )}
           </motion.div>
         </Container>
       </Box>
 
-      {/* Skills Section */}
-      <Box sx={{ py: { xs: 6, sm: 8 }, background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' }}>
-        <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
-          <Typography
-            variant="h2"
-            align="center"
-            sx={{
-              fontWeight: 800,
-              mb: { xs: 3, sm: 4, md: 5 },
-              color: 'white',
-              letterSpacing: 1.5,
-              fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem', lg: '3rem' },
-              lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
-            }}
-          >
-            Skills & Technologies
-          </Typography>
-          {skillsLoading ? (
-            <Typography align="center" color="#cbd5e1">Loading skills...</Typography>
-          ) : (
-            <Box sx={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: { xs: 1, sm: 2 },
-              justifyContent: 'center',
-              mb: 2,
-              px: { xs: 1, sm: 0 }
-            }}>
-              {skills.map(skill => (
-                <Button
-                  key={skill._id}
-                  variant={selectedSkill === skill._id ? 'contained' : 'outlined'}
-                  onClick={() => setSelectedSkill(skill._id)}
-                  sx={{
-                    borderRadius: 2.5,
-                    px: { xs: 2, sm: 3, md: 4 },
-                    py: { xs: 0.8, sm: 1, md: 1.2 },
-                    fontWeight: 700,
-                    fontSize: { xs: '0.9rem', sm: '1rem', md: '1.15rem' },
-                    color: selectedSkill === skill._id ? theme.palette.primary.main : theme.palette.text.secondary,
-                    background: selectedSkill === skill._id ? theme.palette.accent.main : 'transparent',
-                    borderColor: selectedSkill === skill._id ? 'transparent' : 'rgba(255, 255, 255, 0.2)',
-                    boxShadow: selectedSkill === skill._id ? '0 4px 16px rgba(59, 130, 246, 0.4)' : 'none',
-                    transition: 'all 0.2s',
-                    '&:hover': {
-                      background: selectedSkill === skill._id ? theme.palette.primary.main : 'rgba(255, 255, 255, 0.1)',
-                      color: selectedSkill === skill._id ? theme.palette.primary.contrastText : 'white',
-                      boxShadow: '0 4px 16px rgba(59, 130, 246, 0.4)'
-                    }
-                  }}
-                >
-                  {skill.name}
-                </Button>
-              ))}
-            </Box>
-          )}
-        </Container>
-      </Box>
-
       {/* Featured Projects Section */}
-      <Box sx={{ py: { xs: 6, sm: 8 }, background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)' }}>
-        <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+      <Box sx={{ py: 8 }}>
+        <Container maxWidth="lg">
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true }}
+            variants={fadeIn}
           >
             <Typography
-              variant="h2"
-              component="h2"
-              textAlign="center"
-              gutterBottom
-              sx={{ 
-                mb: { xs: 3, sm: 4, md: 6 },
+              variant="h3"
+              align="center"
+              sx={{
                 fontWeight: 700,
-                color: 'white',
-                fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem', lg: '3rem' },
-                lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
+                mb: 6,
+                color: 'white'
               }}
             >
               Featured Projects
             </Typography>
-            
+
             {loading ? (
-              <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-                <Typography variant="h6" color="#cbd5e1">Loading featured projects...</Typography>
-              </Box>
+              <Grid container spacing={3}>
+                {[...Array(3)].map((_, index) => (
+                  <Grid item xs={12} sm={6} md={4} key={index}>
+                    <Skeleton 
+                      variant="rounded" 
+                      width="100%" 
+                      height={300} 
+                      sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2 }}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
             ) : featuredProjects.length > 0 ? (
-              <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
+              <Grid container spacing={3}>
                 {featuredProjects.map((project, index) => (
                   <Grid item xs={12} sm={6} md={4} key={project._id}>
                     <motion.div
-                      initial={{ opacity: 0, y: 30 }}
+                      initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: index * 0.2 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
                       viewport={{ once: true }}
                     >
                       <Card
                         sx={{
                           height: '100%',
-                          background: 'rgba(255, 255, 255, 0.05)',
+                          background: 'rgba(255, 255, 255, 0.03)',
                           backdropFilter: 'blur(10px)',
                           border: '1px solid rgba(255, 255, 255, 0.1)',
-                          boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                          borderRadius: 2,
                           transition: 'all 0.3s ease',
                           '&:hover': {
-                            transform: 'translateY(-10px)',
-                            boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
-                            background: 'rgba(255, 255, 255, 0.08)'
+                            transform: 'translateY(-5px)',
+                            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
+                            background: 'rgba(255, 255, 255, 0.05)'
                           }
                         }}
                       >
-                        <CardMedia
-                          component="img"
-                          height={{ xs: 160, sm: 180, md: 200 }}
-                          image={project.image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop'}
-                          alt={project.title}
-                          sx={{ objectFit: 'cover' }}
-                        />
-                        <CardContent sx={{ p: { xs: 2, sm: 2.5, md: 3 } }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                            <StarIcon sx={{ color: '#f59e0b', mr: 1, fontSize: { xs: '1.2rem', sm: '1.5rem' } }} />
-                            <Typography variant="h5" component="h3" sx={{ 
-                              fontWeight: 700, 
-                              color: 'white', 
-                              flex: 1,
-                              fontSize: { xs: '1.1rem', sm: '1.25rem', md: '1.5rem' },
-                              lineHeight: { xs: 1.3, sm: 1.4 }
-                            }}>
-                              {project.title}
-                            </Typography>
-                          </Box>
-                          <Typography variant="body2" sx={{ 
-                            mb: 2, 
-                            lineHeight: { xs: 1.5, sm: 1.6 }, 
-                            color: '#cbd5e1',
-                            fontSize: { xs: '0.8rem', sm: '0.875rem' }
+                        <Box sx={{ position: 'relative' }}>
+                          <CardMedia
+                            component="img"
+                            height="200"
+                            image={project.image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=250&fit=crop'}
+                            alt={project.title}
+                            sx={{
+                              objectFit: 'cover',
+                              borderTopLeftRadius: 2,
+                              borderTopRightRadius: 2
+                            }}
+                          />
+                          <Box sx={{
+                            position: 'absolute',
+                            top: 12,
+                            right: 12
                           }}>
+                            <StarIcon sx={{ color: '#f59e0b' }} />
+                          </Box>
+                        </Box>
+                        <CardContent sx={{ p: 3 }}>
+                          <Typography 
+                            variant="h6" 
+                            component="h3" 
+                            sx={{ 
+                              fontWeight: 600, 
+                              color: 'white', 
+                              mb: 2,
+                              minHeight: 64
+                            }}
+                          >
+                            {project.title}
+                          </Typography>
+                          <Typography 
+                            variant="body2" 
+                            sx={{ 
+                              color: '#cbd5e1', 
+                              mb: 3,
+                              minHeight: 72,
+                              display: '-webkit-box',
+                              WebkitLineClamp: 3,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden'
+                            }}
+                          >
                             {project.description}
                           </Typography>
                           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 3 }}>
@@ -736,26 +693,26 @@ const Home = () => {
                                 size="small"
                                 variant="outlined"
                                 sx={{
-                                  borderColor: '#3b82f6',
-                                  color: '#3b82f6',
+                                  borderColor: 'rgba(56, 189, 248, 0.5)',
+                                  color: '#38BDF8',
                                   fontWeight: 500,
-                                  bgcolor: 'rgba(59, 130, 246, 0.1)'
+                                  backgroundColor: 'rgba(56, 189, 248, 0.1)'
                                 }}
                               />
                             ))}
                             {project.technologies && project.technologies.length > 3 && (
                               <Chip
-                                label={`+${project.technologies.length - 3} more`}
+                                label={`+${project.technologies.length - 3}`}
                                 size="small"
                                 variant="outlined"
                                 sx={{
-                                  borderColor: '#64748b',
-                                  color: '#64748b'
+                                  borderColor: 'rgba(255, 255, 255, 0.2)',
+                                  color: 'rgba(255, 255, 255, 0.7)'
                                 }}
                               />
                             )}
                           </Box>
-                          <Box sx={{ display: 'flex', gap: 2 }}>
+                          <Box sx={{ display: 'flex', gap: 1.5 }}>
                             {project.githubUrl && (
                               <Button
                                 variant="outlined"
@@ -764,13 +721,13 @@ const Home = () => {
                                 href={project.githubUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                sx={{ 
+                                sx={{
                                   flex: 1,
                                   borderColor: 'rgba(255, 255, 255, 0.2)',
                                   color: '#e2e8f0',
                                   '&:hover': {
                                     borderColor: 'white',
-                                    color: 'white'
+                                    backgroundColor: 'rgba(255, 255, 255, 0.1)'
                                   }
                                 }}
                               >
@@ -785,15 +742,16 @@ const Home = () => {
                                 href={project.liveUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                sx={{ 
+                                sx={{
                                   flex: 1,
-                                  background: 'linear-gradient(45deg, #3b82f6, #8b5cf6)',
+                                  background: 'linear-gradient(90deg, #38BDF8 0%, #818CF8 100%)',
+                                  color: '#0F172A',
                                   '&:hover': {
-                                    background: 'linear-gradient(45deg, #2563eb, #7c3aed)'
+                                    background: 'linear-gradient(90deg, #818CF8 0%, #38BDF8 100%)'
                                   }
                                 }}
                               >
-                                Live Demo
+                                Demo
                               </Button>
                             )}
                           </Box>
@@ -808,12 +766,12 @@ const Home = () => {
                 <Typography variant="h6" color="#cbd5e1" sx={{ mb: 2 }}>
                   No featured projects available
                 </Typography>
-                <Typography variant="body1" color="#94a3b8">
+                <Typography variant="body2" color="#94a3b8">
                   Check back later for featured projects or visit the Projects page to see all projects.
                 </Typography>
               </Box>
             )}
-            
+
             <Box sx={{ textAlign: 'center', mt: 6 }}>
               <Button
                 component={Link}
@@ -824,9 +782,12 @@ const Home = () => {
                 sx={{
                   color: 'white',
                   borderColor: 'rgba(255, 255, 255, 0.3)',
+                  px: 4,
+                  py: 1.5,
+                  borderRadius: 2,
                   '&:hover': {
                     borderColor: 'white',
-                    backgroundColor: 'rgba(255,255,255,0.1)'
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)'
                   }
                 }}
               >
@@ -838,84 +799,110 @@ const Home = () => {
       </Box>
 
       {/* Contact Section */}
-      <Container maxWidth="lg" sx={{ py: { xs: 6, sm: 8, md: 10 }, px: { xs: 2, sm: 3, md: 4 } }}>
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-        >
-          <Typography
-            variant="h2"
-            component="h2"
-            textAlign="center"
-            gutterBottom
-            sx={{ 
-              mb: { xs: 3, sm: 4, md: 6 },
-              fontWeight: 700,
-              background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem', lg: '3rem' },
-              lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
-            }}
+      <Box sx={{ py: 10 }}>
+        <Container maxWidth="md">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeIn}
           >
-            Let's Connect
-          </Typography>
-          <Typography
-            variant="h5"
-            textAlign="center"
-            sx={{ 
-              mb: { xs: 3, sm: 4, md: 6 }, 
-              maxWidth: 600, 
-              mx: 'auto', 
-              color: '#cbd5e1',
-              fontSize: { xs: '1rem', sm: '1.1rem', md: '1.25rem' },
-              lineHeight: { xs: 1.4, sm: 1.5 }
-            }}
-          >
-            I'm always interested in new opportunities and exciting projects.
-          </Typography>
-          <Box sx={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            gap: { xs: 2, sm: 3 }, 
-            flexWrap: 'wrap',
-            flexDirection: { xs: 'column', sm: 'row' },
-            alignItems: { xs: 'center', sm: 'flex-start' }
-          }}>
-            {socialLinks.map((social) => (
+            <Typography
+              variant="h3"
+              align="center"
+              sx={{
+                fontWeight: 700,
+                mb: 3,
+                color: 'white'
+              }}
+            >
+              Let's Connect
+            </Typography>
+            <Typography
+              variant="body1"
+              align="center"
+              sx={{
+                mb: 5,
+                color: '#cbd5e1',
+                maxWidth: 600,
+                mx: 'auto',
+                lineHeight: 1.7
+              }}
+            >
+              I'm always interested in new opportunities and exciting projects.
+              Let's build something amazing together!
+            </Typography>
+
+            <Box sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: 2,
+              flexWrap: 'wrap',
+              mb: 5
+            }}>
+              {socialLinks.map((social, index) => (
+                <motion.div
+                  key={social.label}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <Button
+                    component="a"
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variant="outlined"
+                    startIcon={social.icon}
+                    size="large"
+                    sx={{
+                      borderColor: 'rgba(255, 255, 255, 0.2)',
+                      color: '#e2e8f0',
+                      px: 4,
+                      py: 1.5,
+                      borderRadius: 2,
+                      background: 'rgba(255, 255, 255, 0.03)',
+                      '&:hover': {
+                        borderColor: 'white',
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                      }
+                    }}
+                  >
+                    {social.label}
+                  </Button>
+                </motion.div>
+              ))}
+            </Box>
+
+            <Box sx={{ textAlign: 'center' }}>
               <Button
-                key={social.label}
-                component="a"
-                href={social.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                variant="outlined"
-                startIcon={social.icon}
+                component={Link}
+                to="/contact"
+                variant="contained"
                 size="large"
+                endIcon={<ArrowForwardIcon />}
                 sx={{
-                  borderColor: 'rgba(255, 255, 255, 0.2)',
-                  color: '#e2e8f0',
-                  px: { xs: 3, sm: 4 },
-                  py: { xs: 1.2, sm: 1.5 },
-                  fontSize: { xs: '0.9rem', sm: '1rem' },
-                  width: { xs: '200px', sm: 'auto' },
+                  background: 'linear-gradient(90deg, #38BDF8 0%, #818CF8 100%)',
+                  color: '#0F172A',
+                  fontWeight: 600,
+                  px: 5,
+                  py: 1.5,
+                  borderRadius: 2,
+                  boxShadow: '0 4px 14px rgba(56, 189, 248, 0.4)',
                   '&:hover': {
-                    borderColor: 'white',
-                    color: 'white',
-                    backgroundColor: 'rgba(255,255,255,0.1)'
+                    boxShadow: '0 6px 20px rgba(56, 189, 248, 0.6)',
+                    transform: 'translateY(-2px)'
                   },
                   transition: 'all 0.3s ease'
                 }}
               >
-                {social.label}
+                Get In Touch
               </Button>
-            ))}
-          </Box>
-        </motion.div>
-      </Container>
+            </Box>
+          </motion.div>
+        </Container>
+      </Box>
 
       {/* Scroll to Top Button */}
       {showScrollTop && (
@@ -925,15 +912,12 @@ const Home = () => {
           onClick={scrollToTop}
           sx={{
             position: 'fixed',
-            bottom: { xs: 16, sm: 24 },
-            right: { xs: 16, sm: 24 },
-            background: 'linear-gradient(135deg, #38BDF8, #818CF8)',
+            bottom: 24,
+            right: 24,
+            background: 'linear-gradient(90deg, #38BDF8 0%, #818CF8 100%)',
             '&:hover': {
-              background: 'linear-gradient(135deg, #818CF8, #38BDF8)',
-              transform: 'translateY(-2px)'
-            },
-            zIndex: 1000,
-            boxShadow: '0 4px 20px rgba(56, 189, 248, 0.3)'
+              background: 'linear-gradient(90deg, #818CF8 0%, #38BDF8 100%)'
+            }
           }}
         >
           <KeyboardArrowUpIcon />

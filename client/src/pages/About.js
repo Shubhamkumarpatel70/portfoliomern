@@ -70,6 +70,7 @@ const About = () => {
       setAbout(res.data.about);
     } catch (err) {
       console.error('Error fetching about data:', err);
+      setError('Failed to load about information');
       setAbout(null);
     } finally {
       setLoading(false);
@@ -82,6 +83,7 @@ const About = () => {
       const experiencesData = response.data.experiences || response.data || [];
       setExperiences(Array.isArray(experiencesData) ? experiencesData.slice(0, 4) : []);
     } catch (err) {
+      console.error('Error fetching experiences:', err);
       setExperiences([]);
     }
   };
@@ -118,106 +120,21 @@ const About = () => {
     );
   }
 
-  if (error) {
-    return (
-      <Container maxWidth="lg" sx={{ py: 8 }}>
-        <Alert severity="error">{error}</Alert>
-      </Container>
-    );
-  }
-
-  if (!about) {
+  if (error && !about) {
     return (
       <Box sx={{ 
         background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
         minHeight: '100vh',
-        py: { xs: 4, md: 8 }
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        px: 2
       }}>
-        <Container maxWidth="lg">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <Box sx={{ textAlign: 'center', mb: 6 }}>
-              <Typography
-                variant="h2"
-                sx={{
-                  fontWeight: 800,
-                  background: 'linear-gradient(90deg, #38BDF8, #818CF8)',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  mb: 3,
-                  fontSize: { xs: '2.5rem', md: '3.5rem' }
-                }}
-              >
-                About Information
-              </Typography>
-              <Typography
-                variant="h6"
-                sx={{
-                  color: '#cbd5e1',
-                  mb: 4,
-                  maxWidth: 600,
-                  mx: 'auto',
-                  fontWeight: 500
-                }}
-              >
-                No about information has been set up yet. Please log in to the admin panel to add your information.
-              </Typography>
-            </Box>
-            
-            <Paper
-              elevation={0}
-              sx={{
-                p: { xs: 3, md: 6 },
-                borderRadius: 3,
-                background: 'rgba(255, 255, 255, 0.06)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                maxWidth: 800,
-                mx: 'auto',
-                textAlign: 'center'
-              }}
-            >
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: 80,
-                  height: 80,
-                  borderRadius: '50%',
-                  background: 'linear-gradient(90deg, #38BDF8, #818CF8)',
-                  mx: 'auto',
-                  mb: 3,
-                  color: 'white'
-                }}
-              >
-                <PersonIcon sx={{ fontSize: 40 }} />
-              </Box>
-              <Typography
-                variant="h5"
-                sx={{
-                  fontWeight: 800,
-                  color: 'white',
-                  mb: 2
-                }}
-              >
-                Default Information
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{
-                  color: '#cbd5e1',
-                  lineHeight: 1.7
-                }}
-              >
-                This is a placeholder for your about information. Once you add your details through the admin panel, they will appear here with a beautiful, professional layout.
-              </Typography>
-            </Paper>
-          </motion.div>
+        <Container maxWidth="sm">
+          <Alert severity="error" sx={{ borderRadius: 3, p: 3 }}>
+            <Typography variant="h6" sx={{ mb: 1 }}>Error Loading Content</Typography>
+            <Typography variant="body2">{error}</Typography>
+          </Alert>
         </Container>
       </Box>
     );
@@ -227,9 +144,10 @@ const About = () => {
     <Box sx={{
       background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
       minHeight: '100vh',
-      py: { xs: 4, md: 8 },
-      px: { xs: 0, sm: 2 },
+      py: { xs: 3, md: 6 },
+      px: { xs: 1, sm: 2 },
       position: 'relative',
+      overflow: 'hidden',
       '&::before': {
         content: '""',
         position: 'absolute',
@@ -242,52 +160,52 @@ const About = () => {
         zIndex: 0
       }
     }}>
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
         {/* Hero Section */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <Box sx={{ textAlign: 'center', mb: { xs: 6, md: 8 } }}>
+          <Box sx={{ textAlign: 'center', mb: { xs: 5, md: 7 } }}>
             <Typography
-              variant="h2"
+              variant={isMobile ? "h3" : "h2"}
               sx={{
                 fontWeight: 800,
-                background: 'linear-gradient(135deg, #1e293b, #334155)',
+                background: 'linear-gradient(135deg, #38BDF8 0%, #818CF8 100%)',
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 mb: 3,
-                fontSize: { xs: '2.5rem', md: '3.5rem' }
+                fontSize: { xs: '2.2rem', sm: '2.8rem', md: '3.5rem' }
               }}
             >
               About Me
             </Typography>
             <Typography
-              variant="h5"
+              variant={isMobile ? "h6" : "h5"}
               sx={{
-                color: '#475569',
+                color: '#e2e8f0',
                 maxWidth: 800,
                 mx: 'auto',
                 fontWeight: 600,
                 mb: 3,
                 lineHeight: 1.4,
-                fontSize: { xs: '1.25rem', md: '1.5rem' }
+                fontSize: { xs: '1.1rem', sm: '1.25rem', md: '1.5rem' }
               }}
             >
-              {about.bio || 'Passionate Full Stack Developer with experience creating innovative digital solutions'}
+              {about?.bio || 'Passionate Full Stack Developer with experience creating innovative digital solutions'}
             </Typography>
             <Typography
               variant="body1"
               sx={{
-                color: '#64748b',
+                color: '#94a3b8',
                 maxWidth: 700,
                 mx: 'auto',
                 fontWeight: 500,
                 mb: 4,
                 lineHeight: 1.7,
-                fontSize: '1.1rem'
+                fontSize: { xs: '0.95rem', sm: '1.05rem' }
               }}
             >
               I love building beautiful, functional, and user-centered digital experiences. With a strong foundation in both frontend and backend development, I enjoy turning complex problems into simple, intuitive solutions.
@@ -296,7 +214,7 @@ const About = () => {
             <Box sx={{ 
               display: 'flex', 
               flexWrap: 'wrap', 
-              gap: 2, 
+              gap: 1.5, 
               justifyContent: 'center',
               mb: 4
             }}>
@@ -304,8 +222,8 @@ const About = () => {
                 label="4+ Years Experience" 
                 sx={{ 
                   fontWeight: 700, 
-                  fontSize: '1rem', 
-                  px: 3,
+                  fontSize: { xs: '0.85rem', sm: '0.95rem' }, 
+                  px: { xs: 2, sm: 3 },
                   py: 1,
                   background: 'linear-gradient(45deg, #3b82f6, #8b5cf6)',
                   color: 'white',
@@ -316,8 +234,8 @@ const About = () => {
                 label="Full Stack" 
                 sx={{ 
                   fontWeight: 700, 
-                  fontSize: '1rem', 
-                  px: 3,
+                  fontSize: { xs: '0.85rem', sm: '0.95rem' }, 
+                  px: { xs: 2, sm: 3 },
                   py: 1,
                   background: 'linear-gradient(45deg, #10b981, #3b82f6)',
                   color: 'white',
@@ -329,8 +247,8 @@ const About = () => {
                 variant="outlined" 
                 sx={{ 
                   fontWeight: 700, 
-                  fontSize: '1rem', 
-                  px: 3,
+                  fontSize: { xs: '0.85rem', sm: '0.95rem' }, 
+                  px: { xs: 2, sm: 3 },
                   py: 1,
                   borderColor: '#f59e0b',
                   color: '#f59e0b',
@@ -343,22 +261,22 @@ const About = () => {
 
         {/* Stats Section */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <Grid container spacing={3} sx={{ mb: { xs: 6, md: 8 } }}>
+          <Grid container spacing={{ xs: 2, sm: 3 }} sx={{ mb: { xs: 5, md: 7 } }}>
             {stats.map((stat, index) => (
-              <Grid item xs={6} md={3} key={stat.label}>
+              <Grid item xs={6} sm={6} md={3} key={stat.label}>
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
+                  initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
                 >
                   <Paper
                     elevation={0}
                     sx={{
-                      p: 3,
+                      p: { xs: 2, sm: 3 },
                       textAlign: 'center',
                       background: 'rgba(255, 255, 255, 0.06)',
                       backdropFilter: 'blur(10px)',
@@ -369,10 +287,10 @@ const About = () => {
                         transform: 'translateY(-5px)',
                         boxShadow: '0 12px 30px rgba(0,0,0,0.35)'
                       },
-                      minHeight: { xs: 140, sm: 180 },
-                      width: '100%',
-                      maxWidth: 420,
-                      mx: 'auto'
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center'
                     }}
                   >
                     <Box
@@ -380,24 +298,25 @@ const About = () => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        width: 60,
-                        height: 60,
+                        width: { xs: 50, sm: 60 },
+                        height: { xs: 50, sm: 60 },
                         borderRadius: '50%',
                         background: `radial-gradient(circle at 60% 40%, ${getStatColor(stat.icon)} 60%, #222b 100%)`,
                         mx: 'auto',
-                        mb: 2,
+                        mb: { xs: 1.5, sm: 2 },
                         color: 'white',
                         boxShadow: '0 8px 25px rgba(59, 130, 246, 0.3)'
                       }}
                     >
-                      {stat.icon}
+                      {React.cloneElement(stat.icon, { sx: { fontSize: { xs: 24, sm: 28 } } })}
                     </Box>
                     <Typography
-                      variant="h4"
+                      variant={isMobile ? "h5" : "h4"}
                       sx={{
                         fontWeight: 900,
                         color: '#e2e8f0',
-                        mb: 1
+                        mb: 1,
+                        fontSize: { xs: '1.5rem', sm: '2rem' }
                       }}
                     >
                       {stat.value}
@@ -406,7 +325,8 @@ const About = () => {
                       variant="body2"
                       sx={{
                         color: '#94a3b8',
-                        fontWeight: 600
+                        fontWeight: 600,
+                        fontSize: { xs: '0.8rem', sm: '0.9rem' }
                       }}
                     >
                       {stat.label}
@@ -418,31 +338,29 @@ const About = () => {
           </Grid>
         </motion.div>
 
-        <Grid container spacing={4}>
+        <Grid container spacing={{ xs: 3, md: 4 }}>
           {/* Personal Info Card with Photo */}
           <Grid item xs={12} lg={4}>
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
+              initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
               <Paper
                 elevation={0}
                 sx={{
-                  p: { xs: 3, md: 4 },
+                  p: { xs: 2.5, sm: 3, md: 4 },
                   borderRadius: 3,
-                  background: 'rgba(255, 255, 255, 0.8)',
+                  background: 'rgba(15, 23, 42, 0.7)',
                   backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
                   textAlign: 'center',
                   height: '100%',
-                  minHeight: { xs: 140, sm: 180 },
-                  width: '100%',
-                  maxWidth: 420,
-                  mx: 'auto'
+                  display: 'flex',
+                  flexDirection: 'column'
                 }}
               >
-                <Box component={motion.div} animate={{ y: [0, -6, 0] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }} sx={{ position: 'relative', width: { xs: 140, md: 160 }, height: { xs: 140, md: 160 }, mx: 'auto', mb: 3 }}>
+                <Box component={motion.div} animate={{ y: [0, -6, 0] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }} sx={{ position: 'relative', width: { xs: 120, sm: 140, md: 160 }, height: { xs: 120, sm: 140, md: 160 }, mx: 'auto', mb: 3 }}>
                   <Box component={motion.div} animate={{ rotate: 360 }} transition={{ duration: 14, repeat: Infinity, ease: 'linear' }} sx={{
                     position: 'absolute', inset: -6, borderRadius: '50%',
                     background: 'conic-gradient(from 0deg, #38BDF8, #818CF8, #38BDF8)',
@@ -471,17 +389,17 @@ const About = () => {
                   </motion.div>
                 </Box>
                 <Typography
-                  variant="h4"
+                  variant={isMobile ? "h5" : "h4"}
                   sx={{
                     fontWeight: 800,
-                    color: '#1e293b',
+                    color: '#e2e8f0',
                     mb: 1
                   }}
                 >
-                  {about.name || 'Your Name'}
+                  {about?.name || 'Your Name'}
                 </Typography>
                 <Typography
-                  variant="h6"
+                  variant={isMobile ? "body1" : "h6"}
                   sx={{
                     color: '#3b82f6',
                     fontWeight: 700,
@@ -491,18 +409,18 @@ const About = () => {
                   Full Stack Developer
                 </Typography>
                 
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 3 }}>
-                  {about.location && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, justifyContent: 'center' }}>
-                      <LocationIcon sx={{ color: '#64748b' }} />
-                      <Typography variant="body2" sx={{ color: '#64748b', fontWeight: 500 }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mb: 3 }}>
+                  {about?.location && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, justifyContent: 'center' }}>
+                      <LocationIcon sx={{ color: '#94a3b8', fontSize: { xs: 20, sm: 24 } }} />
+                      <Typography variant="body2" sx={{ color: '#94a3b8', fontWeight: 500 }}>
                         {about.location}
                       </Typography>
                     </Box>
                   )}
-                  {about.website && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, justifyContent: 'center' }}>
-                      <WebsiteIcon sx={{ color: '#3b82f6' }} />
+                  {about?.website && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, justifyContent: 'center' }}>
+                      <WebsiteIcon sx={{ color: '#3b82f6', fontSize: { xs: 20, sm: 24 } }} />
                       <Typography variant="body2" sx={{ color: '#3b82f6', fontWeight: 500 }}>
                         {about.website}
                       </Typography>
@@ -516,28 +434,46 @@ const About = () => {
                       rel="noopener noreferrer"
                       variant="contained"
                       size="small"
-                      sx={{ mt: 1, mx: 'auto' }}
+                      sx={{ 
+                        mt: 1, 
+                        mx: 'auto',
+                        background: 'linear-gradient(45deg, #3b82f6, #8b5cf6)',
+                        fontWeight: 700
+                      }}
                     >
                       View Resume
                     </Button>
                   ) : (
-                    <Button component={Link} to="/login" variant="outlined" size="small" sx={{ mt: 1, mx: 'auto' }}>
+                    <Button 
+                      component={Link} 
+                      to="/login" 
+                      variant="outlined" 
+                      size="small" 
+                      sx={{ 
+                        mt: 1, 
+                        mx: 'auto',
+                        fontWeight: 700,
+                        borderWidth: 2,
+                        '&:hover': { borderWidth: 2 }
+                      }}
+                    >
                       Login to view resume
                     </Button>
                   )}
                 </Box>
                 
-                <Divider sx={{ my: { xs: 4, md: 6 }, borderColor: 'rgba(255,255,255,0.08)' }} />
+                <Divider sx={{ my: { xs: 3, md: 4 }, borderColor: 'rgba(255,255,255,0.08)' }} />
                 
                 <Typography
-                  variant="body1"
+                  variant="body2"
                   sx={{
-                    color: '#64748b',
+                    color: '#94a3b8',
                     lineHeight: 1.7,
-                    fontWeight: 500
+                    fontWeight: 500,
+                    flexGrow: 1
                   }}
                 >
-                  {about.bio || 'I love building beautiful, functional, and user-centered digital experiences. With a strong foundation in both frontend and backend development, I enjoy turning complex problems into simple, intuitive solutions.'}
+                  {about?.bio || 'I love building beautiful, functional, and user-centered digital experiences. With a strong foundation in both frontend and backend development, I enjoy turning complex problems into simple, intuitive solutions.'}
                 </Typography>
               </Paper>
             </motion.div>
@@ -546,39 +482,37 @@ const About = () => {
           {/* Skills Card */}
           <Grid item xs={12} lg={8}>
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
+              initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}
             >
               <Paper
                 elevation={0}
                 sx={{
-                  p: { xs: 3, md: 4 },
+                  p: { xs: 2.5, sm: 3, md: 4 },
                   borderRadius: 3,
-                  background: 'rgba(255, 255, 255, 0.8)',
+                  background: 'rgba(15, 23, 42, 0.7)',
                   backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  height: '100%',
-                  minHeight: { xs: 140, sm: 180 },
-                  width: '100%'
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  height: '100%'
                 }}
               >
                 <Typography
-                  variant="h4"
+                  variant={isMobile ? "h5" : "h4"}
                   sx={{
                     fontWeight: 800,
-                    color: '#1e293b',
+                    color: '#e2e8f0',
                     mb: 3,
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 2
+                    gap: 1.5
                   }}
                 >
-                  <CodeIcon sx={{ color: '#3b82f6' }} />
+                  <CodeIcon sx={{ color: '#3b82f6', fontSize: { xs: 28, sm: 32 } }} />
                   Technical Skills
                 </Typography>
-                {about.skills && about.skills.length > 0 ? (
-                  <Grid container spacing={1.5}>
+                {about?.skills && about.skills.length > 0 ? (
+                  <Grid container spacing={1}>
                     {about.skills.map((skill, index) => (
                       <Grid item xs={6} sm={4} md={3} key={`${skill}-${index}`}>
                         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, delay: index * 0.03 }}>
@@ -588,13 +522,16 @@ const About = () => {
                               width: '100%',
                               justifyContent: 'center',
                               fontWeight: 700,
-                              fontSize: '0.95rem',
-                              px: 2,
+                              fontSize: { xs: '0.75rem', sm: '0.85rem' },
+                              px: 1.5,
                               py: 1,
                               background: 'rgba(59, 130, 246, 0.12)',
                               color: '#3b82f6',
-                              borderRadius: 2.5,
-                              border: '1px solid rgba(59, 130, 246, 0.35)'
+                              borderRadius: 2,
+                              border: '1px solid rgba(59, 130, 246, 0.35)',
+                              '&:hover': {
+                                background: 'rgba(59, 130, 246, 0.2)'
+                              }
                             }}
                           />
                         </motion.div>
@@ -602,7 +539,7 @@ const About = () => {
                     ))}
                   </Grid>
                 ) : (
-                  <Typography variant="body1" sx={{ color: '#64748b', fontStyle: 'italic' }}>
+                  <Typography variant="body1" sx={{ color: '#94a3b8', fontStyle: 'italic' }}>
                     Skills information not available.
                   </Typography>
                 )}
@@ -613,41 +550,37 @@ const About = () => {
           {/* Education Card */}
           <Grid item xs={12} md={6}>
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.8 }}
             >
               <Paper
                 elevation={0}
                 sx={{
-                  p: { xs: 3, md: 4 },
+                  p: { xs: 2.5, sm: 3, md: 4 },
                   borderRadius: 3,
-                  background: 'rgba(255, 255, 255, 0.8)',
+                  background: 'rgba(15, 23, 42, 0.7)',
                   backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  height: '100%',
-                  minHeight: { xs: 140, sm: 180 },
-                  width: '100%',
-                  maxWidth: 420,
-                  mx: 'auto'
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  height: '100%'
                 }}
               >
                 <Typography
-                  variant="h4"
+                  variant={isMobile ? "h5" : "h4"}
                   sx={{
                     fontWeight: 800,
-                    color: '#1e293b',
+                    color: '#e2e8f0',
                     mb: 3,
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 2
+                    gap: 1.5
                   }}
                 >
-                  <SchoolIcon sx={{ color: '#10b981' }} />
+                  <SchoolIcon sx={{ color: '#10b981', fontSize: { xs: 28, sm: 32 } }} />
                   Education
                 </Typography>
-                {about.education && about.education.length > 0 ? (
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {about?.education && about.education.length > 0 ? (
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
                     {about.education.map((edu, index) => (
                       <motion.div
                         key={index}
@@ -655,13 +588,14 @@ const About = () => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.3, delay: index * 0.1 }}
                       >
-                        <Box sx={{ p: 2, borderRadius: 2, bgcolor: 'rgba(16, 185, 129, 0.05)' }}>
+                        <Box sx={{ p: 2, borderRadius: 2, bgcolor: 'rgba(16, 185, 129, 0.08)' }}>
                           <Typography
                             variant="h6"
                             sx={{
                               color: '#10b981',
                               fontWeight: 700,
-                              mb: 1
+                              mb: 1,
+                              fontSize: { xs: '1rem', sm: '1.1rem' }
                             }}
                           >
                             {edu.degree}
@@ -669,7 +603,7 @@ const About = () => {
                           <Typography
                             variant="body2"
                             sx={{
-                              color: '#64748b',
+                              color: '#94a3b8',
                               fontWeight: 600,
                               mb: 1
                             }}
@@ -680,8 +614,9 @@ const About = () => {
                             <Typography
                               variant="body2"
                               sx={{
-                                color: '#64748b',
-                                lineHeight: 1.6
+                                color: '#94a3b8',
+                                lineHeight: 1.6,
+                                fontSize: { xs: '0.85rem', sm: '0.9rem' }
                               }}
                             >
                               {edu.description}
@@ -692,7 +627,7 @@ const About = () => {
                     ))}
                   </Box>
                 ) : (
-                  <Typography variant="body1" sx={{ color: '#64748b', fontStyle: 'italic' }}>
+                  <Typography variant="body1" sx={{ color: '#94a3b8', fontStyle: 'italic' }}>
                     Education information not available.
                   </Typography>
                 )}
@@ -703,47 +638,51 @@ const About = () => {
           {/* Achievements Card */}
           <Grid item xs={12} md={6}>
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 1.0 }}
             >
               <Paper
                 elevation={0}
                 sx={{
-                  p: { xs: 3, md: 4 },
+                  p: { xs: 2.5, sm: 3, md: 4 },
                   borderRadius: 3,
-                  background: 'rgba(255, 255, 255, 0.8)',
+                  background: 'rgba(15, 23, 42, 0.7)',
                   backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  height: '100%',
-                  minHeight: { xs: 140, sm: 180 },
-                  width: '100%',
-                  maxWidth: 420,
-                  mx: 'auto'
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  height: '100%'
                 }}
               >
                 <Typography
-                  variant="h4"
+                  variant={isMobile ? "h5" : "h4"}
                   sx={{
                     fontWeight: 800,
-                    color: '#1e293b',
+                    color: '#e2e8f0',
                     mb: 3,
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 2
+                    gap: 1.5
                   }}
                 >
-                  <TrophyIcon sx={{ color: '#f59e0b' }} />
+                  <TrophyIcon sx={{ color: '#f59e0b', fontSize: { xs: 28, sm: 32 } }} />
                   Achievements
                 </Typography>
-                {about.achievements && about.achievements.length > 0 ? (
-                  <Grid container spacing={1.5}>
+                {about?.achievements && about.achievements.length > 0 ? (
+                  <Grid container spacing={1}>
                     {about.achievements.map((ach, idx) => (
                       <Grid item xs={12} key={idx}>
                         <motion.div initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.25, delay: idx * 0.05 }}>
-                          <Box sx={{ p: 2, borderRadius: 2, background: 'rgba(245, 158, 11, 0.06)', border: '1px solid rgba(245, 158, 11, 0.18)', display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-                            <StarIcon sx={{ color: '#f59e0b', mt: 0.5, fontSize: 20 }} />
-                            <Typography variant="body1" sx={{ color: '#1e293b', fontWeight: 600, lineHeight: 1.6 }}>
+                          <Box sx={{ 
+                            p: 2, 
+                            borderRadius: 2, 
+                            background: 'rgba(245, 158, 11, 0.08)', 
+                            border: '1px solid rgba(245, 158, 11, 0.18)', 
+                            display: 'flex', 
+                            alignItems: 'flex-start', 
+                            gap: 1.5 
+                          }}>
+                            <StarIcon sx={{ color: '#f59e0b', mt: 0.25, fontSize: { xs: 18, sm: 20 } }} />
+                            <Typography variant="body2" sx={{ color: '#e2e8f0', fontWeight: 600, lineHeight: 1.6 }}>
                               {ach}
                             </Typography>
                           </Box>
@@ -752,7 +691,7 @@ const About = () => {
                     ))}
                   </Grid>
                 ) : (
-                  <Typography variant="body1" sx={{ color: '#64748b', fontStyle: 'italic' }}>
+                  <Typography variant="body1" sx={{ color: '#94a3b8', fontStyle: 'italic' }}>
                     Achievements information not available.
                   </Typography>
                 )}
@@ -763,23 +702,41 @@ const About = () => {
 
         {/* Mini Timeline (Experience/Education) */}
         {(experiences && experiences.length > 0) && (
-          <Box sx={{ mt: 8 }}>
-            <Typography variant="h4" sx={{ fontWeight: 900, mb: 3, background: 'linear-gradient(90deg, #38BDF8, #818CF8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              Timeline
+          <Box sx={{ mt: { xs: 6, md: 8 } }}>
+            <Typography variant={isMobile ? "h5" : "h4"} sx={{ 
+              fontWeight: 900, 
+              mb: 3, 
+              background: 'linear-gradient(90deg, #38BDF8, #818CF8)', 
+              WebkitBackgroundClip: 'text', 
+              WebkitTextFillColor: 'transparent' 
+            }}>
+              Professional Experience
             </Typography>
-            <Grid container spacing={3}>
+            <Grid container spacing={2}>
               {experiences.map((exp, idx) => (
                 <Grid item xs={12} md={6} key={exp._id || idx}>
-                  <Paper elevation={0} sx={{ p: 3, borderRadius: 3, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', position: 'relative', transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease', '&:hover': { transform: 'translateY(-4px)', boxShadow: '0 20px 44px rgba(0,0,0,0.4)', borderColor: 'rgba(56,189,248,0.35)' } }}>
+                  <Paper elevation={0} sx={{ 
+                    p: { xs: 2, sm: 3 }, 
+                    borderRadius: 3, 
+                    background: 'rgba(255,255,255,0.06)', 
+                    border: '1px solid rgba(255,255,255,0.12)', 
+                    position: 'relative', 
+                    transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease', 
+                    '&:hover': { 
+                      transform: 'translateY(-4px)', 
+                      boxShadow: '0 20px 44px rgba(0,0,0,0.4)', 
+                      borderColor: 'rgba(56,189,248,0.35)' 
+                    } 
+                  }}>
                     <Box sx={{ position: 'absolute', left: 16, top: 24, bottom: 24, width: 3, background: 'linear-gradient(180deg, #38BDF8, #818CF8)', borderRadius: 2, opacity: 0.6 }} />
                     <Box sx={{ pl: 4 }}>
-                      <Typography variant="h6" sx={{ fontWeight: 800, color: '#e2e8f0' }}>{exp.title}</Typography>
-                      <Typography variant="subtitle2" sx={{ color: '#93c5fd', fontWeight: 700 }}>{exp.company}</Typography>
-                      <Typography variant="body2" sx={{ color: '#94a3b8', mb: 1 }}>
+                      <Typography variant="h6" sx={{ fontWeight: 800, color: '#e2e8f0', fontSize: { xs: '1rem', sm: '1.1rem' } }}>{exp.title}</Typography>
+                      <Typography variant="subtitle2" sx={{ color: '#93c5fd', fontWeight: 700, fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>{exp.company}</Typography>
+                      <Typography variant="body2" sx={{ color: '#94a3b8', mb: 1, fontSize: { xs: '0.75rem', sm: '0.8rem' } }}>
                         {new Date(exp.from).toLocaleDateString(undefined, { year: 'numeric', month: 'short' })} - {exp.current ? 'Present' : new Date(exp.to).toLocaleDateString(undefined, { year: 'numeric', month: 'short' })}
                       </Typography>
                       {exp.description && (
-                        <Typography variant="body2" sx={{ color: '#cbd5e1' }}>{exp.description}</Typography>
+                        <Typography variant="body2" sx={{ color: '#cbd5e1', fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>{exp.description}</Typography>
                       )}
                     </Box>
                   </Paper>
@@ -789,9 +746,32 @@ const About = () => {
           </Box>
         )}
 
-        <Box sx={{ textAlign: 'center', mt: 8 }}>
-          <Chip label="Open to opportunities" sx={{ mr: 2, background: 'linear-gradient(90deg, #38BDF8, #818CF8)', color: 'white', fontWeight: 700 }} />
-          <Chip label="View Projects" component={Link} to="/projects" clickable sx={{ borderColor: 'rgba(59,130,246,0.4)', color: '#3b82f6', fontWeight: 700 }} variant="outlined" />
+        <Box sx={{ textAlign: 'center', mt: { xs: 6, md: 8 } }}>
+          <Chip 
+            label="Open to opportunities" 
+            sx={{ 
+              mr: 2, 
+              background: 'linear-gradient(90deg, #38BDF8, #818CF8)', 
+              color: 'white', 
+              fontWeight: 700,
+              fontSize: { xs: '0.8rem', sm: '0.9rem' },
+              height: { xs: 32, sm: 40 }
+            }} 
+          />
+          <Chip 
+            label="View Projects" 
+            component={Link} 
+            to="/projects" 
+            clickable 
+            sx={{ 
+              borderColor: 'rgba(59,130,246,0.4)', 
+              color: '#3b82f6', 
+              fontWeight: 700,
+              fontSize: { xs: '0.8rem', sm: '0.9rem' },
+              height: { xs: 32, sm: 40 }
+            }} 
+            variant="outlined" 
+          />
         </Box>
       </Container>
     </Box>

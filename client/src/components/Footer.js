@@ -14,7 +14,8 @@ import {
   Fab,
   Link,
   Alert,
-  Snackbar
+  Snackbar,
+  useMediaQuery
 } from '@mui/material';
 import {
   GitHub as GitHubIcon,
@@ -35,6 +36,8 @@ import { api } from '../api';
 
 const Footer = () => {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -141,7 +144,7 @@ const Footer = () => {
         sx={{
           background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
           color: '#e2e8f0',
-          py: { xs: 6, md: 8 },
+          py: { xs: 4, sm: 5, md: 6, lg: 8 },
           position: 'relative',
           overflow: 'hidden',
           borderTop: '1px solid rgba(255, 255, 255, 0.05)',
@@ -159,26 +162,26 @@ const Footer = () => {
         }}
       >
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-          <Grid container spacing={{ xs: 4, md: 6 }} alignItems="flex-start">
+          <Grid container spacing={{ xs: 3, sm: 4, md: 5, lg: 6 }} alignItems="flex-start">
             {/* Brand Section */}
             <Grid item xs={12} md={6} lg={4}>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: isMobile ? "0px" : "-50px" }}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                   <Box sx={{
-                    width: 12,
-                    height: 12,
+                    width: 10,
+                    height: 10,
                     borderRadius: '50%',
                     bgcolor: '#3b82f6',
                     mr: 2,
                     boxShadow: '0 0 0 4px rgba(59, 130, 246, 0.3)'
                   }} />
                   <Typography
-                    variant="h5"
+                    variant={isMobile ? "h6" : "h5"}
                     component="h3"
                     sx={{
                       fontWeight: 800,
@@ -193,13 +196,13 @@ const Footer = () => {
                   </Typography>
                 </Box>
                 <Typography
-                  variant="body1"
+                  variant="body2"
                   sx={{
                     mb: 3,
                     color: '#94a3b8',
-                    lineHeight: 1.7,
-                    fontSize: '1rem',
-                    maxWidth: '90%'
+                    lineHeight: 1.6,
+                    fontSize: isMobile ? '0.875rem' : '1rem',
+                    maxWidth: '100%'
                   }}
                 >
                   Crafting exceptional digital experiences with modern web technologies. 
@@ -214,22 +217,23 @@ const Footer = () => {
                     letterSpacing: '0.5px',
                     textTransform: 'uppercase',
                     display: 'block',
-                    mb: 1.5
+                    mb: 1.5,
+                    fontSize: isMobile ? '0.7rem' : '0.75rem'
                   }}>
                     Tech Stack
                   </Typography>
-                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                  <Box sx={{ display: 'flex', gap: 0.8, flexWrap: 'wrap' }}>
                     {technologies.map((tech, index) => (
                       <motion.div
                         key={tech.name}
                         initial={{ opacity: 0, scale: 0.8 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.3, delay: index * 0.1 }}
-                        viewport={{ once: true }}
+                        viewport={{ once: true, margin: isMobile ? "0px" : "-50px" }}
                         whileHover={{ y: -2 }}
                       >
                         <Chip
-                          icon={React.cloneElement(tech.icon, { sx: { fontSize: '1rem' } })}
+                          icon={React.cloneElement(tech.icon, { sx: { fontSize: '0.9rem' } })}
                           label={tech.name}
                           size="small"
                           variant="outlined"
@@ -237,7 +241,13 @@ const Footer = () => {
                             bgcolor: 'rgba(15, 23, 42, 0.7)',
                             color: '#e2e8f0',
                             borderColor: 'rgba(255, 255, 255, 0.1)',
-                            '& .MuiChip-icon': { color: tech.color, opacity: 0.8 },
+                            fontSize: isMobile ? '0.7rem' : '0.75rem',
+                            height: isMobile ? 24 : 28,
+                            '& .MuiChip-icon': { 
+                              color: tech.color, 
+                              opacity: 0.8,
+                              marginLeft: isMobile ? '4px' : '6px'
+                            },
                             '&:hover': {
                               bgcolor: 'rgba(255, 255, 255, 0.05)',
                               color: 'white',
@@ -259,18 +269,19 @@ const Footer = () => {
                     letterSpacing: '0.5px',
                     textTransform: 'uppercase',
                     display: 'block',
-                    mb: 1.5
+                    mb: 1.5,
+                    fontSize: isMobile ? '0.7rem' : '0.75rem'
                   }}>
                     Connect With Me
                   </Typography>
-                  <Box sx={{ display: 'flex', gap: 1.5 }}>
+                  <Box sx={{ display: 'flex', gap: 1 }}>
                     {socialLinks.map((social, index) => (
                       <motion.div
                         key={social.label}
                         initial={{ opacity: 0, scale: 0.8 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.3, delay: index * 0.1 }}
-                        viewport={{ once: true }}
+                        viewport={{ once: true, margin: isMobile ? "0px" : "-50px" }}
                         whileHover={{ y: -3 }}
                       >
                         <Tooltip title={social.label} arrow>
@@ -283,8 +294,8 @@ const Footer = () => {
                               color: '#94a3b8',
                               bgcolor: 'rgba(255, 255, 255, 0.05)',
                               border: '1px solid rgba(255, 255, 255, 0.08)',
-                              width: 40,
-                              height: 40,
+                              width: isMobile ? 34 : 40,
+                              height: isMobile ? 34 : 40,
                               '&:hover': {
                                 bgcolor: 'rgba(255, 255, 255, 0.1)',
                                 color: 'white',
@@ -294,7 +305,9 @@ const Footer = () => {
                               transition: 'all 0.2s ease'
                             }}
                           >
-                            {social.icon}
+                            {React.cloneElement(social.icon, { 
+                              sx: { fontSize: isMobile ? '1rem' : '1.2rem' } 
+                            })}
                           </IconButton>
                         </Tooltip>
                       </motion.div>
@@ -310,10 +323,10 @@ const Footer = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: isMobile ? "0px" : "-50px" }}
               >
                 <Typography
-                  variant="h6"
+                  variant={isMobile ? "subtitle1" : "h6"}
                   component="h4"
                   gutterBottom
                   sx={{
@@ -325,7 +338,7 @@ const Footer = () => {
                     '&::after': {
                       content: '""',
                       position: 'absolute',
-                      bottom: -8,
+                      bottom: -6,
                       left: 0,
                       width: '100%',
                       height: 2,
@@ -336,14 +349,14 @@ const Footer = () => {
                 >
                   Navigation
                 </Typography>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.2 }}>
                   {quickLinks.map((link, index) => (
                     <motion.div
                       key={link.name}
                       initial={{ opacity: 0, x: -20 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.3, delay: index * 0.1 }}
-                      viewport={{ once: true }}
+                      viewport={{ once: true, margin: isMobile ? "0px" : "-50px" }}
                     >
                       <Link
                         href={link.path}
@@ -351,10 +364,11 @@ const Footer = () => {
                         sx={{
                           display: 'flex',
                           alignItems: 'center',
-                          gap: 1.5,
+                          gap: 1.2,
                           color: '#94a3b8',
                           fontWeight: 500,
                           py: 0.5,
+                          fontSize: isMobile ? '0.9rem' : '1rem',
                           transition: 'all 0.2s ease',
                           '&:hover': {
                             color: 'white',
@@ -370,7 +384,9 @@ const Footer = () => {
                           display: 'flex',
                           transition: 'all 0.2s ease'
                         }}>
-                          {React.cloneElement(link.icon, { sx: { fontSize: '1.1rem' } })}
+                          {React.cloneElement(link.icon, { 
+                            sx: { fontSize: isMobile ? '0.9rem' : '1.1rem' } 
+                          })}
                         </Box>
                         {link.name}
                       </Link>
@@ -386,10 +402,10 @@ const Footer = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: isMobile ? "0px" : "-50px" }}
               >
                 <Typography
-                  variant="h6"
+                  variant={isMobile ? "subtitle1" : "h6"}
                   component="h4"
                   gutterBottom
                   sx={{
@@ -401,7 +417,7 @@ const Footer = () => {
                     '&::after': {
                       content: '""',
                       position: 'absolute',
-                      bottom: -8,
+                      bottom: -6,
                       left: 0,
                       width: '100%',
                       height: 2,
@@ -412,14 +428,14 @@ const Footer = () => {
                 >
                   Get In Touch
                 </Typography>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   {contactInfo.map((contact, index) => (
                     <motion.div
                       key={contact.text}
                       initial={{ opacity: 0, x: -20 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.3, delay: index * 0.1 }}
-                      viewport={{ once: true }}
+                      viewport={{ once: true, margin: isMobile ? "0px" : "-50px" }}
                       whileHover={{ x: 2 }}
                     >
                       <Link
@@ -428,7 +444,7 @@ const Footer = () => {
                         sx={{
                           display: 'flex',
                           alignItems: 'center',
-                          gap: 2,
+                          gap: 1.5,
                           color: '#94a3b8',
                           '&:hover': {
                             color: 'white',
@@ -447,18 +463,24 @@ const Footer = () => {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            width: 40,
-                            height: 40,
-                            borderRadius: '12px',
+                            width: isMobile ? 34 : 40,
+                            height: isMobile ? 34 : 40,
+                            borderRadius: '10px',
                             bgcolor: 'rgba(255, 255, 255, 0.05)',
                             border: '1px solid rgba(255, 255, 255, 0.1)',
                             color: '#e2e8f0',
-                            transition: 'all 0.2s ease'
+                            transition: 'all 0.2s ease',
+                            flexShrink: 0
                           }}
                         >
-                          {contact.icon}
+                          {React.cloneElement(contact.icon, { 
+                            sx: { fontSize: isMobile ? '1rem' : '1.2rem' } 
+                          })}
                         </Box>
-                        <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                        <Typography variant="body2" sx={{ 
+                          fontWeight: 500,
+                          fontSize: isMobile ? '0.85rem' : '1rem'
+                        }}>
                           {contact.text}
                         </Typography>
                       </Link>
@@ -474,10 +496,10 @@ const Footer = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.6 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: isMobile ? "0px" : "-50px" }}
               >
                 <Typography
-                  variant="h6"
+                  variant={isMobile ? "subtitle1" : "h6"}
                   component="h4"
                   gutterBottom
                   sx={{
@@ -489,7 +511,7 @@ const Footer = () => {
                     '&::after': {
                       content: '""',
                       position: 'absolute',
-                      bottom: -8,
+                      bottom: -6,
                       left: 0,
                       width: '100%',
                       height: 2,
@@ -505,10 +527,11 @@ const Footer = () => {
                   sx={{
                     color: '#94a3b8',
                     mb: 3,
-                    lineHeight: 1.6
+                    lineHeight: 1.6,
+                    fontSize: isMobile ? '0.85rem' : '0.9rem'
                   }}
                 >
-                  Join my newsletter for exclusive insights, project updates, and web development tips delivered to your inbox.
+                  Join my newsletter for exclusive insights, project updates, and web development tips.
                 </Typography>
                 
                 <Box 
@@ -528,7 +551,11 @@ const Footer = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     InputProps={{
                       startAdornment: (
-                        <EmailIcon sx={{ color: '#64748b', mr: 1.5, fontSize: '1.2rem' }} />
+                        <EmailIcon sx={{ 
+                          color: '#64748b', 
+                          mr: 1, 
+                          fontSize: isMobile ? '1.1rem' : '1.2rem' 
+                        }} />
                       ),
                     }}
                     sx={{
@@ -549,10 +576,14 @@ const Footer = () => {
                           boxShadow: '0 0 0 2px rgba(245, 158, 11, 0.2)'
                         },
                       },
+                      '& .MuiOutlinedInput-input': {
+                        padding: isMobile ? '10.5px 12px' : '12px 14px',
+                        fontSize: isMobile ? '0.9rem' : '1rem'
+                      },
                       '& .MuiOutlinedInput-input::placeholder': { 
                         color: '#64748b', 
                         opacity: 1,
-                        fontSize: '0.9rem'
+                        fontSize: isMobile ? '0.85rem' : '0.9rem'
                       }
                     }}
                     fullWidth
@@ -576,9 +607,10 @@ const Footer = () => {
                             : 'linear-gradient(90deg, #f59e0b 0%, #f97316 100%)',
                           color: isSubscribed ? 'white' : '#0f172a',
                           borderRadius: 2,
-                          py: 1.5,
+                          py: isMobile ? 1.2 : 1.5,
                           fontWeight: 700,
                           width: '100%',
+                          fontSize: isMobile ? '0.85rem' : '0.9rem',
                           '&:hover': { 
                             background: isSubscribed 
                               ? '#10b981' 
@@ -601,7 +633,7 @@ const Footer = () => {
           </Grid>
 
           <Divider sx={{ 
-            my: { xs: 4, md: 6 }, 
+            my: { xs: 3, sm: 4, md: 5, lg: 6 }, 
             borderColor: 'rgba(255, 255, 255, 0.05)',
             background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)'
           }} />
@@ -611,15 +643,16 @@ const Footer = () => {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.8 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: isMobile ? "0px" : "-50px" }}
           >
             <Box
               sx={{
                 display: 'flex',
-                flexDirection: { xs: 'column-reverse', md: 'row' },
+                flexDirection: { xs: 'column', sm: 'row' },
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                gap: 2
+                gap: 2,
+                textAlign: { xs: 'center', sm: 'left' }
               }}
             >
               <Typography
@@ -627,7 +660,7 @@ const Footer = () => {
                 sx={{
                   color: '#64748b',
                   fontWeight: 500,
-                  fontSize: '0.8rem'
+                  fontSize: isMobile ? '0.75rem' : '0.8rem'
                 }}
               >
                 © {new Date().getFullYear()} SHUBHAM KUMAR. All rights reserved.
@@ -635,23 +668,23 @@ const Footer = () => {
               
               <Box sx={{ 
                 display: 'flex', 
-                gap: { xs: 1.5, md: 3 }, 
+                gap: { xs: 1, sm: 2, md: 3 }, 
                 alignItems: 'center',
                 flexWrap: 'wrap',
-                justifyContent: { xs: 'center', md: 'flex-end' }
+                justifyContent: { xs: 'center', sm: 'flex-end' }
               }}>
                 <Typography
                   variant="body2"
                   sx={{
                     color: '#64748b',
                     fontWeight: 500,
-                    fontSize: '0.8rem',
+                    fontSize: isMobile ? '0.7rem' : '0.8rem',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 0.5,
                   }}
                 >
-                  <CodeIcon sx={{ fontSize: '0.9rem', color: '#3b82f6' }} />
+                  <CodeIcon sx={{ fontSize: isMobile ? '0.8rem' : '0.9rem', color: '#3b82f6' }} />
                   Crafted with React & MUI
                 </Typography>
                 <Box sx={{ 
@@ -665,13 +698,13 @@ const Footer = () => {
                   sx={{
                     color: '#64748b',
                     fontWeight: 500,
-                    fontSize: '0.8rem',
+                    fontSize: isMobile ? '0.7rem' : '0.8rem',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 0.5,
                   }}
                 >
-                  <SecurityIcon sx={{ fontSize: '0.9rem', color: '#10b981' }} />
+                  <SecurityIcon sx={{ fontSize: isMobile ? '0.8rem' : '0.9rem', color: '#10b981' }} />
                   Secure by Design
                 </Typography>
               </Box>
@@ -694,11 +727,13 @@ const Footer = () => {
           onClick={scrollToTop}
           sx={{
             position: 'fixed',
-            bottom: 24,
-            right: 24,
+            bottom: 16,
+            right: 16,
             bgcolor: 'transparent',
             background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
             color: 'white',
+            width: isMobile ? 44 : 56,
+            height: isMobile ? 44 : 56,
             '&:hover': { 
               background: 'linear-gradient(135deg, #6366f1 0%, #3b82f6 100%)', 
               transform: 'translateY(-3px)', 
@@ -708,7 +743,7 @@ const Footer = () => {
             zIndex: 1000
           }}
         >
-          <ArrowUpIcon />
+          <ArrowUpIcon sx={{ fontSize: isMobile ? '1.2rem' : '1.5rem' }} />
         </Fab>
       </motion.div>
 

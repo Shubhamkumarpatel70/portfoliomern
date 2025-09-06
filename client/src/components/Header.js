@@ -16,14 +16,17 @@ import {
   MenuItem,
   useTheme,
   useMediaQuery,
-  Chip
+  Chip,
+  Divider,
+  Badge
 } from '@mui/material';
 import {
   Menu as MenuIcon,
   Person as PersonIcon,
   Logout as LogoutIcon,
   Dashboard as DashboardIcon,
-  AdminPanelSettings as AdminIcon
+  AdminPanelSettings as AdminIcon,
+  Close as CloseIcon
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -34,6 +37,7 @@ const Header = () => {
   const location = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const navItems = [
     { text: 'Home', path: '/' },
@@ -59,6 +63,7 @@ const Header = () => {
   const handleLogout = () => {
     logout();
     handleProfileMenuClose();
+    if (mobileOpen) setMobileOpen(false);
   };
 
   const isActive = (path) => {
@@ -66,13 +71,32 @@ const Header = () => {
   };
 
   const drawer = (
-    <Box sx={{ width: 250 }}>
-      <Box sx={{ p: 2, textAlign: 'center', borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
-        <Typography variant="h6" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>
+    <Box sx={{ 
+      width: isSmallMobile ? '100vw' : 320, 
+      height: '100vh',
+      background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
+      color: '#F1F5F9',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
+      {/* Drawer Header */}
+      <Box sx={{ 
+        p: 2, 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center',
+        borderBottom: '1px solid rgba(255,255,255,0.1)'
+      }}>
+        <Typography variant="h6" sx={{ fontWeight: 900, color: '#38BDF8' }}>
           Shubham
         </Typography>
+        <IconButton onClick={handleDrawerToggle} sx={{ color: '#94A3B8' }}>
+          <CloseIcon />
+        </IconButton>
       </Box>
-      <List>
+      
+      {/* Navigation Items */}
+      <List sx={{ px: 2, py: 1, flexGrow: 1 }}>
         {navItems.map((item) => (
           <ListItem
             key={item.text}
@@ -80,78 +104,111 @@ const Header = () => {
             to={item.path}
             onClick={handleDrawerToggle}
             sx={{
-              color: isActive(item.path) ? theme.palette.primary.main : 'inherit',
+              borderRadius: 2,
+              mb: 0.5,
+              color: isActive(item.path) ? '#38BDF8' : '#94A3B8',
+              background: isActive(item.path) ? 'rgba(56, 189, 248, 0.1)' : 'transparent',
               fontWeight: isActive(item.path) ? 600 : 400,
               '&:hover': {
-                bgcolor: 'rgba(99, 102, 241, 0.1)',
-                color: theme.palette.primary.main
+                bgcolor: 'rgba(56, 189, 248, 0.08)',
+                color: '#38BDF8'
               }
             }}
           >
-            <ListItemText primary={item.text} />
+            <ListItemText 
+              primary={item.text} 
+              sx={{ 
+                '& .MuiListItemText-primary': { 
+                  fontWeight: 'inherit' 
+                } 
+              }} 
+            />
           </ListItem>
         ))}
+      </List>
+      
+      {/* Auth Section */}
+      <Box sx={{ p: 2, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
         {!isAuthenticated ? (
-          <ListItem sx={{ mt: 2 }}>
-            <Button
-              component={Link}
-              to="/login"
-              variant="contained"
-              fullWidth
-              sx={{
-                background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                fontWeight: 600,
-                '&:hover': {
-                  background: 'linear-gradient(135deg, #5b21b6, #7c3aed)'
-                }
-              }}
-            >
-              Login
-            </Button>
-          </ListItem>
+          <Button
+            component={Link}
+            to="/login"
+            variant="contained"
+            fullWidth
+            onClick={handleDrawerToggle}
+            sx={{
+              background: 'linear-gradient(90deg, #38BDF8 0%, #818CF8 100%)',
+              color: '#0F172A',
+              fontWeight: 700,
+              borderRadius: 2,
+              py: 1.5,
+              '&:hover': {
+                background: 'linear-gradient(90deg, #818CF8 0%, #38BDF8 100%)',
+              }
+            }}
+          >
+            Login
+          </Button>
         ) : (
           <>
             {user?.role === 'admin' && (
-              <ListItem sx={{ mt: 2 }}>
-                <Button
-                  component={Link}
-                  to="/admin"
-                  variant="contained"
-                  fullWidth
-                  startIcon={<AdminIcon />}
-                  sx={{
-                    background: 'linear-gradient(135deg, #dc2626, #ef4444)',
-                    fontWeight: 600,
-                    '&:hover': {
-                      background: 'linear-gradient(135deg, #b91c1c, #dc2626)'
-                    }
-                  }}
-                >
-                  Admin Dashboard
-                </Button>
-              </ListItem>
-            )}
-            <ListItem sx={{ mt: 2 }}>
               <Button
-                onClick={handleLogout}
-                variant="outlined"
+                component={Link}
+                to="/admin"
+                variant="contained"
                 fullWidth
+                startIcon={<AdminIcon />}
+                onClick={handleDrawerToggle}
                 sx={{
-                  borderColor: theme.palette.error.main,
-                  color: theme.palette.error.main,
-                  fontWeight: 600,
+                  background: 'linear-gradient(90deg, #818CF8 0%, #38BDF8 100%)',
+                  color: '#0F172A',
+                  fontWeight: 700,
+                  borderRadius: 2,
+                  py: 1.5,
+                  mb: 2,
                   '&:hover': {
-                    bgcolor: theme.palette.error.main,
-                    color: 'white'
+                    background: 'linear-gradient(90deg, #38BDF8 0%, #818CF8 100%)',
                   }
                 }}
               >
-                Logout
+                Admin Dashboard
               </Button>
-            </ListItem>
+            )}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2, p: 1.5, borderRadius: 2, bgcolor: 'rgba(255,255,255,0.05)' }}>
+              <Avatar sx={{ width: 36, height: 36, bgcolor: 'rgba(56, 189, 248, 0.2)', color: '#38BDF8', fontWeight: 700 }}>
+                {user?.name?.charAt(0).toUpperCase() || <PersonIcon />}
+              </Avatar>
+              <Box sx={{ flexGrow: 1 }}>
+                <Typography variant="body2" sx={{ fontWeight: 600, color: '#E2E8F0' }}>
+                  {user?.name || 'User'}
+                </Typography>
+                <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+                  {user?.email || ''}
+                </Typography>
+              </Box>
+            </Box>
+            <Button
+              onClick={handleLogout}
+              variant="outlined"
+              fullWidth
+              startIcon={<LogoutIcon />}
+              sx={{
+                borderColor: 'rgba(56, 189, 248, 0.5)',
+                color: '#38BDF8',
+                fontWeight: 600,
+                borderRadius: 2,
+                py: 1.5,
+                '&:hover': {
+                  bgcolor: 'rgba(56, 189, 248, 0.1)',
+                  borderColor: '#38BDF8'
+                }
+              }}
+            >
+              Logout
+            </Button>
           </>
         )}
-      </List>
+      </Box>
     </Box>
   );
 
@@ -160,14 +217,19 @@ const Header = () => {
       <AppBar
         position="sticky"
         sx={{
-          background: '#0F172A',
+          background: 'rgba(15, 23, 42, 0.95)',
+          backdropFilter: 'blur(10px)',
           color: '#F1F5F9',
-          boxShadow: '0 4px 24px rgba(16, 23, 42, 0.18)',
-          borderBottom: '1.5px solid #1E293B',
+          boxShadow: '0 4px 24px rgba(2, 6, 23, 0.2)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
           zIndex: 1201
         }}
       >
-        <Toolbar sx={{ justifyContent: 'space-between', minHeight: 72 }}>
+        <Toolbar sx={{ 
+          justifyContent: 'space-between', 
+          minHeight: { xs: 64, md: 72 },
+          px: { xs: 1.5, sm: 2, md: 3 }
+        }}>
           {/* Logo */}
           <Typography
             variant="h5"
@@ -176,10 +238,10 @@ const Header = () => {
             sx={{
               fontWeight: 900,
               textDecoration: 'none',
-              color: '#38BDF8',
               letterSpacing: 1.5,
-              fontSize: { xs: '1.2rem', md: '1.5rem' },
+              fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem' },
               px: 1,
+              py: 0.5,
               borderRadius: 2,
               background: 'linear-gradient(90deg, #38BDF8 0%, #818CF8 100%)',
               backgroundClip: 'text',
@@ -187,39 +249,40 @@ const Header = () => {
               WebkitTextFillColor: 'transparent',
               transition: 'all 0.2s',
               '&:hover': {
-                color: '#F1F5F9',
-                background: 'none',
-                WebkitTextFillColor: '#F1F5F9',
+                bgcolor: 'rgba(56, 189, 248, 0.1)',
               }
             }}
           >
             Shubham
           </Typography>
+
           {/* Desktop Navigation */}
           {!isMobile && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: { md: 0.5, lg: 1 } 
+            }}>
               {navItems.map((item) => (
                 <Button
                   key={item.text}
                   component={Link}
                   to={item.path}
                   sx={{
-                    color: isActive(item.path) ? '#38BDF8' : '#F1F5F9',
-                    fontWeight: 700,
-                    fontSize: '1.05rem',
-                    px: 2.5,
-                    py: 1.2,
-                    borderRadius: 2.5,
+                    color: isActive(item.path) ? '#38BDF8' : '#CBD5E1',
+                    fontWeight: isActive(item.path) ? 700 : 500,
+                    fontSize: '1rem',
+                    px: { md: 1.5, lg: 2 },
+                    py: 1,
+                    borderRadius: 2,
+                    minWidth: 'auto',
                     background: isActive(item.path)
-                      ? 'linear-gradient(90deg, #38BDF8 0%, #818CF8 100%)'
+                      ? 'rgba(56, 189, 248, 0.1)'
                       : 'transparent',
-                    backgroundClip: isActive(item.path) ? 'text' : 'none',
-                    WebkitBackgroundClip: isActive(item.path) ? 'text' : 'none',
-                    WebkitTextFillColor: isActive(item.path) ? 'transparent' : undefined,
                     transition: 'all 0.2s',
                     '&:hover': {
                       color: '#38BDF8',
-                      background: 'rgba(56,189,248,0.08)',
+                      background: 'rgba(56, 189, 248, 0.08)',
                     }
                   }}
                 >
@@ -228,6 +291,7 @@ const Header = () => {
               ))}
             </Box>
           )}
+
           {/* Profile/Actions */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {!isAuthenticated ? (
@@ -239,12 +303,13 @@ const Header = () => {
                   background: 'linear-gradient(90deg, #38BDF8 0%, #818CF8 100%)',
                   color: '#0F172A',
                   fontWeight: 700,
-                  borderRadius: 2.5,
+                  borderRadius: 2,
                   px: 3,
-                  boxShadow: '0 2px 8px #38BDF822',
+                  py: 1,
+                  boxShadow: '0 2px 12px rgba(56, 189, 248, 0.3)',
                   '&:hover': {
                     background: 'linear-gradient(90deg, #818CF8 0%, #38BDF8 100%)',
-                    color: '#F1F5F9',
+                    boxShadow: '0 4px 16px rgba(56, 189, 248, 0.4)',
                   }
                 }}
               >
@@ -252,7 +317,7 @@ const Header = () => {
               </Button>
             ) : (
               <>
-                {user?.role === 'admin' && (
+                {user?.role === 'admin' && !isMobile && (
                   <Button
                     component={Link}
                     to="/admin"
@@ -262,13 +327,14 @@ const Header = () => {
                       background: 'linear-gradient(90deg, #818CF8 0%, #38BDF8 100%)',
                       color: '#0F172A',
                       fontWeight: 700,
-                      borderRadius: 2.5,
-                      px: 2.5,
-                      boxShadow: '0 2px 8px #818CF822',
+                      borderRadius: 2,
+                      px: 2,
+                      py: 1,
+                      boxShadow: '0 2px 12px rgba(129, 140, 248, 0.3)',
                       mr: 1,
                       '&:hover': {
                         background: 'linear-gradient(90deg, #38BDF8 0%, #818CF8 100%)',
-                        color: '#F1F5F9',
+                        boxShadow: '0 4px 16px rgba(129, 140, 248, 0.4)',
                       }
                     }}
                   >
@@ -278,17 +344,24 @@ const Header = () => {
                 <IconButton
                   onClick={handleProfileMenuOpen}
                   sx={{
-                    ml: 1,
                     p: 0.5,
-                    border: '2px solid #38BDF8',
-                    background: 'rgba(56,189,248,0.08)',
+                    border: '2px solid rgba(56, 189, 248, 0.3)',
+                    background: 'rgba(56, 189, 248, 0.08)',
                     color: '#38BDF8',
                     '&:hover': {
-                      background: 'rgba(56,189,248,0.18)',
+                      background: 'rgba(56, 189, 248, 0.18)',
+                      borderColor: 'rgba(56, 189, 248, 0.5)',
                     }
                   }}
                 >
-                  <Avatar sx={{ width: 36, height: 36, bgcolor: '#1E293B', color: '#38BDF8', fontWeight: 700 }}>
+                  <Avatar sx={{ 
+                    width: 36, 
+                    height: 36, 
+                    bgcolor: 'rgba(56, 189, 248, 0.2)', 
+                    color: '#38BDF8', 
+                    fontWeight: 700,
+                    fontSize: '1rem'
+                  }}>
                     {user?.name?.charAt(0).toUpperCase() || <PersonIcon />}
                   </Avatar>
                 </IconButton>
@@ -303,17 +376,32 @@ const Header = () => {
                     sx: {
                       bgcolor: '#1E293B',
                       color: '#F1F5F9',
-                      minWidth: 180,
-                      boxShadow: '0 4px 24px #0F172A88',
-                      borderRadius: 2.5
+                      minWidth: 200,
+                      boxShadow: '0 4px 24px rgba(2, 6, 23, 0.4)',
+                      borderRadius: 2,
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      overflow: 'hidden'
                     }
                   }}
                 >
-                  <MenuItem disabled sx={{ fontWeight: 700, opacity: 0.7 }}>
+                  <MenuItem disabled sx={{ 
+                    fontWeight: 700, 
+                    opacity: 0.8,
+                    borderBottom: '1px solid rgba(255,255,255,0.08)'
+                  }}>
                     {user?.name || 'Profile'}
                   </MenuItem>
-                  <MenuItem onClick={handleLogout} sx={{ color: '#38BDF8', fontWeight: 700 }}>
-                    <LogoutIcon fontSize="small" sx={{ mr: 1 }} /> Logout
+                  <MenuItem 
+                    onClick={handleLogout} 
+                    sx={{ 
+                      color: '#38BDF8', 
+                      fontWeight: 600,
+                      '&:hover': {
+                        bgcolor: 'rgba(56, 189, 248, 0.1)'
+                      }
+                    }}
+                  >
+                    <LogoutIcon fontSize="small" sx={{ mr: 1.5 }} /> Logout
                   </MenuItem>
                 </Menu>
               </>
@@ -324,7 +412,14 @@ const Header = () => {
                 color="inherit"
                 edge="end"
                 onClick={handleDrawerToggle}
-                sx={{ ml: 1 }}
+                sx={{ 
+                  ml: 1,
+                  color: '#CBD5E1',
+                  '&:hover': {
+                    color: '#38BDF8',
+                    bgcolor: 'rgba(56, 189, 248, 0.1)'
+                  }
+                }}
               >
                 <MenuIcon />
               </IconButton>
@@ -332,125 +427,23 @@ const Header = () => {
           </Box>
         </Toolbar>
       </AppBar>
+
       {/* Mobile Drawer */}
       <Drawer
         anchor="right"
         open={mobileOpen}
         onClose={handleDrawerToggle}
-        PaperProps={{
-          sx: {
-            bgcolor: '#1E293B',
-            color: '#F1F5F9',
-            width: 270,
-            pt: 2,
-            borderTopLeftRadius: 18,
-            borderBottomLeftRadius: 18,
+        sx={{
+          '& .MuiDrawer-paper': {
+            boxShadow: 'none',
+            overflow: 'hidden'
           }
         }}
       >
-        <Box sx={{ p: 2, textAlign: 'center', borderBottom: '1px solid #334155' }}>
-          <Typography variant="h6" sx={{ fontWeight: 900, color: '#38BDF8', letterSpacing: 1 }}>
-            Shubham
-          </Typography>
-        </Box>
-        <List>
-          {navItems.map((item) => (
-            <ListItem
-              key={item.text}
-              component={Link}
-              to={item.path}
-              onClick={handleDrawerToggle}
-              sx={{
-                color: isActive(item.path) ? '#38BDF8' : '#F1F5F9',
-                fontWeight: isActive(item.path) ? 700 : 500,
-                borderRadius: 2,
-                px: 2,
-                my: 0.5,
-                '&:hover': {
-                  bgcolor: 'rgba(56,189,248,0.08)',
-                  color: '#38BDF8'
-                }
-              }}
-            >
-              <ListItemText primary={item.text} />
-            </ListItem>
-          ))}
-          {!isAuthenticated ? (
-            <ListItem sx={{ mt: 2 }}>
-              <Button
-                component={Link}
-                to="/login"
-                variant="contained"
-                fullWidth
-                sx={{
-                  background: 'linear-gradient(90deg, #38BDF8 0%, #818CF8 100%)',
-                  color: '#0F172A',
-                  fontWeight: 700,
-                  borderRadius: 2.5,
-                  px: 3,
-                  boxShadow: '0 2px 8px #38BDF822',
-                  '&:hover': {
-                    background: 'linear-gradient(90deg, #818CF8 0%, #38BDF8 100%)',
-                    color: '#F1F5F9',
-                  }
-                }}
-              >
-                Login
-              </Button>
-            </ListItem>
-          ) : (
-            <>
-              {user?.role === 'admin' && (
-                <ListItem sx={{ mt: 2 }}>
-                  <Button
-                    component={Link}
-                    to="/admin"
-                    variant="contained"
-                    fullWidth
-                    startIcon={<AdminIcon />}
-                    sx={{
-                      background: 'linear-gradient(90deg, #818CF8 0%, #38BDF8 100%)',
-                      color: '#0F172A',
-                      fontWeight: 700,
-                      borderRadius: 2.5,
-                      px: 2.5,
-                      boxShadow: '0 2px 8px #818CF822',
-                      mr: 1,
-                      '&:hover': {
-                        background: 'linear-gradient(90deg, #38BDF8 0%, #818CF8 100%)',
-                        color: '#F1F5F9',
-                      }
-                    }}
-                  >
-                    Admin
-                  </Button>
-                </ListItem>
-              )}
-              <ListItem sx={{ mt: 2 }}>
-                <Button
-                  onClick={handleLogout}
-                  variant="outlined"
-                  fullWidth
-                  sx={{
-                    borderColor: '#38BDF8',
-                    color: '#38BDF8',
-                    fontWeight: 700,
-                    borderRadius: 2.5,
-                    '&:hover': {
-                      bgcolor: '#38BDF8',
-                      color: '#0F172A',
-                    }
-                  }}
-                >
-                  Logout
-                </Button>
-              </ListItem>
-            </>
-          )}
-        </List>
+        {drawer}
       </Drawer>
     </>
   );
 };
 
-export default Header; 
+export default Header;
