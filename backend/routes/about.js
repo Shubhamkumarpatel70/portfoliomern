@@ -25,7 +25,7 @@ router.route('/me')
   .delete(protect, deleteAbout);
 
 // Upload resume (PDF)
-router.put('/me/resume', protect, uploadSingle('resume'), uploadResume);
+router.post('/me/resume', protect, uploadSingle('resume'), uploadResume);
 
 // Admin routes
 router.route('/admin/all').get(protect, admin, getAllAbout);

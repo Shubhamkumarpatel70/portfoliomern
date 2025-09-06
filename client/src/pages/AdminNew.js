@@ -259,7 +259,7 @@ const AdminNew = () => {
     try {
       const formData = new FormData();
       formData.append('resume', file);
-      await api.put('/api/about/me/resume', formData);
+      await api.post('/api/about/me/resume', formData);
       setSuccess('Resume uploaded successfully!');
       fetchData(); // Refresh data to get the new resume URL
     } catch (error) {

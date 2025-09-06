@@ -55,6 +55,7 @@ const About = () => {
   const [error, setError] = useState('');
   const [experiences, setExperiences] = useState([]);
   const theme = useTheme();
+  const [uploadingResume, setUploadingResume] = useState(false);
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
@@ -89,6 +90,34 @@ const About = () => {
     }
   };
 
+  const handleResumeUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      setError('Please select a valid PDF file.');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+      setError('Resume file size must be less than 5MB.');
+      return;
+    }
+
+    setUploadingResume(true);
+    setError('');
+
+    try {
+      const formData = new FormData();
+      formData.append('resume', file);
+      await api.post('/api/about/me/resume', formData);
+      fetchAboutData(); // Refresh data to get the new resume URL
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to upload resume.');
+    } finally {
+      setUploadingResume(false);
+    }
+  };
   const stats = [
     { label: 'Years Experience', value: '4+', icon: <WorkIcon /> },
     { label: 'Projects Completed', value: '50+', icon: <CodeIcon /> },
@@ -408,11 +437,9 @@ const About = () => {
                   )}
                   {about?.resumeUrl ? (
                     <Button
-                      component="a"
-                      href={getImageUrl(about.resumeUrl)}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      component="label"
                       variant="contained"
+                      disabled={uploadingResume}
                       size="small"
                       sx={{ 
                         mt: 1, 
@@ -422,7 +449,23 @@ const About = () => {
                         fontWeight: 700
                       }}
                     >
-                      View Resume
+                      {uploadingResume ? 'Uploading...' : 'Upload New Resume'}
+                      {/* The actual link to view the resume */}
+                      <a 
+                        href={getImageUrl(about.resumeUrl)} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        onClick={(e) => e.stopPropagation()} 
+                        style={{ color: 'inherit', textDecoration: 'none', marginLeft: '8px' }}
+                      > (View)</a>
+                      {/* Hidden file input */}
+                      <input
+                        type="file"
+                        hidden
+                        accept="application/pdf"
+                        onChange={handleResumeUpload}
+                        style={{ display: 'none' }}
+                      />
                     </Button>
                   ) : (
                     <Button 
