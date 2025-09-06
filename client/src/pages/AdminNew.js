@@ -90,6 +90,7 @@ const AdminNew = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [uploadingResume, setUploadingResume] = useState(false);
   
   // Dialog states
   const [deleteDialog, setDeleteDialog] = useState({ open: false, type: '', id: '', name: '' });
@@ -226,6 +227,36 @@ const AdminNew = () => {
     }
   };
 
+  const handleResumeUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      setError('Please select a valid PDF file for the resume.');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Resume file size must be less than 5MB');
+      return;
+    }
+
+    setUploadingResume(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const formData = new FormData();
+      formData.append('resume', file);
+      await api.put('/api/about/me/resume', formData);
+      setSuccess('Resume uploaded successfully!');
+      fetchData(); // Refresh data to get the new resume URL
+    } catch (error) {
+      setError(error.response?.data?.message || 'Failed to upload resume.');
+    } finally {
+      setUploadingResume(false);
+    }
+  };
   const handleDelete = async () => {
     try {
       const { type, id } = deleteDialog;
@@ -581,6 +612,8 @@ const AdminNew = () => {
                 about={about} 
                 onRefresh={fetchData}
                 onEdit={(data) => setAboutDialog({ open: true, data: data || {} })}
+                onResumeUpload={handleResumeUpload}
+                uploadingResume={uploadingResume}
               />
             )}
             {tabValue === 6 && (
@@ -1146,7 +1179,7 @@ const ContactsTab = ({ contacts, onRefresh }) => (
   </Box>
 );
 
-const AboutTab = ({ about, onRefresh, onEdit }) => (
+const AboutTab = ({ about, onRefresh, onEdit, onResumeUpload, uploadingResume }) => (
   <Box>
     <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
       <Typography variant="h5" fontWeight="bold">
@@ -1219,6 +1252,37 @@ const AboutTab = ({ about, onRefresh, onEdit }) => (
                 <Chip key={index} label={skill} variant="outlined" />
               ))}
             </Box>
+
+            <Divider sx={{ my: 3 }} />
+
+            <Typography variant="h6" fontWeight="bold" mb={2}>
+              Resume
+            </Typography>
+            {about.resumeUrl && (
+              <Box mb={2}>
+                <Link href={about.resumeUrl} target="_blank" rel="noopener noreferrer">
+                  View Current Resume
+                </Link>
+              </Box>
+            )}
+            <Button
+              variant="contained"
+              component="label"
+              startIcon={uploadingResume ? <CircularProgress size={20} color="inherit" /> : <UploadIcon />}
+              disabled={uploadingResume}
+            >
+              {uploadingResume ? 'Uploading...' : 'Upload New Resume'}
+              <input
+                type="file"
+                hidden
+                accept="application/pdf"
+                onChange={onResumeUpload}
+              />
+            </Button>
+            <Typography variant="caption" display="block" mt={1} color="text.secondary">
+              Upload a new PDF to replace the existing one.
+            </Typography>
+
           </Grid>
         </Grid>
       </Card>
@@ -1230,6 +1294,7 @@ const AboutTab = ({ about, onRefresh, onEdit }) => (
         <Button
           variant="contained"
           startIcon={<AddIcon />}
+          onClick={() => onEdit(null)}
         >
           Add About Information
         </Button>
