@@ -31,6 +31,7 @@ import {
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import axios from 'axios';
+import LoadingSpinner from '../components/LoadingSpinner';
 import { api } from '../api';
 
 const getStatColor = (icon) => {
@@ -96,28 +97,7 @@ const About = () => {
   ];
 
   if (loading) {
-    return (
-      <Box sx={{ 
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
-        minHeight: '100vh',
-        py: { xs: 4, sm: 6, md: 8, lg: 10 }
-      }}>
-        <Container maxWidth="lg">
-          <Box sx={{ textAlign: 'center', mb: { xs: 4, sm: 5, md: 6 } }}>
-            <Skeleton variant="text" width={{ xs: '80%', sm: '60%' }} height={{ xs: 40, sm: 50, md: 60 }} sx={{ mx: 'auto', mb: 2, bgcolor: 'rgba(255,255,255,0.12)' }} />
-            <Skeleton variant="text" width={{ xs: '90%', sm: '80%' }} height={{ xs: 30, sm: 35, md: 40 }} sx={{ mx: 'auto', mb: 2, bgcolor: 'rgba(255,255,255,0.1)' }} />
-            <Skeleton variant="text" width={{ xs: '70%', sm: '70%' }} height={{ xs: 20, sm: 24 }} sx={{ mx: 'auto', bgcolor: 'rgba(255,255,255,0.08)' }} />
-          </Box>
-          <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
-            {[1, 2, 3, 4].map((item) => (
-              <Grid item xs={12} sm={6} md={6} lg={3} key={item}>
-                <Skeleton variant="rectangular" height={{ xs: 180, sm: 200, md: 200 }} sx={{ borderRadius: { xs: 2, sm: 3 }, bgcolor: 'rgba(255,255,255,0.06)' }} />
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </Box>
-    );
+    return <LoadingSpinner message="Loading About Information..." />;
   }
 
   if (error && !about) {
@@ -338,7 +318,7 @@ const About = () => {
           </Grid>
         </motion.div>
 
-        <Grid container spacing={{ xs: 3, md: 4 }}>
+        <Grid container spacing={{ xs: 4, md: 5 }}>
           {/* Personal Info Card with Photo */}
           <Grid item xs={12} lg={4}>
             <motion.div
@@ -438,6 +418,7 @@ const About = () => {
                         mt: 1, 
                         mx: 'auto',
                         background: 'linear-gradient(45deg, #3b82f6, #8b5cf6)',
+                        borderRadius: '10px',
                         fontWeight: 700
                       }}
                     >
@@ -453,6 +434,7 @@ const About = () => {
                         mt: 1, 
                         mx: 'auto',
                         fontWeight: 700,
+                        borderRadius: '10px',
                         borderWidth: 2,
                         '&:hover': { borderWidth: 2 }
                       }}
@@ -512,9 +494,9 @@ const About = () => {
                   Technical Skills
                 </Typography>
                 {about?.skills && about.skills.length > 0 ? (
-                  <Grid container spacing={1}>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                     {about.skills.map((skill, index) => (
-                      <Grid item xs={6} sm={4} md={3} key={`${skill}-${index}`}>
+                      <React.Fragment key={`${skill}-${index}`}>
                         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, delay: index * 0.03 }}>
                           <Chip
                             label={skill}
@@ -535,9 +517,9 @@ const About = () => {
                             }}
                           />
                         </motion.div>
-                      </Grid>
+                      </React.Fragment>
                     ))}
-                  </Grid>
+                  </Box>
                 ) : (
                   <Typography variant="body1" sx={{ color: '#94a3b8', fontStyle: 'italic' }}>
                     Skills information not available.

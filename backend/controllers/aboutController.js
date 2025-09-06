@@ -21,7 +21,7 @@ exports.getAbout = catchAsyncErrors(async (req, res, next) => {
 
 // Get about by user ID (for public access)
 exports.getAboutByUserId = catchAsyncErrors(async (req, res, next) => {
-  const about = await About.findOne({ user: req.params.userId }).populate('user', 'name email avatar');
+  const about = await About.findOne({ user: req.params.userId }).populate('user', 'name email avatar social');
 
   if (!about) {
     return res.status(404).json({
@@ -45,16 +45,25 @@ exports.getAboutByUserId = catchAsyncErrors(async (req, res, next) => {
 
 // Upload resume (PDF) for current user
 exports.uploadResume = catchAsyncErrors(async (req, res, next) => {
-  // uploadSingle middleware already set req.body.resume
-  if (!req.body.resume) {
+  if (!req.file) {
     return res.status(400).json({ success: false, message: 'No resume uploaded' });
+  }
+
+  // Determine the URL of the uploaded file
+  let resumeUrl;
+  if (process.env.NODE_ENV === 'production' && process.env.CLOUDINARY_CLOUD_NAME) {
+    // Cloudinary provides a full path
+    resumeUrl = req.file.path;
+  } else {
+    // For local storage, construct the path
+    resumeUrl = `/uploads/${req.file.filename}`;
   }
 
   let about = await About.findOne({ user: req.user.id });
   if (!about) {
-    about = await About.create({ user: req.user.id, name: req.user.name || 'User', bio: ' ', resumeUrl: req.body.resume });
+    about = await About.create({ user: req.user.id, name: req.user.name || 'User', bio: ' ', resumeUrl: resumeUrl });
   } else {
-    about.resumeUrl = req.body.resume;
+    about.resumeUrl = resumeUrl;
     await about.save();
   }
 
@@ -155,7 +164,7 @@ exports.deleteAbout = catchAsyncErrors(async (req, res, next) => {
 
 // Get first available about information (for public access)
 exports.getFirstAbout = catchAsyncErrors(async (req, res, next) => {
-  const about = await About.findOne().populate('user', 'name email avatar');
+  const about = await About.findOne().populate('user', 'name email avatar social');
 
   if (!about) {
     return res.status(404).json({

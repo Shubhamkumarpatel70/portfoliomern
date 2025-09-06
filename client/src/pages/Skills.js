@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../api';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const levelColor = {
   Beginner: '#94a3b8',
@@ -100,6 +101,10 @@ const Skills = () => {
     }
   };
 
+  if (loading) {
+    return <LoadingSpinner message="Loading Skills..." />;
+  }
+
   return (
     <Box sx={{ 
       minHeight: '100vh', 
@@ -158,7 +163,7 @@ const Skills = () => {
                 background: 'linear-gradient(90deg, #38BDF8 0%, #818CF8 100%)',
                 color: '#0F172A',
                 fontWeight: 800,
-                borderRadius: 3,
+                borderRadius: '10px',
                 px: { xs: 2.5, sm: 3 },
                 py: { xs: 1, sm: 1.25 },
                 boxShadow: '0 6px 18px rgba(56,189,248,0.25)',
@@ -200,7 +205,7 @@ const Skills = () => {
                   variant={selectedCategory === cat ? 'contained' : 'outlined'}
                   onClick={() => setSelectedCategory(cat)}
                   sx={{
-                    borderRadius: 3,
+                    borderRadius: '10px',
                     fontWeight: 700,
                     px: { xs: 1.5, sm: 2.5 },
                     py: { xs: 0.5, sm: 0.75 },
@@ -235,23 +240,7 @@ const Skills = () => {
           </Box>
           
           {/* Skills Grid */}
-          {loading ? (
-            <Box sx={{ 
-              display: 'flex', 
-              justifyContent: 'center', 
-              alignItems: 'center', 
-              height: '300px'
-            }}>
-              <CircularProgress 
-                size={60} 
-                thickness={4}
-                sx={{ 
-                  color: '#38BDF8',
-                  animationDuration: '800ms'
-                }} 
-              />
-            </Box>
-          ) : (
+          {filteredSkills.length > 0 ? (
             <motion.div
               variants={containerVariants}
               initial="hidden"
@@ -277,7 +266,7 @@ const Skills = () => {
                       <motion.div
                         variants={itemVariants}
                         layout
-                        style={{ width: '100%', maxWidth: '320px' }}
+                        style={{ width: '100%', display: 'flex' }}
                       >
                         <Card 
                           sx={{
@@ -287,7 +276,7 @@ const Skills = () => {
                             color: 'white',
                             p: { xs: 1.5, sm: 2, md: 2.5 },
                             height: '100%',
-                            display: 'flex',
+                            width: '100%',
                             flexDirection: 'column',
                             justifyContent: 'center',
                             backdropFilter: 'blur(10px)',
@@ -416,6 +405,12 @@ const Skills = () => {
                 </AnimatePresence>
               </Grid>
             </motion.div>
+          ) : (
+            <Box sx={{ textAlign: 'center', py: 5 }}>
+              <Typography variant="h6" color="text.secondary">
+                No skills found for this category.
+              </Typography>
+            </Box>
           )}
         </motion.div>
       </Container>

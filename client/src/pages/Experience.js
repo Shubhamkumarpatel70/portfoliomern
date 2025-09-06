@@ -29,6 +29,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import LoadingSpinner from '../components/LoadingSpinner';
 import { api } from '../api';
 
 const Experience = () => {
@@ -135,39 +136,7 @@ const Experience = () => {
   };
 
   if (loading) {
-    return (
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        minHeight: '60vh',
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)'
-      }}>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <Typography 
-            variant="h6" 
-            sx={{ 
-              color: '#cbd5e1',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1
-            }}
-          >
-            <motion.span
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            >
-              ⏳
-            </motion.span>
-            Loading experiences...
-          </Typography>
-        </motion.div>
-      </Box>
-    );
+    return <LoadingSpinner message="Loading Experiences..." />;
   }
 
   return (
@@ -255,7 +224,7 @@ const Experience = () => {
         </Container>
       </Box>
 
-      <Container maxWidth="lg" sx={{ py: { xs: 6, md: 10 }, px: { xs: 2, sm: 3 } }}>
+      <Container maxWidth="lg" sx={{ py: { xs: 4, md: 8 }, px: { xs: 2, sm: 3 } }}>
         {/* Add Experience Button */}
         {isAdmin ? (
           <Box sx={{ mb: 6, textAlign: { xs: 'center', sm: 'right' } }}>
@@ -269,7 +238,7 @@ const Experience = () => {
                   fontWeight: 600,
                   px: 4,
                   py: 1.5,
-                  borderRadius: 2,
+                  borderRadius: '10px',
                   '&:hover': {
                     background: 'linear-gradient(135deg, #5b21b6, #7c3aed)',
                     transform: 'translateY(-2px)',
@@ -297,14 +266,13 @@ const Experience = () => {
             <Box
               sx={{
                 position: 'absolute',
-                left: { xs: 16, md: 36 },
+                left: { xs: 16, sm: 36 },
                 top: 40,
                 bottom: 0,
                 width: 3,
                 background: 'linear-gradient(to bottom, #667eea, #764ba2, transparent)',
                 opacity: 0.6,
-                borderRadius: 2,
-                display: { xs: 'none', sm: 'block' }
+                borderRadius: 2
               }}
             />
             
@@ -344,7 +312,7 @@ const Experience = () => {
                       pl: { xs: 5, sm: 6, md: 8 }, 
                       pr: { xs: 2, sm: 4 },
                       py: 4,
-                      '&:last-child': { pb: 4 }
+                      '&:last-child': { pb: 4 },
                     }}>
                       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
                         {/* Timeline Dot */}
@@ -352,7 +320,7 @@ const Experience = () => {
                           className="timeline-dot"
                           sx={{
                             position: 'absolute',
-                            left: { xs: 12, sm: 14, md: 32 },
+                            left: { xs: 12, sm: 32 },
                             top: 32,
                             width: 16,
                             height: 16,
@@ -376,10 +344,10 @@ const Experience = () => {
                             mb: 3 
                           }}>
                             <Box>
-                              <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 800, color: '#e2e8f0' }}>
+                              <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 800, color: '#e2e8f0', fontSize: { xs: '1.2rem', sm: '1.5rem' } }}>
                                 {experience.title}
                               </Typography>
-                              <Typography variant="h6" gutterBottom sx={{ fontWeight: 700, color: '#93c5fd' }}>
+                              <Typography variant="h6" gutterBottom sx={{ fontWeight: 700, color: '#93c5fd', fontSize: { xs: '1rem', sm: '1.25rem' } }}>
                                 {experience.company}
                               </Typography>
                             </Box>
@@ -474,7 +442,7 @@ const Experience = () => {
                     fontWeight: 600,
                     px: 4,
                     py: 1.5,
-                    borderRadius: 2,
+                    borderRadius: '10px',
                     '&:hover': {
                       background: 'linear-gradient(135deg, #5b21b6, #7c3aed)',
                       transform: 'translateY(-2px)',
@@ -498,9 +466,7 @@ const Experience = () => {
         maxWidth="sm" 
         fullWidth
         fullScreen={isMobile}
-        PaperProps={{
-          sx: { borderRadius: isMobile ? 0 : 2 }
-        }}
+        PaperProps={{ sx: { borderRadius: isMobile ? 0 : '10px' } }}
       >
         <DialogTitle sx={{ 
           fontWeight: 600,
@@ -677,7 +643,7 @@ const Experience = () => {
                   background: 'linear-gradient(135deg, #667eea, #764ba2)',
                   fontWeight: 600,
                   px: 3,
-                  borderRadius: 2,
+                  borderRadius: '10px',
                   '&:hover': {
                     background: 'linear-gradient(135deg, #5b21b6, #7c3aed)'
                   }

@@ -82,7 +82,7 @@ const Login = () => {
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
         position: 'relative',
         overflow: 'hidden',
         '&::before': {
@@ -105,11 +105,12 @@ const Login = () => {
         >
           <Card
             sx={{
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85))',
-              backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255,255,255,0.3)',
-              boxShadow: '0 25px 50px rgba(0,0,0,0.15)',
-              borderRadius: 4
+              background: 'rgba(15, 23, 42, 0.8)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+              borderRadius: 4,
+              color: 'white'
             }}
           >
             <CardContent sx={{ p: 6, textAlign: 'center' }}>
@@ -121,11 +122,11 @@ const Login = () => {
                     mx: 'auto',
                     mb: 3,
                     borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                    background: 'linear-gradient(135deg, #38BDF8, #818CF8)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 10px 30px rgba(99, 102, 241, 0.3)'
+                    boxShadow: '0 10px 30px rgba(56, 189, 248, 0.3)'
                   }}
                 >
                   <LoginIcon sx={{ fontSize: '2.5rem', color: 'white' }} />
@@ -136,7 +137,7 @@ const Login = () => {
                   gutterBottom 
                   sx={{ 
                     fontWeight: 800,
-                    background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                    background: 'linear-gradient(135deg, #38BDF8, #818CF8)',
                     backgroundClip: 'text',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent'
@@ -144,7 +145,7 @@ const Login = () => {
                 >
                   Welcome Back
                 </Typography>
-                <Typography variant="body1" color="text.secondary" sx={{ fontWeight: 500 }}>
+                <Typography variant="body1" color="#94a3b8" sx={{ fontWeight: 500 }}>
                   Sign in to your account to continue
                 </Typography>
               </Box>
@@ -166,19 +167,25 @@ const Login = () => {
                   required
                   margin="normal"
                   InputProps={{
-                    startAdornment: <EmailIcon sx={{ mr: 1, color: 'text.secondary' }} />
+                    startAdornment: <EmailIcon sx={{ mr: 1, color: '#94a3b8' }} />
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
                       borderRadius: 3,
-                      background: 'rgba(255,255,255,0.8)',
+                      background: 'rgba(255,255,255,0.05)',
+                      color: 'white',
                       '&:hover': {
-                        background: 'rgba(255,255,255,1)'
+                        background: 'rgba(255,255,255,0.1)'
                       },
                       '&.Mui-focused': {
-                        background: 'rgba(255,255,255,1)'
-                      }
-                    }
+                        background: 'rgba(255,255,255,0.1)',
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#38BDF8'
+                        }
+                      },
+                      '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.2)' }
+                    },
+                    '& .MuiInputLabel-root': { color: '#94a3b8' }
                   }}
                 />
                 <TextField
@@ -191,19 +198,25 @@ const Login = () => {
                   required
                   margin="normal"
                   InputProps={{
-                    startAdornment: <LockIcon sx={{ mr: 1, color: 'text.secondary' }} />
+                    startAdornment: <LockIcon sx={{ mr: 1, color: '#94a3b8' }} />
                   }}
                   sx={{
                     '& .MuiOutlinedInput-root': {
                       borderRadius: 3,
-                      background: 'rgba(255,255,255,0.8)',
+                      background: 'rgba(255,255,255,0.05)',
+                      color: 'white',
                       '&:hover': {
-                        background: 'rgba(255,255,255,1)'
+                        background: 'rgba(255,255,255,0.1)'
                       },
                       '&.Mui-focused': {
-                        background: 'rgba(255,255,255,1)'
-                      }
-                    }
+                        background: 'rgba(255,255,255,0.1)',
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#38BDF8'
+                        }
+                      },
+                      '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.2)' }
+                    },
+                    '& .MuiInputLabel-root': { color: '#94a3b8' }
                   }}
                 />
                 <Button
@@ -216,18 +229,19 @@ const Login = () => {
                     mt: 4,
                     mb: 3,
                     py: 1.5,
-                    background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                    background: 'linear-gradient(135deg, #38BDF8, #818CF8)',
                     fontWeight: 700,
                     fontSize: '1.1rem',
-                    borderRadius: 3,
+                    borderRadius: '10px',
                     textTransform: 'none',
+                    color: '#0f172a',
                     '&:hover': {
-                      background: 'linear-gradient(135deg, #5b21b6, #7c3aed)',
+                      background: 'linear-gradient(135deg, #818CF8, #38BDF8)',
                       transform: 'translateY(-2px)',
-                      boxShadow: '0 8px 25px rgba(99, 102, 241, 0.3)'
+                      boxShadow: '0 8px 25px rgba(56, 189, 248, 0.3)'
                     },
                     '&:disabled': {
-                      background: 'rgba(99, 102, 241, 0.5)',
+                      background: 'rgba(56, 189, 248, 0.5)',
                       transform: 'none'
                     },
                     transition: 'all 0.3s ease'
@@ -237,7 +251,7 @@ const Login = () => {
                 </Button>
               </form>
 
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              <Typography variant="body2" color="#94a3b8" sx={{ mb: 2 }}>
                 Don't have an account?{' '}
                 <Link 
                   to="/register" 

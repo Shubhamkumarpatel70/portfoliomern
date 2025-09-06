@@ -70,11 +70,17 @@ import {
   FilterList as FilterIcon,
   Search as SearchIcon,
   MoreVert as MoreVertIcon,
-  Email as EmailIcon
+  Email as EmailIcon,
+  GitHub as GitHubIcon,
+  LinkedIn as LinkedInIcon,
+  Twitter as TwitterIcon,
+  Instagram as InstagramIcon,
+  Save as SaveIcon
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../api';
+import LoadingSpinner from '../components/LoadingSpinner';
 import NewsletterManagement from '../components/NewsletterManagement';
 
 const AdminNew = () => {
@@ -91,6 +97,8 @@ const AdminNew = () => {
   const [success, setSuccess] = useState('');
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingResume, setUploadingResume] = useState(false);
+  const [socials, setSocials] = useState({ github: '', linkedin: '', twitter: '', instagram: '' });
+  const [savingSocials, setSavingSocials] = useState(false);
   
   // Dialog states
   const [deleteDialog, setDeleteDialog] = useState({ open: false, type: '', id: '', name: '' });
@@ -131,6 +139,9 @@ const AdminNew = () => {
       setSkills(skillsRes.data.skills || skillsRes.data);
       setContacts(contactsRes.data.contacts || contactsRes.data);
       setAbout(aboutRes.data?.about || null);
+      if (aboutRes.data?.about?.user?.social) {
+        setSocials(aboutRes.data.about.user.social);
+      }
 
       // Calculate stats
       const totalUsers = usersRes.data.length;
@@ -257,6 +268,30 @@ const AdminNew = () => {
       setUploadingResume(false);
     }
   };
+
+  const handleSocialsChange = (e) => {
+    const { name, value } = e.target;
+    setSocials(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSaveSocials = async () => {
+    if (!about?.user?._id) {
+      setError('User information is not available to save social links.');
+      return;
+    }
+    setSavingSocials(true);
+    setError('');
+    setSuccess('');
+    try {
+      await api.put(`/api/auth/users/${about.user._id}/socials`, socials);
+      setSuccess('Social links updated successfully!');
+      fetchData();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to update social links.');
+    } finally {
+      setSavingSocials(false);
+    }
+  };
   const handleDelete = async () => {
     try {
       const { type, id } = deleteDialog;
@@ -316,7 +351,7 @@ const AdminNew = () => {
             <Box
               sx={{
                 p: 1.5,
-                borderRadius: 2,
+                borderRadius: '10px',
                 background: `linear-gradient(135deg, ${theme.palette[color].main}, ${theme.palette[color].dark})`,
                 color: 'white'
               }}
@@ -345,14 +380,7 @@ const AdminNew = () => {
   );
 
   if (loading) {
-    return (
-      <Box sx={{ width: '100%', mt: 4 }}>
-        <LinearProgress />
-        <Typography variant="h6" textAlign="center" mt={2}>
-          Loading Dashboard...
-        </Typography>
-      </Box>
-    );
+    return <LoadingSpinner message="Loading Dashboard..." />;
   }
 
   return (
@@ -614,6 +642,10 @@ const AdminNew = () => {
                 onEdit={(data) => setAboutDialog({ open: true, data: data || {} })}
                 onResumeUpload={handleResumeUpload}
                 uploadingResume={uploadingResume}
+                socials={socials}
+                onSocialsChange={handleSocialsChange}
+                onSaveSocials={handleSaveSocials}
+                savingSocials={savingSocials}
               />
             )}
             {tabValue === 6 && (
@@ -640,7 +672,7 @@ const AdminNew = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
+      
       {/* Project Dialog */}
       <ProjectDialog 
         open={projectDialog.open}
@@ -743,7 +775,7 @@ const UsersTab = ({ users, onRefresh, onDelete }) => (
       </Button>
     </Box>
     
-    <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
+    <TableContainer component={Paper} sx={{ borderRadius: '10px' }}>
       <Table>
         <TableHead>
           <TableRow sx={{ bgcolor: 'grey.50' }}>
@@ -1003,7 +1035,7 @@ const ExperiencesTab = ({ experiences, onRefresh, onEdit, onDelete }) => (
       </Box>
     </Box>
     
-    <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
+    <TableContainer component={Paper} sx={{ borderRadius: '10px' }}>
       <Table>
         <TableHead>
           <TableRow sx={{ bgcolor: 'grey.50' }}>
@@ -1142,7 +1174,7 @@ const ContactsTab = ({ contacts, onRefresh }) => (
       </Button>
     </Box>
     
-    <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
+    <TableContainer component={Paper} sx={{ borderRadius: '10px' }}>
       <Table>
         <TableHead>
           <TableRow sx={{ bgcolor: 'grey.50' }}>
@@ -1179,7 +1211,7 @@ const ContactsTab = ({ contacts, onRefresh }) => (
   </Box>
 );
 
-const AboutTab = ({ about, onRefresh, onEdit, onResumeUpload, uploadingResume }) => (
+const AboutTab = ({ about, onRefresh, onEdit, onResumeUpload, uploadingResume, socials, onSocialsChange, onSaveSocials, savingSocials }) => (
   <Box>
     <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
       <Typography variant="h5" fontWeight="bold">
@@ -1196,7 +1228,7 @@ const AboutTab = ({ about, onRefresh, onEdit, onResumeUpload, uploadingResume })
         <Button
           variant="contained"
           startIcon={<EditIcon />}
-          onClick={() => onEdit(about)}
+          onClick={() => onEdit(about || {})}
         >
           Edit About
         </Button>
@@ -1283,6 +1315,72 @@ const AboutTab = ({ about, onRefresh, onEdit, onResumeUpload, uploadingResume })
               Upload a new PDF to replace the existing one.
             </Typography>
 
+            <Divider sx={{ my: 3 }} />
+
+            <Typography variant="h6" fontWeight="bold" mb={2}>
+              Social Media Links
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="GitHub URL"
+                  name="github"
+                  value={socials?.github || ''}
+                  onChange={onSocialsChange}
+                  InputProps={{
+                    startAdornment: <GitHubIcon sx={{ mr: 1, color: 'text.secondary' }} />,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="LinkedIn URL"
+                  name="linkedin"
+                  value={socials?.linkedin || ''}
+                  onChange={onSocialsChange}
+                  InputProps={{
+                    startAdornment: <LinkedInIcon sx={{ mr: 1, color: 'text.secondary' }} />,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Twitter URL"
+                  name="twitter"
+                  value={socials?.twitter || ''}
+                  onChange={onSocialsChange}
+                  InputProps={{
+                    startAdornment: <TwitterIcon sx={{ mr: 1, color: 'text.secondary' }} />,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Instagram URL"
+                  name="instagram"
+                  value={socials?.instagram || ''}
+                  onChange={onSocialsChange}
+                  InputProps={{
+                    startAdornment: <InstagramIcon sx={{ mr: 1, color: 'text.secondary' }} />,
+                  }}
+                />
+              </Grid>
+            </Grid>
+            <Box mt={3} textAlign="right">
+              <Button
+                variant="contained"
+                onClick={onSaveSocials}
+                disabled={savingSocials}
+                startIcon={savingSocials ? <CircularProgress size={20} color="inherit" /> : <SaveIcon />}
+              >
+                {savingSocials ? 'Saving...' : 'Save Social Links'}
+              </Button>
+            </Box>
+
           </Grid>
         </Grid>
       </Card>
@@ -1294,7 +1392,7 @@ const AboutTab = ({ about, onRefresh, onEdit, onResumeUpload, uploadingResume })
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => onEdit(null)}
+          onClick={() => onEdit({})}
         >
           Add About Information
         </Button>
@@ -1350,10 +1448,10 @@ const ProjectDialog = ({ open, edit, data, onClose, onSubmit }) => {
                 value={formData.title || ''}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 required
-                size={isSmallMobile ? "small" : "medium"}
+                size={isMobile ? "small" : "medium"}
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: { xs: 1.5, sm: 2 }
+                    borderRadius: { xs: '10px', sm: '10px' }
                   }
                 }}
               />
@@ -1363,14 +1461,14 @@ const ProjectDialog = ({ open, edit, data, onClose, onSubmit }) => {
                 fullWidth
                 label="Description"
                 multiline
-                rows={isSmallMobile ? 2 : 3}
+                rows={isMobile ? 2 : 3}
                 value={formData.description || ''}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 required
-                size={isSmallMobile ? "small" : "medium"}
+                size={isMobile ? "small" : "medium"}
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: { xs: 1.5, sm: 2 }
+                    borderRadius: { xs: '10px', sm: '10px' }
                   }
                 }}
               />
@@ -1381,10 +1479,10 @@ const ProjectDialog = ({ open, edit, data, onClose, onSubmit }) => {
                 label="Image URL"
                 value={formData.image || ''}
                 onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                size={isSmallMobile ? "small" : "medium"}
+                size={isMobile ? "small" : "medium"}
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: { xs: 1.5, sm: 2 }
+                    borderRadius: { xs: '10px', sm: '10px' }
                   }
                 }}
               />
@@ -1395,10 +1493,10 @@ const ProjectDialog = ({ open, edit, data, onClose, onSubmit }) => {
                 label="Technologies (comma separated)"
                 value={formData.technologies || ''}
                 onChange={(e) => setFormData({ ...formData, technologies: e.target.value })}
-                size={isSmallMobile ? "small" : "medium"}
+                size={isMobile ? "small" : "medium"}
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: { xs: 1.5, sm: 2 }
+                    borderRadius: { xs: '10px', sm: '10px' }
                   }
                 }}
               />
@@ -1409,10 +1507,10 @@ const ProjectDialog = ({ open, edit, data, onClose, onSubmit }) => {
                 label="GitHub URL"
                 value={formData.githubUrl || ''}
                 onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
-                size={isSmallMobile ? "small" : "medium"}
+                size={isMobile ? "small" : "medium"}
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: { xs: 1.5, sm: 2 }
+                    borderRadius: { xs: '10px', sm: '10px' }
                   }
                 }}
               />
@@ -1423,10 +1521,10 @@ const ProjectDialog = ({ open, edit, data, onClose, onSubmit }) => {
                 label="Live URL"
                 value={formData.liveUrl || ''}
                 onChange={(e) => setFormData({ ...formData, liveUrl: e.target.value })}
-                size={isSmallMobile ? "small" : "medium"}
+                size={isMobile ? "small" : "medium"}
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: { xs: 1.5, sm: 2 }
+                    borderRadius: { xs: '10px', sm: '10px' }
                   }
                 }}
               />
@@ -1437,7 +1535,7 @@ const ProjectDialog = ({ open, edit, data, onClose, onSubmit }) => {
                   <Switch
                     checked={formData.featured || false}
                     onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                    size={isSmallMobile ? "small" : "medium"}
+                    size={isMobile ? "small" : "medium"}
                   />
                 }
                 label="Featured Project"
@@ -1456,16 +1554,16 @@ const ProjectDialog = ({ open, edit, data, onClose, onSubmit }) => {
         }}>
           <Button 
             onClick={onClose}
-            fullWidth={isSmallMobile}
-            size={isSmallMobile ? "small" : "medium"}
+            fullWidth={isMobile}
+            size={isMobile ? "small" : "medium"}
           >
             Cancel
           </Button>
           <Button 
             type="submit" 
             variant="contained"
-            fullWidth={isSmallMobile}
-            size={isSmallMobile ? "small" : "medium"}
+            fullWidth={isMobile}
+            size={isMobile ? "small" : "medium"}
           >
             {edit ? 'Update' : 'Create'}
           </Button>
@@ -1492,7 +1590,7 @@ const ExperienceDialog = ({ open, edit, data, onClose, onSubmit }) => {
       <DialogTitle>{edit ? 'Edit Experience' : 'Add Experience'}</DialogTitle>
       <form onSubmit={handleSubmit}>
         <DialogContent>
-          <Grid container spacing={2}>
+          <Grid container spacing={{ xs: 2, sm: 3 }}>
             <Grid item xs={12}>
               <TextField
                 fullWidth

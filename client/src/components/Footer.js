@@ -143,7 +143,7 @@ const Footer = () => {
         component="footer"
         sx={{
           background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-          color: '#e2e8f0',
+          color: '#94a3b8',
           py: { xs: 4, sm: 5, md: 6, lg: 8 },
           position: 'relative',
           overflow: 'hidden',
@@ -162,7 +162,7 @@ const Footer = () => {
         }}
       >
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-          <Grid container spacing={{ xs: 3, sm: 4, md: 5, lg: 6 }} alignItems="flex-start">
+          <Grid container spacing={{ xs: 4, sm: 4, md: 5 }} alignItems="flex-start">
             {/* Brand Section */}
             <Grid item xs={12} md={6} lg={4}>
               <motion.div
@@ -181,7 +181,7 @@ const Footer = () => {
                     boxShadow: '0 0 0 4px rgba(59, 130, 246, 0.3)'
                   }} />
                   <Typography
-                    variant={isMobile ? "h6" : "h5"}
+                    variant="h5"
                     component="h3"
                     sx={{
                       fontWeight: 800,
@@ -189,7 +189,8 @@ const Footer = () => {
                       letterSpacing: '-0.5px',
                       background: 'linear-gradient(90deg, #e2e8f0, #94a3b8)',
                       WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent'
+                      WebkitTextFillColor: 'transparent',
+                      fontSize: { xs: '1.25rem', sm: '1.5rem' }
                     }}
                   >
                     SHUBHAM KUMAR
@@ -199,9 +200,8 @@ const Footer = () => {
                   variant="body2"
                   sx={{
                     mb: 3,
-                    color: '#94a3b8',
                     lineHeight: 1.6,
-                    fontSize: isMobile ? '0.875rem' : '1rem',
+                    fontSize: { xs: '0.875rem', sm: '1rem' },
                     maxWidth: '100%'
                   }}
                 >
@@ -218,7 +218,7 @@ const Footer = () => {
                     textTransform: 'uppercase',
                     display: 'block',
                     mb: 1.5,
-                    fontSize: isMobile ? '0.7rem' : '0.75rem'
+                    fontSize: '0.75rem'
                   }}>
                     Tech Stack
                   </Typography>
@@ -239,10 +239,10 @@ const Footer = () => {
                           variant="outlined"
                           sx={{
                             bgcolor: 'rgba(15, 23, 42, 0.7)',
-                            color: '#e2e8f0',
+                            color: '#cbd5e1',
                             borderColor: 'rgba(255, 255, 255, 0.1)',
-                            fontSize: isMobile ? '0.7rem' : '0.75rem',
-                            height: isMobile ? 24 : 28,
+                            fontSize: '0.75rem',
+                            height: 28,
                             '& .MuiChip-icon': { 
                               color: tech.color, 
                               opacity: 0.8,
@@ -270,7 +270,7 @@ const Footer = () => {
                     textTransform: 'uppercase',
                     display: 'block',
                     mb: 1.5,
-                    fontSize: isMobile ? '0.7rem' : '0.75rem'
+                    fontSize: '0.75rem'
                   }}>
                     Connect With Me
                   </Typography>
@@ -294,10 +294,10 @@ const Footer = () => {
                               color: '#94a3b8',
                               bgcolor: 'rgba(255, 255, 255, 0.05)',
                               border: '1px solid rgba(255, 255, 255, 0.08)',
-                              width: isMobile ? 34 : 40,
-                              height: isMobile ? 34 : 40,
+                              width: 40,
+                              height: 40,
                               '&:hover': {
-                                bgcolor: 'rgba(255, 255, 255, 0.1)',
+                                bgcolor: 'rgba(255, 255, 255, 0.15)',
                                 color: 'white',
                                 transform: 'translateY(-2px)',
                                 boxShadow: `0 4px 12px ${social.color}20`
@@ -306,7 +306,7 @@ const Footer = () => {
                             }}
                           >
                             {React.cloneElement(social.icon, { 
-                              sx: { fontSize: isMobile ? '1rem' : '1.2rem' } 
+                              sx: { fontSize: '1.2rem' } 
                             })}
                           </IconButton>
                         </Tooltip>
@@ -326,7 +326,7 @@ const Footer = () => {
                 viewport={{ once: true, margin: isMobile ? "0px" : "-50px" }}
               >
                 <Typography
-                  variant={isMobile ? "subtitle1" : "h6"}
+                  variant="h6"
                   component="h4"
                   gutterBottom
                   sx={{
@@ -343,7 +343,8 @@ const Footer = () => {
                       width: '100%',
                       height: 2,
                       background: 'linear-gradient(90deg, #3b82f6, transparent)',
-                      borderRadius: 2
+                      borderRadius: 2,
+                      fontSize: { xs: '1.1rem', md: '1.25rem' }
                     }
                   }}
                 >
@@ -368,7 +369,7 @@ const Footer = () => {
                           color: '#94a3b8',
                           fontWeight: 500,
                           py: 0.5,
-                          fontSize: isMobile ? '0.9rem' : '1rem',
+                          fontSize: { xs: '0.9rem', sm: '1rem' },
                           transition: 'all 0.2s ease',
                           '&:hover': {
                             color: 'white',
@@ -385,7 +386,7 @@ const Footer = () => {
                           transition: 'all 0.2s ease'
                         }}>
                           {React.cloneElement(link.icon, { 
-                            sx: { fontSize: isMobile ? '0.9rem' : '1.1rem' } 
+                            sx: { fontSize: { xs: '1rem', sm: '1.1rem' } } 
                           })}
                         </Box>
                         {link.name}
@@ -405,7 +406,7 @@ const Footer = () => {
                 viewport={{ once: true, margin: isMobile ? "0px" : "-50px" }}
               >
                 <Typography
-                  variant={isMobile ? "subtitle1" : "h6"}
+                  variant="h6"
                   component="h4"
                   gutterBottom
                   sx={{
@@ -422,7 +423,8 @@ const Footer = () => {
                       width: '100%',
                       height: 2,
                       background: 'linear-gradient(90deg, #10b981, transparent)',
-                      borderRadius: 2
+                      borderRadius: 2,
+                      fontSize: { xs: '1.1rem', md: '1.25rem' }
                     }
                   }}
                 >
@@ -463,8 +465,8 @@ const Footer = () => {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            width: isMobile ? 34 : 40,
-                            height: isMobile ? 34 : 40,
+                            width: 40,
+                            height: 40,
                             borderRadius: '10px',
                             bgcolor: 'rgba(255, 255, 255, 0.05)',
                             border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -474,12 +476,12 @@ const Footer = () => {
                           }}
                         >
                           {React.cloneElement(contact.icon, { 
-                            sx: { fontSize: isMobile ? '1rem' : '1.2rem' } 
+                            sx: { fontSize: '1.2rem' } 
                           })}
                         </Box>
                         <Typography variant="body2" sx={{ 
                           fontWeight: 500,
-                          fontSize: isMobile ? '0.85rem' : '1rem'
+                          fontSize: { xs: '0.875rem', sm: '1rem' }
                         }}>
                           {contact.text}
                         </Typography>
@@ -499,7 +501,7 @@ const Footer = () => {
                 viewport={{ once: true, margin: isMobile ? "0px" : "-50px" }}
               >
                 <Typography
-                  variant={isMobile ? "subtitle1" : "h6"}
+                  variant="h6"
                   component="h4"
                   gutterBottom
                   sx={{
@@ -516,7 +518,8 @@ const Footer = () => {
                       width: '100%',
                       height: 2,
                       background: 'linear-gradient(90deg, #f59e0b, transparent)',
-                      borderRadius: 2
+                      borderRadius: 2,
+                      fontSize: { xs: '1.1rem', md: '1.25rem' }
                     }
                   }}
                 >
@@ -527,8 +530,7 @@ const Footer = () => {
                   sx={{
                     color: '#94a3b8',
                     mb: 3,
-                    lineHeight: 1.6,
-                    fontSize: isMobile ? '0.85rem' : '0.9rem'
+                    lineHeight: 1.6
                   }}
                 >
                   Join my newsletter for exclusive insights, project updates, and web development tips.
@@ -554,7 +556,7 @@ const Footer = () => {
                         <EmailIcon sx={{ 
                           color: '#64748b', 
                           mr: 1, 
-                          fontSize: isMobile ? '1.1rem' : '1.2rem' 
+                          fontSize: '1.2rem' 
                         }} />
                       ),
                     }}
@@ -577,13 +579,12 @@ const Footer = () => {
                         },
                       },
                       '& .MuiOutlinedInput-input': {
-                        padding: isMobile ? '10.5px 12px' : '12px 14px',
-                        fontSize: isMobile ? '0.9rem' : '1rem'
+                        padding: '12px 14px',
+                        fontSize: '1rem'
                       },
                       '& .MuiOutlinedInput-input::placeholder': { 
                         color: '#64748b', 
-                        opacity: 1,
-                        fontSize: isMobile ? '0.85rem' : '0.9rem'
+                        opacity: 1
                       }
                     }}
                     fullWidth
@@ -606,11 +607,11 @@ const Footer = () => {
                             ? '#10b981' 
                             : 'linear-gradient(90deg, #f59e0b 0%, #f97316 100%)',
                           color: isSubscribed ? 'white' : '#0f172a',
-                          borderRadius: 2,
-                          py: isMobile ? 1.2 : 1.5,
+                          borderRadius: '10px',
+                          py: 1.5,
                           fontWeight: 700,
                           width: '100%',
-                          fontSize: isMobile ? '0.85rem' : '0.9rem',
+                          fontSize: '0.9rem',
                           '&:hover': { 
                             background: isSubscribed 
                               ? '#10b981' 
@@ -633,7 +634,7 @@ const Footer = () => {
           </Grid>
 
           <Divider sx={{ 
-            my: { xs: 3, sm: 4, md: 5, lg: 6 }, 
+            my: { xs: 4, sm: 5, md: 6 }, 
             borderColor: 'rgba(255, 255, 255, 0.05)',
             background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)'
           }} />
@@ -660,7 +661,7 @@ const Footer = () => {
                 sx={{
                   color: '#64748b',
                   fontWeight: 500,
-                  fontSize: isMobile ? '0.75rem' : '0.8rem'
+                  fontSize: '0.8rem'
                 }}
               >
                 © {new Date().getFullYear()} SHUBHAM KUMAR. All rights reserved.
@@ -678,13 +679,13 @@ const Footer = () => {
                   sx={{
                     color: '#64748b',
                     fontWeight: 500,
-                    fontSize: isMobile ? '0.7rem' : '0.8rem',
+                    fontSize: '0.8rem',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 0.5,
                   }}
                 >
-                  <CodeIcon sx={{ fontSize: isMobile ? '0.8rem' : '0.9rem', color: '#3b82f6' }} />
+                  <CodeIcon sx={{ fontSize: '0.9rem', color: '#3b82f6' }} />
                   Crafted with React & MUI
                 </Typography>
                 <Box sx={{ 
@@ -698,13 +699,13 @@ const Footer = () => {
                   sx={{
                     color: '#64748b',
                     fontWeight: 500,
-                    fontSize: isMobile ? '0.7rem' : '0.8rem',
+                    fontSize: '0.8rem',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 0.5,
                   }}
                 >
-                  <SecurityIcon sx={{ fontSize: isMobile ? '0.8rem' : '0.9rem', color: '#10b981' }} />
+                  <SecurityIcon sx={{ fontSize: '0.9rem', color: '#10b981' }} />
                   Secure by Design
                 </Typography>
               </Box>
@@ -712,40 +713,6 @@ const Footer = () => {
           </motion.div>
         </Container>
       </Box>
-
-      {/* Back to Top Button */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3, delay: 1 }}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        <Fab
-          color="primary"
-          aria-label="back to top"
-          onClick={scrollToTop}
-          sx={{
-            position: 'fixed',
-            bottom: 16,
-            right: 16,
-            bgcolor: 'transparent',
-            background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
-            color: 'white',
-            width: isMobile ? 44 : 56,
-            height: isMobile ? 44 : 56,
-            '&:hover': { 
-              background: 'linear-gradient(135deg, #6366f1 0%, #3b82f6 100%)', 
-              transform: 'translateY(-3px)', 
-              boxShadow: '0 8px 25px rgba(59, 130, 246, 0.4)' 
-            },
-            transition: 'all 0.3s ease',
-            zIndex: 1000
-          }}
-        >
-          <ArrowUpIcon sx={{ fontSize: isMobile ? '1.2rem' : '1.5rem' }} />
-        </Fab>
-      </motion.div>
 
       {/* Snackbar for notifications */}
       <Snackbar

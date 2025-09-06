@@ -44,6 +44,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import LoadingSpinner from '../components/LoadingSpinner';
 import { api } from '../api';
 
 const Projects = () => {
@@ -198,41 +199,7 @@ const Projects = () => {
   };
 
   if (loading) {
-    return (
-      <Box sx={{ 
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
-        minHeight: '100vh',
-        py: { xs: 3, sm: 4, md: 6 }
-      }}>
-        <Container maxWidth="lg">
-          <Box sx={{ textAlign: 'center', mb: { xs: 4, sm: 5 } }}>
-            <Skeleton 
-              variant="rounded" 
-              width={{ xs: '70%', sm: '50%', md: '40%' }} 
-              height={60} 
-              sx={{ mx: 'auto', mb: 2, borderRadius: 3 }} 
-            />
-            <Skeleton 
-              variant="rounded" 
-              width={{ xs: '90%', sm: '70%', md: '60%' }} 
-              height={40} 
-              sx={{ mx: 'auto', borderRadius: 3 }} 
-            />
-          </Box>
-          <Grid container spacing={{ xs: 2, sm: 3 }}>
-            {[1, 2, 3, 4, 5, 6].map((item) => (
-              <Grid item xs={12} sm={6} md={4} key={item}>
-                <Skeleton 
-                  variant="rectangular" 
-                  height={320} 
-                  sx={{ borderRadius: 3 }} 
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </Box>
-    );
+    return <LoadingSpinner message="Loading Projects..." />;
   }
 
   return (
@@ -339,7 +306,7 @@ const Projects = () => {
             <Stack 
               spacing={2} 
               direction={{ xs: 'column', sm: 'row' }} 
-              alignItems={{ xs: 'stretch', sm: 'center' }}
+              alignItems="center"
               justifyContent="space-between"
             >
               {/* Search Field */}
@@ -353,7 +320,7 @@ const Projects = () => {
                   startAdornment: <SearchIcon sx={{ mr: 1, color: '#94a3b8' }} />,
                   sx: { borderRadius: 2 }
                 }}
-                sx={{
+                sx={{ 
                   maxWidth: { sm: 300 },
                   '& .MuiOutlinedInput-root': {
                     background: 'rgba(255,255,255,0.06)',
@@ -427,7 +394,7 @@ const Projects = () => {
                     fontWeight: 600,
                     px: 3,
                     py: 1,
-                    borderRadius: 2,
+                    borderRadius: '10px',
                     color: '#0F172A',
                     boxShadow: '0 4px 15px rgba(56, 189, 248, 0.3)',
                     '&:hover': { 
@@ -493,7 +460,8 @@ const Projects = () => {
                         transform: 'translateY(-5px)',
                         boxShadow: '0 15px 30px rgba(0,0,0,0.3)',
                         '& .project-image': {
-                          transform: 'scale(1.05)'
+                          transform: 'scale(1.05)',
+                          filter: 'brightness(1.1)'
                         }
                       }
                     }}
@@ -506,7 +474,7 @@ const Projects = () => {
                         alt={project.title}
                         className="project-image"
                         sx={{
-                          transition: 'transform 0.5s ease',
+                          transition: 'transform 0.5s ease, filter 0.5s ease',
                           objectFit: 'cover'
                         }}
                       />
@@ -533,7 +501,7 @@ const Projects = () => {
                                   transform: 'scale(1.1)' 
                                 },
                                 transition: 'all 0.3s ease',
-                                borderRadius: 2
+                                borderRadius: '10px'
                               }}
                             >
                               <EditIcon fontSize="small" />
@@ -552,7 +520,7 @@ const Projects = () => {
                                   transform: 'scale(1.1)' 
                                 },
                                 transition: 'all 0.3s ease',
-                                borderRadius: 2
+                                borderRadius: '10px'
                               }}
                             >
                               <DeleteIcon fontSize="small" />
@@ -641,7 +609,7 @@ const Projects = () => {
                               borderColor: 'rgba(56, 189, 248, 0.5)',
                               color: '#38BDF8',
                               fontWeight: 500,
-                              borderRadius: 2,
+                              borderRadius: '10px',
                               '&:hover': {
                                 borderColor: '#7dd3fc',
                                 backgroundColor: 'rgba(56, 189, 248, 0.1)'
@@ -663,7 +631,7 @@ const Projects = () => {
                               flex: 1,
                               background: 'linear-gradient(90deg, #38BDF8 0%, #818CF8 100%)',
                               fontWeight: 600,
-                              borderRadius: 2,
+                              borderRadius: '10px',
                               color: '#0F172A',
                               '&:hover': { 
                                 background: 'linear-gradient(90deg, #818CF8 0%, #38BDF8 100%)' 
@@ -749,7 +717,7 @@ const Projects = () => {
                     fontWeight: 600,
                     px: 4,
                     py: 1,
-                    borderRadius: 2,
+                    borderRadius: '10px',
                     boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)',
                     '&:hover': {
                       background: 'linear-gradient(45deg, #2563eb, #7c3aed)',
@@ -941,7 +909,7 @@ const Projects = () => {
               sx={{ 
                 fontWeight: 500,
                 color: '#94a3b8',
-                borderRadius: 2
+                borderRadius: '10px'
               }}
             >
               Cancel
@@ -955,7 +923,7 @@ const Projects = () => {
                 fontWeight: 600,
                 px: 3,
                 py: 1,
-                borderRadius: 2,
+                borderRadius: '10px',
                 '&:hover': { 
                   background: 'linear-gradient(90deg, #818CF8 0%, #38BDF8 100%)' 
                 }

@@ -308,6 +308,39 @@ const updateAvatar = async (req, res) => {
   }
 };
 
+// @desc    Update user socials by ID (admin only)
+// @route   PUT /api/auth/users/:id/socials
+// @access  Private/Admin
+const updateUserSocials = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Ensure social object exists
+    if (!user.social) {
+      user.social = {};
+    }
+
+    user.social.github = req.body.github !== undefined ? req.body.github : user.social.github;
+    user.social.linkedin = req.body.linkedin !== undefined ? req.body.linkedin : user.social.linkedin;
+    user.social.twitter = req.body.twitter !== undefined ? req.body.twitter : user.social.twitter;
+    user.social.instagram = req.body.instagram !== undefined ? req.body.instagram : user.social.instagram;
+
+    const updatedUser = await user.save();
+
+    res.json({
+      _id: updatedUser._id,
+      social: updatedUser.social,
+    });
+  } catch (error) {
+    console.error('Update user socials error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -317,4 +350,5 @@ module.exports = {
   deleteUser,
   changePassword,
   updateAvatar,
+  updateUserSocials,
 };

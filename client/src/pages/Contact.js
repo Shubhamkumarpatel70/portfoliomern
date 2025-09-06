@@ -129,7 +129,7 @@ const Contact = () => {
       },
     }}>
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-        <Grid container spacing={3}>
+        <Grid container spacing={{ xs: 4, md: 3 }} alignItems="center">
           <Grid item xs={12} lg={5}>
             <motion.div
               initial={{ opacity: 0, y: 40 }}
@@ -154,7 +154,7 @@ const Contact = () => {
                 <Typography variant="h2" sx={{ 
                   fontWeight: 800, 
                   mb: 2,
-                  fontSize: { xs: '2.5rem', sm: '3rem', md: '3.5rem' },
+                  fontSize: { xs: '2.2rem', sm: '3rem', md: '3.5rem' },
                   background: 'linear-gradient(90deg, #38BDF8 0%, #818CF8 100%)',
                   backgroundClip: 'text',
                   WebkitBackgroundClip: 'text',
@@ -167,7 +167,8 @@ const Contact = () => {
                   color: '#94a3b8', 
                   mb: 4,
                   lineHeight: 1.7,
-                  maxWidth: '100%'
+                  maxWidth: '100%',
+                  fontSize: { xs: '1rem', md: '1.125rem' }
                 }}>
                   Have a project in mind or want to discuss opportunities? 
                   Fill out the form or reach out directly.
@@ -297,7 +298,7 @@ const Contact = () => {
                 border: '1px solid rgba(255,255,255,0.1)',
                 overflow: 'hidden',
                 mx: { xs: 2, sm: 0 },
-                '&:hover': {
+                '&:hover, &:focus-within': {
                   boxShadow: '0 12px 40px rgba(0,0,0,0.4)'
                 },
                 transition: 'all 0.3s ease'
@@ -339,7 +340,7 @@ const Contact = () => {
                   </AnimatePresence>
 
                   <form onSubmit={handleSubmit}>
-                    <Grid container spacing={2}>
+                    <Grid container spacing={{ xs: 2, sm: 3 }}>
                       <Grid item xs={12} sm={6}>
                         <TextField
                           name="name"
@@ -350,7 +351,7 @@ const Contact = () => {
                           required
                           sx={{
                             '& .MuiOutlinedInput-root': {
-                              borderRadius: 2,
+                              borderRadius: '10px',
                               background: 'rgba(255,255,255,0.05)',
                               color: 'white',
                               transition: 'all 0.2s ease',
@@ -386,7 +387,7 @@ const Contact = () => {
                           required
                           sx={{
                             '& .MuiOutlinedInput-root': {
-                              borderRadius: 2,
+                              borderRadius: '10px',
                               background: 'rgba(255,255,255,0.05)',
                               color: 'white',
                               transition: 'all 0.2s ease',
@@ -425,7 +426,7 @@ const Contact = () => {
                       rows={4}
                       sx={{
                         '& .MuiOutlinedInput-root': {
-                          borderRadius: 2,
+                          borderRadius: '10px',
                           background: 'rgba(255,255,255,0.05)',
                           color: 'white',
                           transition: 'all 0.2s ease',
@@ -460,7 +461,7 @@ const Contact = () => {
                           endIcon={!loading && <SendIcon />}
                           sx={{
                             fontWeight: 700,
-                            borderRadius: 2,
+                            borderRadius: '10px',
                             background: 'linear-gradient(90deg, #3b82f6 0%, #6366f1 100%)',
                             fontSize: '1rem',
                             px: 4,
